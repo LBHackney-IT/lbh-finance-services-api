@@ -6,6 +6,8 @@ using System.Reflection;
 using BaseApi.V1.Controllers;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using BaseApi.V1.Gateways;
+using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction.Account;
+using BaseApi.V1.Gateways.SuspenseTransaction.Account;
 using BaseApi.V1.Infrastructure;
 using BaseApi.V1.UseCase;
 using BaseApi.V1.UseCase.Interfaces;
@@ -151,16 +153,15 @@ namespace BaseApi
 
         private static void RegisterGateways(IServiceCollection services)
         {
-            services.AddScoped<IExampleGateway, ExampleGateway>();
+            services.AddScoped<IAccountGateway, AccountGateway>();
 
             //TODO: For DynamoDb, remove the line above and uncomment the line below.
-            //services.AddScoped<IExampleGateway, DynamoDbGateway>();
+            //services.AddScoped<IAccountGateway, DynamoDbGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)
         {
-            services.AddScoped<IGetAllUseCase, GetAllUseCase>();
-            services.AddScoped<IGetByIdUseCase, GetByIdUseCase>();
+            services.AddScoped<V1.UseCase.Interfaces.SuspenseTransaction.Accounts.IGetByIdUseCase, V1.UseCase.SuspenseTransaction.Account.GetByIdUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
