@@ -1,5 +1,6 @@
 using AutoFixture;
 using BaseApi.V1.Domain;
+using BaseApi.V1.Domain.SuspenseTransaction;
 using BaseApi.V1.Factories;
 using BaseApi.V1.Infrastructure;
 using FluentAssertions;
@@ -29,7 +30,7 @@ namespace BaseApi.Tests.V1.Factories
         [Test]
         public void CanMapADomainEntityToADatabaseObject()
         {
-            var entity = _fixture.Create<Entity>();
+            var entity = _fixture.Create<ConfirmTransferEntity>();
             var databaseEntity = entity.ToDatabase();
 
             entity.Id.Should().Be(databaseEntity.Id);

@@ -1,3 +1,4 @@
+using System;
 using BaseApi.V1.Boundary.Response;
 using BaseApi.V1.Factories;
 using BaseApi.V1.Gateways;
@@ -15,7 +16,7 @@ namespace BaseApi.V1.UseCase
         }
 
         //TODO: rename id to the name of the identifier that will be used for this API, the type may also need to change
-        public ResponseObject Execute(int id)
+        public ResponseObject Execute(Guid id)
         {
             return _gateway.GetEntityById(id).ToResponse();
         }

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using BaseApi.V1.Domain;
+using BaseApi.V1.Domain.SuspenseTransaction;
 using BaseApi.V1.Factories;
 using BaseApi.V1.Infrastructure;
 
@@ -15,16 +17,16 @@ namespace BaseApi.V1.Gateways
             _databaseContext = databaseContext;
         }
 
-        public Entity GetEntityById(int id)
+        public ConfirmTransferEntity GetEntityById(Guid id)
         {
             var result = _databaseContext.DatabaseEntities.Find(id);
 
             return result?.ToDomain();
         }
 
-        public List<Entity> GetAll()
+        public List<ConfirmTransferEntity> GetAll()
         {
-            return new List<Entity>();
+            return new List<ConfirmTransferEntity>();
         }
     }
 }

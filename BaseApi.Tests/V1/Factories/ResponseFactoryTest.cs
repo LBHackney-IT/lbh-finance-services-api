@@ -1,4 +1,5 @@
 using BaseApi.V1.Domain;
+using BaseApi.V1.Domain.SuspenseTransaction;
 using BaseApi.V1.Factories;
 using NUnit.Framework;
 
@@ -11,7 +12,7 @@ namespace BaseApi.Tests.V1.Factories
         [Test]
         public void CanMapADatabaseEntityToADomainObject()
         {
-            var domain = new Entity();
+            var domain = new ConfirmTransferEntity();
             var response = domain.ToResponse();
             //TODO: check here that all of the fields have been mapped correctly. i.e. response.fieldOne.Should().Be("one")
         }

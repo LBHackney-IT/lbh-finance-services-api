@@ -2,6 +2,7 @@ using System.Linq;
 using AutoFixture;
 using BaseApi.V1.Boundary.Response;
 using BaseApi.V1.Domain;
+using BaseApi.V1.Domain.SuspenseTransaction;
 using BaseApi.V1.Factories;
 using BaseApi.V1.Gateways;
 using BaseApi.V1.UseCase;
@@ -28,7 +29,7 @@ namespace BaseApi.Tests.V1.UseCase
         [Test]
         public void GetsAllFromTheGateway()
         {
-            var stubbedEntities = _fixture.CreateMany<Entity>().ToList();
+            var stubbedEntities = _fixture.CreateMany<ConfirmTransferEntity>().ToList();
             _mockGateway.Setup(x => x.GetAll()).Returns(stubbedEntities);
 
             var expectedResponse = new ResponseObjectList { ResponseObjects = stubbedEntities.ToResponse() };

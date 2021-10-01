@@ -21,7 +21,7 @@ namespace BaseApi.V1.Infrastructure
     {
         [Column("id")]
         [DynamoDBHashKey]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Column("created_at")]
         [DynamoDBProperty]

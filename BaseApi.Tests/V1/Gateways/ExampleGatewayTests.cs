@@ -1,6 +1,8 @@
+using System;
 using AutoFixture;
 using BaseApi.Tests.V1.Helper;
 using BaseApi.V1.Domain;
+using BaseApi.V1.Domain.SuspenseTransaction;
 using BaseApi.V1.Gateways;
 using FluentAssertions;
 using NUnit.Framework;
@@ -25,7 +27,7 @@ namespace BaseApi.Tests.V1.Gateways
         [Test]
         public void GetEntityByIdReturnsNullIfEntityDoesntExist()
         {
-            var response = _classUnderTest.GetEntityById(123);
+            var response = _classUnderTest.GetEntityById(Guid.NewGuid());
 
             response.Should().BeNull();
         }
@@ -33,7 +35,7 @@ namespace BaseApi.Tests.V1.Gateways
         [Test]
         public void GetEntityByIdReturnsTheEntityIfItExists()
         {
-            var entity = _fixture.Create<Entity>();
+            var entity = _fixture.Create<ConfirmTransferEntity>();
             var databaseEntity = DatabaseEntityHelper.CreateDatabaseEntityFrom(entity);
 
             DatabaseContext.DatabaseEntities.Add(databaseEntity);
