@@ -1,22 +1,23 @@
 using System;
-using BaseApi.V1.Domain;
+using AutoFixture;
 using BaseApi.V1.Domain.SuspenseTransaction;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace BaseApi.Tests.V1.Domain
 {
-    [TestFixture]
     public class EntityTests
     {
-        [Test]
+        private readonly Fixture _fixture = new Fixture();
+
+        [Fact]
         public void EntitiesHaveAnId()
         {
-            var entity = new ConfirmTransferEntity();
+            var entity = _fixture.Create<ConfirmTransferEntity>();
             entity.Id.Should().NotBeEmpty();
         }
 
-        [Test]
+        [Fact]
         public void EntitiesHaveACreatedAt()
         {
             var entity = new ConfirmTransferEntity();
