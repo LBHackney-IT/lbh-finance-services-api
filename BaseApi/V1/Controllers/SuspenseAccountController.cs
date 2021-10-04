@@ -1,11 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
-using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction.Account;
-using BaseApi.V1.UseCase.Interfaces;
 using IGetByIdUseCase = BaseApi.V1.UseCase.Interfaces.SuspenseTransaction.Accounts.IGetByIdUseCase;
 
 namespace BaseApi.V1.Controllers
