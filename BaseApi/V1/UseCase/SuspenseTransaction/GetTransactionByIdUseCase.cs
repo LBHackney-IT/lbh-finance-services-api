@@ -6,7 +6,7 @@ using BaseApi.V1.UseCase.Interfaces.SuspenseTransaction;
 
 namespace BaseApi.V1.UseCase.SuspenseTransaction
 {
-    public class GetTransactionByIdUseCase: IGetTransactionByIdUseCase
+    public class GetTransactionByIdUseCase : IGetTransactionByIdUseCase
     {
         private readonly ITransactionGateway _gateway;
 

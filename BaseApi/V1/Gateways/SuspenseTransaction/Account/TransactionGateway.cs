@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace BaseApi.V1.Gateways.SuspenseTransaction.Account
 {
-    public class TransactionGateway:ITransactionGateway
+    public class TransactionGateway : ITransactionGateway
     {
         private readonly HttpClient _client;
         private readonly string _transactionApiUrl;
@@ -32,7 +32,7 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction.Account
             if (id == null || id == Guid.Empty)
                 throw new NoNullAllowedException("The transaction id shouldn't be empty or null");
 
-            _client.DefaultRequestHeaders.Add("x-api-key",_transactionApiKey);
+            _client.DefaultRequestHeaders.Add("x-api-key", _transactionApiKey);
 
             var response = await _client.GetAsync(new Uri($"{_transactionApiUrl}/{id.ToString()}")).ConfigureAwait(false);
 
