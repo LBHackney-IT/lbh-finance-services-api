@@ -1,12 +1,10 @@
 using System;
 using System.Data;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using BaseApi.V1.Boundary.Response;
 using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction.Account;
-using BaseApi.V1.Infrastructure;
 using Newtonsoft.Json;
 
 namespace BaseApi.V1.Gateways.SuspenseTransaction.Account
