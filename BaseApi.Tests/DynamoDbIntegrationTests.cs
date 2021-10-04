@@ -1,18 +1,27 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using Xunit;
 
 namespace BaseApi.Tests
 {
-    public class DynamoDbIntegrationTests<TStartup> where TStartup : class
+    public class DynamoDbIntegrationTests<TStartup> : IDisposable where TStartup : class
     {
         protected HttpClient Client { get; private set; }
         private DynamoDbMockWebApplicationFactory<TStartup> _factory;
         protected IDynamoDBContext DynamoDbContext => _factory?.DynamoDbContext;
         protected List<Action> CleanupActions { get; set; }
+
+        public DynamoDbIntegrationTests()
+        {
+            EnsureEnvVarConfigured("DynamoDb_LocalMode", "true");
+            EnsureEnvVarConfigured("DynamoDb_LocalServiceUrl", "http://localhost:8000");
+            _factory = new DynamoDbMockWebApplicationFactory<TStartup>(_tables);
+            Client = _factory.CreateClient();
+            CleanupActions = new List<Action>();
+        }
 
         private readonly List<TableDef> _tables = new List<TableDef>
         {
@@ -26,30 +35,9 @@ namespace BaseApi.Tests
                 Environment.SetEnvironmentVariable(name, defaultValue);
         }
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            EnsureEnvVarConfigured("DynamoDb_LocalMode", "true");
-            EnsureEnvVarConfigured("DynamoDb_LocalServiceUrl", "http://localhost:8000");
-            _factory = new DynamoDbMockWebApplicationFactory<TStartup>(_tables);
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
+        public void Dispose()
         {
             _factory.Dispose();
-        }
-
-        [SetUp]
-        public void BaseSetup()
-        {
-            Client = _factory.CreateClient();
-            CleanupActions = new List<Action>();
-        }
-
-        [TearDown]
-        public void BaseTearDown()
-        {
             foreach (var act in CleanupActions)
                 act();
             Client.Dispose();

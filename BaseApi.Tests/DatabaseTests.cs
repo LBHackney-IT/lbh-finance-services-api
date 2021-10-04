@@ -1,18 +1,17 @@
+using System;
 using BaseApi.V1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using NUnit.Framework;
+using Xunit;
 
 namespace BaseApi.Tests
 {
-    [TestFixture]
-    public class DatabaseTests
+    public class DatabaseTests : IDisposable
     {
         private IDbContextTransaction _transaction;
         protected DatabaseContext DatabaseContext { get; private set; }
 
-        [SetUp]
-        public void RunBeforeAnyTests()
+        public DatabaseTests()
         {
             var builder = new DbContextOptionsBuilder();
             builder.UseNpgsql(ConnectionString.TestDatabase());
@@ -22,8 +21,8 @@ namespace BaseApi.Tests
             _transaction = DatabaseContext.Database.BeginTransaction();
         }
 
-        [TearDown]
-        public void RunAfterAnyTests()
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        public void Dispose()
         {
             _transaction.Rollback();
             _transaction.Dispose();

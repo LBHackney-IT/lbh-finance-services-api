@@ -1,7 +1,7 @@
-using BaseApi.V1.Domain;
 using BaseApi.V1.Domain.SuspenseTransaction;
 using BaseApi.V1.Factories;
-using NUnit.Framework;
+using Xunit;
+
 
 namespace BaseApi.Tests.V1.Factories
 {
@@ -9,7 +9,7 @@ namespace BaseApi.Tests.V1.Factories
     {
         //TODO: add assertions for all the fields being mapped in `ResponseFactory.ToResponse()`. Also be sure to add test cases for
         // any edge cases that might exist.
-        [Test]
+        [Fact]
         public void CanMapADatabaseEntityToADomainObject()
         {
             var domain = new ConfirmTransferEntity();

@@ -6,7 +6,7 @@ using BaseApi.V1.Factories;
 using BaseApi.V1.Infrastructure;
 using FluentAssertions;
 using Newtonsoft.Json;
-using NUnit.Framework;
+
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -44,7 +44,7 @@ using System.Threading.Tasks;
 //        CleanupActions.Add(async () => await DynamoDbContext.DeleteAsync<DatabaseEntity>(entity.Id).ConfigureAwait(false));
 //    }
 
-//    [Test]
+//    [Fact]
 //    public async Task GetEntityByIdNotFoundReturns404()
 //    {
 //        int id = 123456789;
@@ -55,7 +55,7 @@ using System.Threading.Tasks;
 //        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 //    }
 
-//    [Test]
+//    [Fact]
 //    public async Task GetNoteBydIdFoundReturnsResponse()
 //    {
 //        var entity = ConstructTestEntity();
