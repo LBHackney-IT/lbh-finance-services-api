@@ -6,10 +6,6 @@ namespace BaseApi.V1.Domain.SuspenseTransaction
 {
     public class ConfirmTransferEntity
     {
-        [NonEmptyGuid]
-        public Guid Id { get; set; }
-        [Required]
-        public DateTime CreatedAt { get; set; }
         [Required]
         public string Payee { get; set; }
         public static string Account => "Suspense";
