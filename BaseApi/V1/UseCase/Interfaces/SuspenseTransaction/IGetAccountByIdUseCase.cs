@@ -2,9 +2,9 @@ using System;
 using System.Threading.Tasks;
 using BaseApi.V1.Boundary.Response;
 
-namespace BaseApi.V1.UseCase.Interfaces.SuspenseTransaction.Accounts
+namespace BaseApi.V1.UseCase.Interfaces.SuspenseTransaction
 {
-    public interface IGetByIdUseCase
+    public interface IGetAccountByIdUseCase
     {
         public Task<AccountResponse> ExecuteAsync(Guid id);
     }

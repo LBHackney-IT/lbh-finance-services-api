@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using BaseApi.V1.Boundary.Response;
-using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction.Account;
+using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction;
 using Newtonsoft.Json;
 
 namespace BaseApi.V1.Gateways.SuspenseTransaction.Account
@@ -26,7 +26,7 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction.Account
                 throw new Exception("Account api token shouldn't be null");
         }
 
-        public async Task<AccountResponse> GetEntityById(Guid id)
+        public async Task<AccountResponse> GetById(Guid id)
         {
             if (id == null || id == Guid.Empty)
                 throw new NoNullAllowedException("the account id shouldn't be empty or null");
