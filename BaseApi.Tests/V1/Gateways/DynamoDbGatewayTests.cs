@@ -18,9 +18,9 @@ namespace BaseApi.Tests.V1.Gateways
 
     public class DynamoDbGatewayTests
     {
-        private readonly Fixture _fixture = new Fixture();
+        /*private readonly Fixture _fixture = new Fixture();
         private Mock<IDynamoDBContext> _dynamoDb;
-        private DynamoDbGateway _classUnderTest;
+        //private DynamoDbGateway _classUnderTest;
 
         public DynamoDbGatewayTests()
         {
@@ -51,6 +51,6 @@ namespace BaseApi.Tests.V1.Gateways
 
             entity.Id.Should().Be(response.Id);
             entity.CreatedAt.Should().BeSameDateAs(response.CreatedAt);
-        }
+        }*/
     }
 }

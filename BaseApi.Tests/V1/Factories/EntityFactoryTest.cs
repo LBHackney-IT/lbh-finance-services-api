@@ -11,7 +11,7 @@ namespace BaseApi.Tests.V1.Factories
 
     public class EntityFactoryTest
     {
-        private readonly Fixture _fixture = new Fixture();
+        /*private readonly Fixture _fixture = new Fixture();
 
         //TODO: add assertions for all the fields being mapped in `EntityFactory.ToDomain()`. Also be sure to add test cases for
         // any edge cases that might exist.
@@ -35,6 +35,6 @@ namespace BaseApi.Tests.V1.Factories
 
             entity.Id.Should().Be(databaseEntity.Id);
             entity.CreatedAt.Should().BeSameDateAs(databaseEntity.CreatedAt);
-        }
+        }*/
     }
 }

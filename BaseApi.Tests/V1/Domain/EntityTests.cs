@@ -13,18 +13,16 @@ namespace BaseApi.Tests.V1.Domain
         [Fact]
         public void EntitiesHaveAnId()
         {
+            var confirmTransferEntity = typeof(ConfirmTransferEntity);
+            confirmTransferEntity.GetProperties().Length.Should().Be(7);
+
             var entity = _fixture.Create<ConfirmTransferEntity>();
-            entity.Id.Should().NotBeEmpty();
-        }
-
-        [Fact]
-        public void EntitiesHaveACreatedAt()
-        {
-            var entity = new ConfirmTransferEntity();
-            var date = new DateTime(2019, 02, 21);
-            entity.CreatedAt = date;
-
-            entity.CreatedAt.Should().BeSameDateAs(date);
+            Assert.IsType<string>(entity.Address);
+            Assert.IsType<decimal>(entity.ArrearsAfterPayment);
+            Assert.IsType<decimal>(entity.CurrentArrears);
+            Assert.IsType<string>(entity.Payee);
+            Assert.IsType<string>(entity.RentAccountNumber);
+            Assert.IsType<string>(entity.Resident);
         }
     }
 }

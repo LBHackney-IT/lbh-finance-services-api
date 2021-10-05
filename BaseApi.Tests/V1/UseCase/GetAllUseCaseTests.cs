@@ -14,7 +14,7 @@ namespace BaseApi.Tests.V1.UseCase
 {
     public class GetAllUseCaseTests
     {
-        private Mock<IExampleGateway> _mockGateway;
+        /*private Mock<IExampleGateway> _mockGateway;
         private GetAllUseCase _classUnderTest;
         private Fixture _fixture;
 
@@ -34,7 +34,7 @@ namespace BaseApi.Tests.V1.UseCase
             var expectedResponse = new ResponseObjectList { ResponseObjects = stubbedEntities.ToResponse() };
 
             _classUnderTest.Execute().Should().BeEquivalentTo(expectedResponse);
-        }
+        }*/
 
         //TODO: Add extra tests here for extra functionality added to the use case
     }
