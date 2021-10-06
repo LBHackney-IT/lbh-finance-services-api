@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using BaseApi.V1.Domain.SuspenseTransaction;
 using BaseApi.V1.Infrastructure;
@@ -36,8 +37,8 @@ namespace BaseApi.V1.Controllers
                     paramName: $"The {nameof(accountId).ToString()} or {nameof(transactionId).ToString()} shouldn't be empty!");
 
             var accountResponse = await _getAccountByIdUseCase.ExecuteAsync(accountId).ConfigureAwait(false);
-            TryValidateModel(accountResponse);
-            if (ModelState.IsValid)
+            /*this.TryValidateModel();*/
+            if (ModelValidatorHelper.IsModelValid(accountResponse)/*ModelState.IsValid*/)
             {
                 if (accountResponse == null)
                 {
@@ -52,7 +53,7 @@ namespace BaseApi.V1.Controllers
             }
 
             var transactionResponse = await _getTransactionByIdUseCase.ExecuteAsync(transactionId).ConfigureAwait(false);
-            TryValidateModel(transactionResponse);
+            this.TryValidateModel(transactionResponse);
             if (ModelState.IsValid)
             {
                 if (transactionResponse == null)
