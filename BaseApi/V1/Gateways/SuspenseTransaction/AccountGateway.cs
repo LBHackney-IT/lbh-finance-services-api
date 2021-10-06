@@ -7,7 +7,7 @@ using BaseApi.V1.Boundary.Response;
 using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction;
 using Newtonsoft.Json;
 
-namespace BaseApi.V1.Gateways.SuspenseTransaction.Account
+namespace BaseApi.V1.Gateways.SuspenseTransaction
 {
     public class AccountGateway : IAccountGateway
     {

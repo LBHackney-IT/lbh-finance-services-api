@@ -66,7 +66,7 @@ namespace BaseApi.V1.Boundary.Response
         /// <example>
         /// 56.78
         /// </example>
-        [Range(0, (double) decimal.MaxValue)]
+        [Range(0.0, 999999999999)]
         public decimal TransactionAmount { get; set; }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace BaseApi.V1.Boundary.Response
         /// <example>
         /// true
         /// </example>
-        public bool IsSuspense => TargetId == Guid.Empty;
+        public bool IsSuspense => TargetId == Guid.Empty && SuspenseResolutionInfo.IsApproved && SuspenseResolutionInfo.IsConfirmed;
         /// <summary>
         /// 
         /// </summary>
@@ -115,7 +115,7 @@ namespace BaseApi.V1.Boundary.Response
         /// <example>
         /// 56.78
         /// </example>
-        [Range(0, (double) decimal.MaxValue)]
+        [Range(0.0, 999999999999)]
         public decimal PaidAmount { get; set; }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace BaseApi.V1.Boundary.Response
         /// <example>
         /// 87.53
         /// </example>
-        [Range(0, (double) decimal.MaxValue)]
+        [Range(0.0, 999999999999)]
         public decimal ChargedAmount { get; set; }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace BaseApi.V1.Boundary.Response
         /// <example>
         /// 25.56
         /// </example>
-        [Range(0, (double) decimal.MaxValue)]
+        [Range(0.0, 999999999999)]
         public decimal HousingBenefitAmount { get; set; }
 
         /// <summary>

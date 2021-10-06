@@ -13,7 +13,7 @@ namespace BaseApi.Tests.V1.Factories
         public void CanMapADatabaseEntityToADomainObject()
         {
             var domain = new ConfirmTransferEntity();
-            var response = domain.ToResponse();
+            //var response = domain.ToResponse();
             //TODO: check here that all of the fields have been mapped correctly. i.e. response.fieldOne.Should().Be("one")
         }
     }

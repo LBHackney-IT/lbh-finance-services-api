@@ -7,7 +7,7 @@ using BaseApi.V1.Boundary.Response;
 using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction;
 using Newtonsoft.Json;
 
-namespace BaseApi.V1.Gateways.SuspenseTransaction.Account
+namespace BaseApi.V1.Gateways.SuspenseTransaction
 {
     public class TransactionGateway : ITransactionGateway
     {
@@ -40,6 +40,8 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction.Account
             if (responseContent != null)
             {
                 TransactionResponse transactionResponse = JsonConvert.DeserializeObject<TransactionResponse>(responseContent);
+                if (!transactionResponse.IsSuspense)
+                    throw new Exception("Transaction is not suspense");
                 return transactionResponse;
             }
             else

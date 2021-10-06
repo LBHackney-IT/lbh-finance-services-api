@@ -1,17 +1,23 @@
 using System;
 using AutoFixture;
+using BaseApi.V1.Controllers;
 using BaseApi.V1.Domain.SuspenseTransaction;
+using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction;
+using BaseApi.V1.UseCase.Interfaces.SuspenseTransaction;
+using BaseApi.V1.UseCase.SuspenseTransaction;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Xunit;
 
 namespace BaseApi.Tests.V1.Domain
 {
-    public class EntityTests
+    public class ConfirmTransferEntityTests
     {
         private readonly Fixture _fixture = new Fixture();
 
         [Fact]
-        public void EntitiesHaveAnId()
+        public void EntitiesHaveProperties()
         {
             var confirmTransferEntity = typeof(ConfirmTransferEntity);
             confirmTransferEntity.GetProperties().Length.Should().Be(7);
