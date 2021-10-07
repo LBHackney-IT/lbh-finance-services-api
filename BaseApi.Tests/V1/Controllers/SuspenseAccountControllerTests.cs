@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using BaseApi.Tests.V1.Helper;
@@ -61,6 +62,66 @@ namespace BaseApi.Tests.V1.Controllers
 
             var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
             result.Should().BeOfType(typeof(BadRequestObjectResult));
+        }
+
+        [Fact]
+        public async Task GetAccountByIdWithNullResponseThrowsBadRequest()
+        {
+            AccountResponse accountResponse = _fixture.Build<AccountResponse>()
+                .Without(p => p.CreatedBy)
+                .Create();
+            _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                .ReturnsAsync((AccountResponse)null);
+
+            var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
+            result.Should().BeOfType(typeof(NotFoundObjectResult));
+        }
+
+        [Fact]
+        public async Task GetTransactionByIdWithInvalidResponseThrowsBadRequest()
+        {
+            AccountResponse accountResponse = _fixture.Build<AccountResponse>().Create();
+            _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(accountResponse);
+
+            TransactionResponse transactionResponse = _fixture.Build<TransactionResponse>()
+                .Without(p => p.TransactionDate)
+                .Create();
+            _getTransactionByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(transactionResponse);
+
+            var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
+            result.Should().BeOfType(typeof(BadRequestObjectResult));
+        }
+
+        [Fact]
+        public async Task GetTransactionByIdWithNullResponseThrowsBadRequest()
+        {
+            AccountResponse accountResponse = _fixture.Build<AccountResponse>().Create();
+            _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(accountResponse);
+
+            TransactionResponse transactionResponse = _fixture.Build<TransactionResponse>().Create();
+            _getTransactionByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                .ReturnsAsync((TransactionResponse)null);
+
+            var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
+            result.Should().BeOfType(typeof(NotFoundObjectResult));
+        }
+
+        [Fact]
+        public async Task GetByIdWithValidInputReturnsOk()
+        {
+            AccountResponse accountResponse = _fixture.Build<AccountResponse>().Create();
+            _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(accountResponse);
+
+            TransactionResponse transactionResponse = _fixture.Build<TransactionResponse>().Create();
+            _getTransactionByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(transactionResponse);
+
+            var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
+            result.Should().BeOfType(typeof(OkObjectResult));
         }
     }
 }

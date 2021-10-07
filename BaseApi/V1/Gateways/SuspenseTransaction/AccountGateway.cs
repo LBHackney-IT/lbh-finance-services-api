@@ -5,18 +5,19 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using BaseApi.V1.Boundary.Response;
 using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction;
+using BaseApi.V1.Infrastructure.Interfaces;
 using Newtonsoft.Json;
 
 namespace BaseApi.V1.Gateways.SuspenseTransaction
 {
     public class AccountGateway : IAccountGateway
     {
-        private readonly HttpClient _client;
+        private readonly ICustomeHttpClient _client;
         private readonly string _accountApiUrl;
         private readonly string _accountApiToken;
-        public AccountGateway()
+        public AccountGateway(ICustomeHttpClient client)
         {
-            _client = new HttpClient();
+            _client = client;
             _accountApiUrl = Environment.GetEnvironmentVariable("ACCOUNT_API_URL");
             if (string.IsNullOrEmpty(_accountApiUrl))
                 throw new Exception("Account api url shouldn't be null");
@@ -29,13 +30,19 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction
         public async Task<AccountResponse> GetById(Guid id)
         {
             if (id == null || id == Guid.Empty)
-                throw new NoNullAllowedException("the account id shouldn't be empty or null");
+                throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
 
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _accountApiToken);
+            _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", _accountApiToken));
 
             var response = await _client.GetAsync(new Uri($"{_accountApiUrl}/{id.ToString()}")).ConfigureAwait(false);
-
+            if (response == null)
+            {
+                throw new Exception("The account api is not reachable!");
+            }
+            else if (response.Content == null)
+            {
+                throw new Exception(response.StatusCode.ToString());
+            }
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (responseContent != null)
             {

@@ -37,35 +37,27 @@ namespace BaseApi.V1.Controllers
                     paramName: $"The {nameof(accountId).ToString()} or {nameof(transactionId).ToString()} shouldn't be empty!");
 
             var accountResponse = await _getAccountByIdUseCase.ExecuteAsync(accountId).ConfigureAwait(false);
-            /*this.TryValidateModel();*/
-            if (ModelValidatorHelper.IsModelValid(accountResponse)/*ModelState.IsValid*/)
+            if (accountResponse == null)
             {
-                if (accountResponse == null)
-                {
-                    return NotFound(new BaseErrorResponse((int) StatusCodes.Status404NotFound,
-                        "No information by provided account id or account id founded!"));
-                }
+                return NotFound(new BaseErrorResponse((int) StatusCodes.Status404NotFound,
+                    "No information by provided account id or account id founded!"));
             }
-            else
+            else if (!ModelValidatorHelper.IsModelValid(accountResponse))
             {
                 return BadRequest(new BaseErrorResponse((int) StatusCodes.Status400BadRequest,
-                    ModelState.GetErrorMessages()));
+                    ModelValidatorHelper.ErrorMessages));
             }
 
             var transactionResponse = await _getTransactionByIdUseCase.ExecuteAsync(transactionId).ConfigureAwait(false);
-            this.TryValidateModel(transactionResponse);
-            if (ModelState.IsValid)
+            if (transactionResponse == null)
             {
-                if (transactionResponse == null)
-                {
-                    return NotFound(new BaseErrorResponse((int) StatusCodes.Status404NotFound,
-                        "No information by provided transaction id or account id founded!"));
-                }
+                return NotFound(new BaseErrorResponse((int) StatusCodes.Status404NotFound,
+                    "No information by provided transaction id or account id founded!"));
             }
-            else
+            else if (!ModelValidatorHelper.IsModelValid(accountResponse))
             {
                 return BadRequest(new BaseErrorResponse((int) StatusCodes.Status400BadRequest,
-                    ModelState.GetErrorMessages()));
+                    ModelValidatorHelper.ErrorMessages));
             }
 
             ConfirmTransferEntity result = Factories.EntityFactory.ToDomain(accountResponse, transactionResponse);

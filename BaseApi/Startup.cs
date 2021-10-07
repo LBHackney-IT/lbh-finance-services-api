@@ -8,6 +8,7 @@ using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction;
 using BaseApi.V1.Gateways.SuspenseTransaction;
 using BaseApi.V1.Infrastructure;
+using BaseApi.V1.Infrastructure.Interfaces;
 using BaseApi.V1.UseCase.Interfaces.SuspenseTransaction;
 using BaseApi.V1.UseCase.SuspenseTransaction;
 using BaseApi.Versioning;
@@ -120,6 +121,12 @@ namespace BaseApi
 
             RegisterGateways(services);
             RegisterUseCases(services);
+            RegisterInfraService(services);
+        }
+
+        private static void RegisterInfraService(IServiceCollection services)
+        {
+            services.AddScoped<ICustomeHttpClient, CustomeHttpClient>();
         }
 
         private static void ConfigureDbContext(IServiceCollection services)
