@@ -16,6 +16,8 @@ namespace BaseApi.V1.UseCase.SuspenseTransaction
 
         public Task<AccountResponse> ExecuteAsync(Guid id)
         {
+            if(id==Guid.Empty)
+                throw new Exception("The id shouldn't be empty");
             return _accountGateway.GetById(id);
         }
     }

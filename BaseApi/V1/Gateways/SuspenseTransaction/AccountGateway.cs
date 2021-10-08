@@ -1,6 +1,4 @@
 using System;
-using System.Data;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using BaseApi.V1.Boundary.Response;
@@ -15,14 +13,14 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction
         private readonly ICustomeHttpClient _client;
         private readonly string _accountApiUrl;
         private readonly string _accountApiToken;
-        public AccountGateway(ICustomeHttpClient client)
+        public AccountGateway(ICustomeHttpClient client, IEnvironmentVariables environmentVariables)
         {
             _client = client;
-            _accountApiUrl = Environment.GetEnvironmentVariable("ACCOUNT_API_URL");
+            _accountApiUrl = environmentVariables.GetAccountApiUrl().ToString();
             if (string.IsNullOrEmpty(_accountApiUrl))
-                throw new Exception("Account api url shouldn't be null");
+                throw new Exception("Account api url shouldn't be null or empty");
 
-            _accountApiToken = Environment.GetEnvironmentVariable("ACCOUNT_API_TOKEN");
+            _accountApiToken = environmentVariables.GetAccountApiToken();
             if (string.IsNullOrEmpty(_accountApiToken))
                 throw new Exception("Account api token shouldn't be null");
         }

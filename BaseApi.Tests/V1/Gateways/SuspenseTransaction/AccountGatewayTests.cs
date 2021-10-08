@@ -1,19 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AutoFixture;
-using BaseApi.Tests.V1.Helper;
 using BaseApi.V1.Boundary.Response;
 using BaseApi.V1.Gateways.SuspenseTransaction;
 using BaseApi.V1.Infrastructure;
 using BaseApi.V1.Infrastructure.Interfaces;
 using FluentAssertions;
-using FluentAssertions.Common;
 using FluentAssertions.Specialized;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Newtonsoft.Json;
 using Xunit;
@@ -23,6 +18,7 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
     public class AccountGatewayTests
     {
         private readonly Mock<ICustomeHttpClient> _httpClientMock;
+        private readonly Mock<IEnvironmentVariables> _environmentVariables;
         private AccountGateway _gateway;
         private readonly Fixture _fixture;
 
@@ -30,14 +26,31 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
         {
             _fixture = new Fixture();
             _httpClientMock = new Mock<ICustomeHttpClient>();
-            _gateway = new AccountGateway(_httpClientMock.Object);
+            _environmentVariables = new Mock<IEnvironmentVariables>();
+            _gateway = new AccountGateway(_httpClientMock.Object, _environmentVariables.Object);
         }
         [Fact]
         public void ConstructorGetsApiUrlAndApiTokenFromEnvironment()
         {
-            CustomeHttpClient client = new CustomeHttpClient();
-            _gateway = new AccountGateway(client);
+            /*CustomeHttpClient client = new CustomeHttpClient();
+            EnvironmentVariables environmentVariables = new EnvironmentVariables();*/
+            _gateway = new AccountGateway(_httpClientMock.Object, _environmentVariables.Object);
             Assert.True(true);
+        }
+
+        [Fact]
+        public void ConstructorWithoutApiUrlThrowsError()
+        {
+            try
+            {
+                _environmentVariables.Setup(_ => _.GetAccountApiUrl()).Returns(String.Empty);
+                _gateway = new AccountGateway(_httpClientMock.Object, _environmentVariables.Object);
+                Assert.Fail("This section shouldn't be happen!");
+            }
+            catch (Exception ex)
+            {
+                ex.Message.Should().Be("Account api url shouldn't be null or empty");
+            }
         }
 
         [Fact]

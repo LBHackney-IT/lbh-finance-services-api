@@ -54,22 +54,22 @@ namespace BaseApi.V1.Controllers
                 return NotFound(new BaseErrorResponse((int) StatusCodes.Status404NotFound,
                     "No information by provided transaction id or account id founded!"));
             }
-            else if (!ModelValidatorHelper.IsModelValid(accountResponse))
+            else if (!ModelValidatorHelper.IsModelValid(transactionResponse))
             {
                 return BadRequest(new BaseErrorResponse((int) StatusCodes.Status400BadRequest,
                     ModelValidatorHelper.ErrorMessages));
             }
 
             ConfirmTransferEntity result = Factories.EntityFactory.ToDomain(accountResponse, transactionResponse);
-            if (result != null)
+            return Ok(result);
+            /*if (result != null)
             {
-                return Ok(result);
             }
             else
             {
-                /*This should not happen in any way*/
+                *//*This should not happen in any way*//*
                 throw new Exception("Something wrong happened in getting information!");
-            }
+            }*/
         }
     }
 }

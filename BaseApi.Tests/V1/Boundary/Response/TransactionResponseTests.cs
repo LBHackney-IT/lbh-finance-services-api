@@ -15,7 +15,7 @@ namespace BaseApi.Tests.V1.Boundary.Response
         private readonly Fixture _fixture = new Fixture();
 
         [Fact]
-        public void ResponseHasProperites()
+        public void ResponseHasPropertiesSet()
         {
             var transactionResponseType = typeof(TransactionResponse);
             transactionResponseType.GetProperties().Length.Should().Be(20);

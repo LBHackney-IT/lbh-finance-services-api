@@ -16,14 +16,14 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction
         private readonly string _transactionApiUrl;
         private readonly string _transactionApiKey;
 
-        public TransactionGateway(ICustomeHttpClient client)
+        public TransactionGateway(ICustomeHttpClient client, IEnvironmentVariables environmentVariables)
         {
             _client = client;
-            _transactionApiUrl = Environment.GetEnvironmentVariable("TRANSACTION_API_URL");
+            _transactionApiUrl = environmentVariables.GetTransactionApiUrl().ToString();
             if (string.IsNullOrEmpty(_transactionApiUrl))
                 throw new Exception("Transaction api url shouldn't be null");
 
-            _transactionApiKey = Environment.GetEnvironmentVariable("TRANSACTION_API_KEY");
+            _transactionApiKey = environmentVariables.GetTransactionApiKey();
             if (string.IsNullOrEmpty(_transactionApiKey))
                 throw new Exception("Transaction api key shouldn't be null");
         }

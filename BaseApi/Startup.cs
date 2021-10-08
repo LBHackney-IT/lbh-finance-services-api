@@ -127,6 +127,7 @@ namespace BaseApi
         private static void RegisterInfraService(IServiceCollection services)
         {
             services.AddScoped<ICustomeHttpClient, CustomeHttpClient>();
+            services.AddScoped<IEnvironmentVariables, EnvironmentVariables>();
         }
 
         private static void ConfigureDbContext(IServiceCollection services)
