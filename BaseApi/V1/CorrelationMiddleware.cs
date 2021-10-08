@@ -1,9 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using BaseApi.V1.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace BaseApi.V1.Controllers
+namespace BaseApi.V1
 {
     public class CorrelationMiddleware
     {

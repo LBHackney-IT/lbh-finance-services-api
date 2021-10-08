@@ -32,5 +32,7 @@ namespace BaseApi.Tests.V1.Controllers
         {
             Assert.Throws<TestOpsErrorException>(_classUnderTest.ThrowError);
         }
+
+
     }
 }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,6 +18,7 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
     public class TransactionGatewayTests
     {
         private readonly Mock<ICustomeHttpClient> _httpClientMock;
+        private readonly Mock<IGetEnvironmentVariables> _getEnvironmentVariables;
         private TransactionGateway _gateway;
         private readonly Fixture _fixture;
 
@@ -27,19 +26,27 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
         {
             _fixture = new Fixture();
             _httpClientMock = new Mock<ICustomeHttpClient>();
-            _gateway = new TransactionGateway(_httpClientMock.Object);
+            _getEnvironmentVariables = new Mock<IGetEnvironmentVariables>();
+
+            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl())
+                .Returns(Environment.GetEnvironmentVariable("TRANSACTION_API_URL"));
+
+            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey())
+                .Returns(Environment.GetEnvironmentVariable("TRANSACTION_API_KEY"));
+
+            _gateway = new TransactionGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
         }
         [Fact]
         public void ConstructorGetsApiUrlAndApiTokenFromEnvironment()
         {
-            CustomeHttpClient client = new CustomeHttpClient();
-            _gateway = new TransactionGateway(client);
+            _gateway = new TransactionGateway(new CustomeHttpClient(), new GetEnvironmentVariables());
             Assert.True(true);
         }
 
         [Fact]
         public void GetByIdWithEmptyIdThrowsArgumentNullException()
         {
+            _gateway = new TransactionGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
             Func<Task<TransactionResponse>> func = async () => await _gateway.GetById(Guid.Empty).ConfigureAwait(false);
             func.Should().Throw<ArgumentNullException>();
         }
@@ -85,6 +92,38 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
             var result = await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(transactionResponse);
+        }
+
+        [Fact]
+        public async Task GetByIdWithEmptyApiUrlThrowsException()
+        {
+            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl())
+                .Returns(String.Empty);
+
+            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey())
+                .Returns(Environment.GetEnvironmentVariable("TRANSACTION_API_KEY"));
+
+            _gateway = new TransactionGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
+
+            Func<Task<TransactionResponse>> func = async () =>
+                await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            var exceptionAssertions = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task GetByIdWithEmptyApiKeyThrowsException()
+        {
+            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl())
+                .Returns(Environment.GetEnvironmentVariable("TRANSACTION_API_URL"));
+
+            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey())
+                .Returns(String.Empty);
+
+            _gateway = new TransactionGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
+
+            Func<Task<TransactionResponse>> func = async () =>
+                await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            var exceptionAssertions = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
         }
     }
 }

@@ -11,18 +11,12 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction
     public class AccountGateway : IAccountGateway
     {
         private readonly ICustomeHttpClient _client;
-        private readonly string _accountApiUrl;
-        private readonly string _accountApiToken;
-        public AccountGateway(ICustomeHttpClient client, IEnvironmentVariables environmentVariables)
+        private readonly IGetEnvironmentVariables _getEnvironmentVariables;
+
+        public AccountGateway(ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
         {
             _client = client;
-            _accountApiUrl = environmentVariables.GetAccountApiUrl().ToString();
-            if (string.IsNullOrEmpty(_accountApiUrl))
-                throw new Exception("Account api url shouldn't be null or empty");
-
-            _accountApiToken = environmentVariables.GetAccountApiToken();
-            if (string.IsNullOrEmpty(_accountApiToken))
-                throw new Exception("Account api token shouldn't be null");
+            _getEnvironmentVariables = getEnvironmentVariables;
         }
 
         public async Task<AccountResponse> GetById(Guid id)
@@ -30,9 +24,12 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction
             if (id == null || id == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
 
-            _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", _accountApiToken));
+            var accountApiUrl = _getEnvironmentVariables.GetAccountApiUrl().ToString();
+            var accountApiToken = _getEnvironmentVariables.GetAccountApiToken();
 
-            var response = await _client.GetAsync(new Uri($"{_accountApiUrl}/{id.ToString()}")).ConfigureAwait(false);
+            _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", accountApiToken));
+
+            var response = await _client.GetAsync(new Uri($"{accountApiUrl}/{id.ToString()}")).ConfigureAwait(false);
             if (response == null)
             {
                 throw new Exception("The account api is not reachable!");
@@ -42,13 +39,8 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction
                 throw new Exception(response.StatusCode.ToString());
             }
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            if (responseContent != null)
-            {
                 AccountResponse accountResponse = JsonConvert.DeserializeObject<AccountResponse>(responseContent);
                 return accountResponse;
-            }
-            else
-                throw new Exception("The account doesn't exists");
         }
     }
 }

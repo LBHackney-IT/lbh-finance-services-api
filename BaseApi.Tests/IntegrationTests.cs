@@ -10,7 +10,6 @@ namespace BaseApi.Tests
     public class IntegrationTests<TStartup> : IDisposable where TStartup : class
     {
         protected HttpClient Client { get; private set; }
-        protected DatabaseContext DatabaseContext { get; private set; }
 
         private MockWebApplicationFactory<TStartup> _factory;
         private NpgsqlConnection _connection;
@@ -29,10 +28,7 @@ namespace BaseApi.Tests
             _builder.UseNpgsql(_connection);
 
             _factory = new MockWebApplicationFactory<TStartup>(_connection);
-            Client = _factory.CreateClient();
-            DatabaseContext = new DatabaseContext(_builder.Options);
-            DatabaseContext.Database.EnsureCreated();
-            _transaction = DatabaseContext.Database.BeginTransaction();
+            Client = _factory.CreateClient(); 
         }
 
         public void Dispose()
@@ -41,8 +37,7 @@ namespace BaseApi.Tests
             _factory?.Dispose();
             _transaction.Rollback();
             _transaction?.Dispose();
-            _connection?.Dispose();
-            DatabaseContext?.Dispose();
+            _connection?.Dispose(); 
         }
     }
 }

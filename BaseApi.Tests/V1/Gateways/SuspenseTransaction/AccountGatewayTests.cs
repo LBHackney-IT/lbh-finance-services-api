@@ -18,7 +18,7 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
     public class AccountGatewayTests
     {
         private readonly Mock<ICustomeHttpClient> _httpClientMock;
-        private readonly Mock<IEnvironmentVariables> _environmentVariables;
+        private readonly Mock<IGetEnvironmentVariables> _getEnvironmentVariables;
         private AccountGateway _gateway;
         private readonly Fixture _fixture;
 
@@ -26,32 +26,22 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
         {
             _fixture = new Fixture();
             _httpClientMock = new Mock<ICustomeHttpClient>();
-            _environmentVariables = new Mock<IEnvironmentVariables>();
-            _gateway = new AccountGateway(_httpClientMock.Object, _environmentVariables.Object);
+            _getEnvironmentVariables = new Mock<IGetEnvironmentVariables>();
+
+            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl())
+                .Returns(Environment.GetEnvironmentVariable("ACCOUNT_API_URL"));
+
+            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl())
+                .Returns(Environment.GetEnvironmentVariable("ACCOUNT_API_URL"));
+
+            _gateway = new AccountGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
         }
         [Fact]
         public void ConstructorGetsApiUrlAndApiTokenFromEnvironment()
         {
-            /*CustomeHttpClient client = new CustomeHttpClient();
-            EnvironmentVariables environmentVariables = new EnvironmentVariables();*/
-            _gateway = new AccountGateway(_httpClientMock.Object, _environmentVariables.Object);
+            _gateway = new AccountGateway(new CustomeHttpClient(), new GetEnvironmentVariables());
             Assert.True(true);
-        }
-
-        [Fact]
-        public void ConstructorWithoutApiUrlThrowsError()
-        {
-            try
-            {
-                _environmentVariables.Setup(_ => _.GetAccountApiUrl()).Returns(String.Empty);
-                _gateway = new AccountGateway(_httpClientMock.Object, _environmentVariables.Object);
-                Assert.Fail("This section shouldn't be happen!");
-            }
-            catch (Exception ex)
-            {
-                ex.Message.Should().Be("Account api url shouldn't be null or empty");
-            }
-        }
+        } 
 
         [Fact]
         public void GetByIdWithEmptyIdThrowsArgumentNullException()
@@ -101,6 +91,38 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
             var result =await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(accountResponse);
+        }
+
+        [Fact]
+        public async Task GetByIdWithEmptyApiUrlThrowsException()
+        {
+            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl())
+                .Returns(String.Empty);
+
+            _getEnvironmentVariables.Setup(_ => _.GetAccountApiToken())
+                .Returns(Environment.GetEnvironmentVariable("ACCOUNT_API_TOKEN"));
+
+            _gateway = new AccountGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
+
+            Func<Task<AccountResponse>> func = async () =>
+                await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            var exceptionAssertions = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task GetByIdWithEmptyApiKeyThrowsException()
+        {
+            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl())
+                .Returns(Environment.GetEnvironmentVariable("ACCOUNT_API_URL"));
+
+            _getEnvironmentVariables.Setup(_ => _.GetAccountApiToken())
+                .Returns(String.Empty);
+
+            _gateway = new AccountGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
+
+            Func<Task<AccountResponse>> func = async () =>
+                await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            var exceptionAssertions = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
         }
 
     }

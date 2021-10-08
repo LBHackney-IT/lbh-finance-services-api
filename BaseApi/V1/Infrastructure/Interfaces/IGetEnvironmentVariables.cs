@@ -1,6 +1,6 @@
 namespace BaseApi.V1.Infrastructure.Interfaces
 {
-    public interface IEnvironmentVariables
+    public interface IGetEnvironmentVariables
     {
         public string GetAccountApiUrl();
         public string GetAccountApiToken();
