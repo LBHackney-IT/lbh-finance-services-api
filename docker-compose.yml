@@ -25,7 +25,7 @@ services:
       - ./database:/docker-entrypoint-initdb.d
 
   finance-services-api-test:
-    image: base-api-test
+    image: finance-services-api-test
     build:
       context: .
       dockerfile: FinanceServicesApi.Tests/Dockerfile
