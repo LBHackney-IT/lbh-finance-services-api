@@ -38,11 +38,11 @@ namespace BaseApi.Tests.V1.Domain
         }
 
         [Theory]
-        [InlineData(true,true)]
-        [InlineData(true,false)]
+        [InlineData(true, true)]
+        [InlineData(true, false)]
         [InlineData(false, true)]
-        [InlineData(false,false)]
-        public void IsResolveDependsIsConfirmedAndIsApproved(bool isConfirmed,bool isApproved)
+        [InlineData(false, false)]
+        public void IsResolveDependsIsConfirmedAndIsApproved(bool isConfirmed, bool isApproved)
         {
             SuspenseResolutionInfo suspenseResolutionInfo = _fixture.Create<SuspenseResolutionInfo>();
             suspenseResolutionInfo.IsApproved = isApproved;

@@ -41,7 +41,7 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
         {
             _gateway = new AccountGateway(new CustomeHttpClient(), new GetEnvironmentVariables());
             Assert.True(true);
-        } 
+        }
 
         [Fact]
         public void GetByIdWithEmptyIdThrowsArgumentNullException()
@@ -69,7 +69,7 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
         public async Task GetByIdReturnsNullThrowsException()
         {
             _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
-                .ReturnsAsync((HttpResponseMessage)null);
+                .ReturnsAsync((HttpResponseMessage) null);
 
             Func<Task<AccountResponse>> func = async () => await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
 
@@ -88,7 +88,7 @@ namespace BaseApi.Tests.V1.Gateways.SuspenseTransaction
             _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
                 .ReturnsAsync(message);
 
-            var result =await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            var result = await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(accountResponse);
         }

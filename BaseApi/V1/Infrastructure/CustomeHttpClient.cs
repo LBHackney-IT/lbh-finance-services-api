@@ -18,7 +18,7 @@ namespace BaseApi.V1.Infrastructure
 
         public void AddHeader(HttpHeader<string, string> header)
         {
-            DefaultRequestHeaders.Add(header.Name,header.Value);
+            DefaultRequestHeaders.Add(header.Name, header.Value);
         }
 
         /// <inheritdoc />

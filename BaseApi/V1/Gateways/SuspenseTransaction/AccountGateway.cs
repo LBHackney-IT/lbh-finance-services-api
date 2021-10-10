@@ -39,8 +39,8 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction
                 throw new Exception(response.StatusCode.ToString());
             }
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                AccountResponse accountResponse = JsonConvert.DeserializeObject<AccountResponse>(responseContent);
-                return accountResponse;
+            AccountResponse accountResponse = JsonConvert.DeserializeObject<AccountResponse>(responseContent);
+            return accountResponse;
         }
     }
 }

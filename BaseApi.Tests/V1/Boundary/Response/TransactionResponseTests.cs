@@ -45,7 +45,7 @@ namespace BaseApi.Tests.V1.Boundary.Response
             personType.GetProperties().Length.Should().Be(2);
             Assert.IsType<Guid>(transactionResponse.Person.Id);
             Assert.IsType<string>(transactionResponse.Person.FullName);
-            
+
 
             Assert.IsType<SuspenseResolutionInfo>(transactionResponse.SuspenseResolutionInfo);
             var suspenseResolutionInfoType = typeof(SuspenseResolutionInfo);

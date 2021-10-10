@@ -39,7 +39,7 @@ namespace BaseApi.V1.Infrastructure
             return response.IsValid;
         }
     }
-     
+
 
     public class ValidationResponse
     {

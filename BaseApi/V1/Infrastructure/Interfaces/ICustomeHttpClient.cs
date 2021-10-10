@@ -11,7 +11,7 @@ namespace BaseApi.V1.Infrastructure.Interfaces
     public interface ICustomeHttpClient
     {
         public void AddAuthorization(AuthenticationHeaderValue headerValue);
-        public void AddHeader(HttpHeader<string,string> header);
+        public void AddHeader(HttpHeader<string, string> header);
         public Task<HttpResponseMessage> GetAsync(Uri uri);
     }
 

@@ -44,10 +44,10 @@ namespace BaseApi.Tests.V1.Controllers
         }
 
         [Theory]
-        [MemberData(nameof(SuspenseAccountGetByIdArgument.GetTestData),MemberType =typeof(SuspenseAccountGetByIdArgument))]
-        public async  Task GetByIdWithEmptyParametersThrowsArgumentNullException(Guid transactionId,Guid accountId)
+        [MemberData(nameof(SuspenseAccountGetByIdArgument.GetTestData), MemberType = typeof(SuspenseAccountGetByIdArgument))]
+        public async Task GetByIdWithEmptyParametersThrowsArgumentNullException(Guid transactionId, Guid accountId)
         {
-            Func<Task<IActionResult>> func = async () => await _sut.GetById(transactionId,accountId).ConfigureAwait(false);
+            Func<Task<IActionResult>> func = async () => await _sut.GetById(transactionId, accountId).ConfigureAwait(false);
             await func.Should().ThrowAsync<ArgumentNullException>().ConfigureAwait(false);
         }
 
@@ -71,7 +71,7 @@ namespace BaseApi.Tests.V1.Controllers
                 .Without(p => p.CreatedBy)
                 .Create();
             _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
-                .ReturnsAsync((AccountResponse)null);
+                .ReturnsAsync((AccountResponse) null);
 
             var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
             result.Should().BeOfType(typeof(NotFoundObjectResult));
@@ -103,7 +103,7 @@ namespace BaseApi.Tests.V1.Controllers
 
             TransactionResponse transactionResponse = _fixture.Build<TransactionResponse>().Create();
             _getTransactionByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
-                .ReturnsAsync((TransactionResponse)null);
+                .ReturnsAsync((TransactionResponse) null);
 
             var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
             result.Should().BeOfType(typeof(NotFoundObjectResult));
