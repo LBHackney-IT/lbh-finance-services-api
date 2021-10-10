@@ -13,7 +13,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         [Fact]
         public void GetAccountApiUrlExistsVariableReturnsValue()
         {
-            GetEnvironmentVariables environmentVariables= new GetEnvironmentVariables();
+            GetEnvironmentVariables environmentVariables = new GetEnvironmentVariables();
             string result = environmentVariables.GetAccountApiUrl();
             result.Should().NotBeNullOrEmpty();
             result.Length.Should().BeGreaterThan(10);
