@@ -28,7 +28,7 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction
 
             _client.AddHeader(new HttpHeader<string, string> { Name = "x-api-key", Value = transactionApiKey });
 
-            var response = await _client.GetAsync(new Uri($"{transactionApiUrl}/{id.ToString()}")).ConfigureAwait(false);
+            var response = await _client.GetAsync(new Uri($"{transactionApiUrl}/transactions/{id.ToString()}")).ConfigureAwait(false);
             if (response == null)
             {
                 throw new Exception("The transaction api is not reachable!");

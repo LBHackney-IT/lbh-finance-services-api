@@ -16,6 +16,9 @@
       <EmbeddedResource Remove="terraform\**" />
       <None Remove="terraform\**" />
     </ItemGroup>
+    <ItemGroup>
+      <None Remove="V1\Gateways\SuspenseTransaction\AccountGateway.cs~RFde65b7.TMP" />
+    </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="5.1.1" />

@@ -29,7 +29,7 @@ namespace BaseApi.V1.Gateways.SuspenseTransaction
 
             _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", accountApiToken));
 
-            var response = await _client.GetAsync(new Uri($"{accountApiUrl}/{id.ToString()}")).ConfigureAwait(false);
+            var response = await _client.GetAsync(new Uri($"{accountApiUrl}/accounts/{id.ToString()}")).ConfigureAwait(false);
             if (response == null)
             {
                 throw new Exception("The account api is not reachable!");
