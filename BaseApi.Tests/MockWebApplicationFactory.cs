@@ -1,10 +1,7 @@
 using System.Data.Common;
-using BaseApi.V1.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BaseApi.Tests
 {
@@ -22,7 +19,7 @@ namespace BaseApi.Tests
         {
             builder.ConfigureAppConfiguration(b => b.AddEnvironmentVariables())
                 .UseStartup<Startup>();
-            builder.ConfigureServices(services =>
+            /*builder.ConfigureServices(services =>
             {
                 var dbBuilder = new DbContextOptionsBuilder();
                 dbBuilder.UseNpgsql(_connection);
@@ -33,7 +30,7 @@ namespace BaseApi.Tests
                 var dbContext = serviceProvider.GetRequiredService<DatabaseContext>();
 
                 dbContext.Database.EnsureCreated();
-            });
+            });*/
         }
     }
 }
