@@ -9,12 +9,11 @@ services:
     ports:
       - 3000:3000
     environment:
-# TODO: If using DynamoDb remove the line above and uncomment the section below.
-#      - DynamoDb_LocalMode=true
-#      - DynamoDb_LocalServiceUrl=http://dynamodb-database:8000
-#      - AWS_REGION=eu-west-2
-#      - AWS_ACCESS_KEY_ID=local
-#      - AWS_SECRET_ACCESS_KEY=local
+      - DynamoDb_LocalMode=true
+      - DynamoDb_LocalServiceUrl=http://dynamodb-database:8000
+      - AWS_REGION=eu-west-2
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_SECRET_ACCESS_KEY=local
     links:
       - dev-database
   dev-database:
