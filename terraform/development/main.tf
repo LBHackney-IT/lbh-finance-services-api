@@ -14,7 +14,7 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 locals {
-  application_name = your application name # The name to use for your application
+  application_name = FinanceServicesApi # The name to use for your application
    parameter_store = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter"
 }
 
@@ -32,7 +32,7 @@ terraform {
     bucket  = "terraform-state-development-apis"
     encrypt = true
     region  = "eu-west-2"
-    key     = services/YOUR API NAME/state #e.g. "services/transactions-api/state"
+    key     = services/FinanceServicesApi/state #e.g. "services/transactions-api/state"
   }
 }
 
