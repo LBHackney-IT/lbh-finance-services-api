@@ -7,6 +7,14 @@
 # 6) IF ADDITIONAL RESOURCES ARE REQUIRED BY YOUR API, ADD THEM TO THIS FILE
 # 7) ENSURE THIS FILE IS PLACED WITHIN A 'terraform' FOLDER LOCATED AT THE ROOT PROJECT DIRECTORY
 
+terraform {
+    required_providers {
+        aws = {
+            source  = "hashicorp/aws"
+            version = "~> 3.0"
+        }
+    }
+}
 provider "aws" {
   region  = "eu-west-2"
   version = "~> 2.0"
@@ -29,7 +37,7 @@ data "aws_iam_role" "ecs_task_execution_role" {
 
 terraform {
   backend "s3" {
-    bucket  = "terraform-state-production-apis"
+        bucket  = "terraform-state-housing-production"
     encrypt = true
     region  = "eu-west-2"
     key     = services/FinanceServicesApi/state #e.g. "services/transactions-api/state"
