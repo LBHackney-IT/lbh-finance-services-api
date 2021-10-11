@@ -99,17 +99,7 @@ jobs:
       - run:
           name: Run formatter check
           command: ./dotnet-format-local/dotnet-format --check
-  build-and-test:
-    executor: docker-python
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: build
-          command: docker-compose build finance-services-api-test
-      - run:
-          name: Run tests
-          command: docker-compose run finance-services-api-test
+
   assume-role-development:
     executor: docker-python
     steps:
