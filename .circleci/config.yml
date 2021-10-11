@@ -110,11 +110,11 @@ jobs:
           command: docker-compose build finance-services-api-test
       - run:
           name: Getting environment variable 
-          command:
-            ACCOUNT_API_URL=$(aws ssm get-parameter --name /housing-finance/development/account-api-url --query Parameter:Value)
-            ACCOUNT_API_TOKEN=$(aws ssm get-parameter --name /housing-finance/development/account-api-token --query Parameter:Value)
-            TRANSACTION_API_URL=$(aws ssm get-parameter --name /housing-finance/development/financial-transactions-api-url --query Parameter:Value)
-            TRANSACTION_API_KEY=$(aws ssm get-parameter --name /housing-finance/development/financial-transactions-api-key --query Parameter:Value)
+          command: |
+            ACCOUNT_API_URL=$(aws ssm get-parameter --name /housing-finance/development/account-api-url --query Parameter.Value)
+            ACCOUNT_API_TOKEN=$(aws ssm get-parameter --name /housing-finance/development/account-api-token --query Parameter.Value)
+            TRANSACTION_API_URL=$(aws ssm get-parameter --name /housing-finance/development/financial-transactions-api-url --query Parameter.Value)
+            TRANSACTION_API_KEY=$(aws ssm get-parameter --name /housing-finance/development/financial-transactions-api-key --query Parameter.Value)
       - run:
           name: Run tests
           command: docker-compose run finance-services-api-test
