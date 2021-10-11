@@ -8,8 +8,7 @@ provider:
     apiGateway: true
   vpc: ${self:custom.vpc.${opt:stage}}
   stage: ${opt:stage}
-  # TODO: Enable this line if DynamoDb is in use
-  #account: ${opt:account}
+  account: ${opt:account}
   region: eu-west-2
   apiKeys:
     - secureAccess:
@@ -39,10 +38,7 @@ functions:
           path: /{proxy+}
           method: ANY
           private: true
-      - http:
-          path: /swagger/{proxy+}
-          method: GET
-          private: false
+          cors: true
 resources:
   Resources:
     lambdaExecutionRole:
