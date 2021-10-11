@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 namespace FinanceServicesApi.V1.Controllers
 {
     [ApiController]
-    [Route("api/v1/info/suspenseAccount")]
+    [Route("api/v1/suspenseAccount")]
     [Produces("application/json")]
     [ApiVersion("1.0")]
     public class SuspenseAccountController : BaseController
