@@ -17,6 +17,8 @@ namespace BaseApi.V1.UseCase.SuspenseTransaction
 
         public Task<TransactionResponse> ExecuteAsync(Guid id)
         {
+            if (id == Guid.Empty)
+                throw new Exception("The id shouldn't be empty");
             return _gateway.GetById(id);
         }
     }

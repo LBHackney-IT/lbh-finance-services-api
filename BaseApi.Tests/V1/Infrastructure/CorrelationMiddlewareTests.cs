@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using BaseApi.V1;
 using BaseApi.V1.Controllers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +10,7 @@ namespace BaseApi.Tests.V1.Infrastructure
 
     public class CorrelationMiddlewareTest
     {
-        private CorrelationMiddleware _sut;
+        private readonly CorrelationMiddleware _sut;
 
         public CorrelationMiddlewareTest()
         {

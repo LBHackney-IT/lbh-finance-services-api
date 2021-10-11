@@ -7,15 +7,8 @@ namespace BaseApi.V1.Domain
     {
         [RequiredDateTime]
         public DateTime ResolutionDate { get; set; }
-        public bool IsResolve
-        {
-            get
-            {
-                if ((IsConfirmed && IsApproved))
-                    return true;
-                return false;
-            }
-        }
+
+        public bool IsResolve => IsConfirmed && IsApproved;
         public bool IsConfirmed { get; set; } = false;
         public DateTime ConfirmedDate { get; set; }
         public bool IsApproved { get; set; } = false;

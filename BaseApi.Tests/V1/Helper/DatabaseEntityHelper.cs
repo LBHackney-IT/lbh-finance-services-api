@@ -7,7 +7,7 @@ namespace BaseApi.Tests.V1.Helper
 {
     public static class DatabaseEntityHelper
     {
-        public static DatabaseEntity CreateDatabaseEntity()
+        /*public static DatabaseEntity CreateDatabaseEntity()
         {
             var entity = new Fixture().Create<ConfirmTransferEntity>();
 
@@ -21,6 +21,6 @@ namespace BaseApi.Tests.V1.Helper
                 Id = entity.Id,
                 CreatedAt = entity.CreatedAt,
             };
-        }
+        }*/
     }
 }

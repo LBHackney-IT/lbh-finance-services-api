@@ -8,7 +8,7 @@ namespace BaseApi.V1.Domain.SuspenseTransaction
     {
         [Required]
         public string Payee { get; set; }
-        public static string Account => "Suspense";
+        public string Account { get; } = "Suspense";
         public string Address { get; set; }
         [Required]
         public decimal CurrentArrears { get; set; }

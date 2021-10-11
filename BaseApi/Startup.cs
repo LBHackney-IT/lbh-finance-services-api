@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using BaseApi.V1.Controllers;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
+using BaseApi.V1;
 using BaseApi.V1.Gateways.Interfaces.SuspenseTransaction;
-using BaseApi.V1.Gateways.SuspenseTransaction.Account;
+using BaseApi.V1.Gateways.SuspenseTransaction;
 using BaseApi.V1.Infrastructure;
+using BaseApi.V1.Infrastructure.Interfaces;
 using BaseApi.V1.UseCase.Interfaces.SuspenseTransaction;
 using BaseApi.V1.UseCase.SuspenseTransaction;
 using BaseApi.Versioning;
@@ -16,7 +17,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -114,20 +114,15 @@ namespace BaseApi
 
             ConfigureLogging(services, Configuration);
 
-            ConfigureDbContext(services);
-            //TODO: For DynamoDb, remove the line above and uncomment the line below.
-            // services.ConfigureDynamoDB();
-
             RegisterGateways(services);
             RegisterUseCases(services);
+            RegisterInfraService(services);
         }
 
-        private static void ConfigureDbContext(IServiceCollection services)
+        private static void RegisterInfraService(IServiceCollection services)
         {
-            var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-
-            services.AddDbContext<DatabaseContext>(
-                opt => opt.UseNpgsql(connectionString).AddXRayInterceptor(true));
+            services.AddScoped<ICustomeHttpClient, CustomeHttpClient>();
+            services.AddScoped<IGetEnvironmentVariables, GetEnvironmentVariables>();
         }
 
         private static void ConfigureLogging(IServiceCollection services, IConfiguration configuration)
