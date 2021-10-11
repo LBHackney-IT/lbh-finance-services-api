@@ -7,9 +7,9 @@ COPY *.csproj ./
 RUN dotnet restore
 
 # Copy everything else and build
-COPY . ./
-RUN dotnet build -c Release -o out
-RUN dotnet publish -c Release -o out
+COPY ./FinanceServicesApi ./
+RUN dotnet build -c Release -o out ./FinanceServicesApi.csproj
+RUN dotnet publish -c Release -o out ./FinanceServicesApi.csproj
 
 EXPOSE ${PORT:-3000}
 CMD ASPNETCORE_URLS=http://+:${PORT:-3000} dotnet ./out/FinanceServicesApi.dll
