@@ -33,10 +33,10 @@ functions:
 # TODO: Create ssm variables for this API's postgres mirror then rename base-api below to match api name
 # TODO: Remove this line if DynamoDb is being used
       CONNECTION_STRING: Host=${ssm:/base-api/${self:provider.stage}/postgres-hostname};Port=${ssm:/base-api/${self:provider.stage}/postgres-port};Database=base-api-mirror;Username=${ssm:/base-api/${self:provider.stage}/postgres-username};Password=${ssm:/base-api/${self:provider.stage}/postgres-password}
-      ACCOUNT_API_URL: ${ssm:/housing-finance/${self:provider.stage}/account-api-url}
-      ACCOUNT_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/account-api-token}
-      TRANSACTION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/financial-transactions-api-url}
-      TRANSACTION_API_KEY: ${ssm:/housing-finance/${self:provider.stage}/financial-transactions-api-key}
+      ACCOUNT_API_URL: ${ssm:/housing-finance/development/account-api-url}
+      ACCOUNT_API_TOKEN: ${ssm:/housing-finance/development/account-api-token}
+      TRANSACTION_API_URL: ${ssm:/housing-finance/development/financial-transactions-api-url}
+      TRANSACTION_API_KEY: ${ssm:/housing-finance/development/financial-transactions-api-key}
     events:
       - http:
           path: /{proxy+}
