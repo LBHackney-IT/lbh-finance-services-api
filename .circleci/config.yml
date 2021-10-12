@@ -88,13 +88,13 @@ commands:
           command: |
             cd ./FinanceServicesApi/
             sls deploy --stage <<parameters.stage>> --account <<parameters.aws-account>> --conceal
-      - run:
-          name: Getting environment variable 
-          command:
-            ACCOUNT_API_URL=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/account-api-url --query Parameter.Value)
-            ACCOUNT_API_TOKEN=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/account-api-token --query Parameter.Value)
-            TRANSACTION_API_URL=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/financial-transactions-api-url --query Parameter.Value)
-            TRANSACTION_API_KEY=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/financial-transactions-api-key --query Parameter.Value)
+      # - run:
+      #     name: Getting environment variable 
+      #     command:
+      #       ACCOUNT_API_URL=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/account-api-url --query Parameter.Value)
+      #       ACCOUNT_API_TOKEN=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/account-api-token --query Parameter.Value)
+      #       TRANSACTION_API_URL=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/financial-transactions-api-url --query Parameter.Value)
+      #       TRANSACTION_API_KEY=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/financial-transactions-api-key --query Parameter.Value)
 jobs:
   check-code-formatting:
     executor: docker-dotnet
@@ -111,7 +111,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - aws-cli/install
+      # - aws-cli/install
       - run:
           name: build
           command: docker-compose build finance-services-api-test
