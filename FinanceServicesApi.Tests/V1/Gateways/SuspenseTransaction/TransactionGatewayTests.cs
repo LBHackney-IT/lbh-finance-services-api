@@ -55,7 +55,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways.SuspenseTransaction
         public async Task GetByIdReturnsBadRequestThrowsException()
         {
             HttpResponseMessage message = new HttpResponseMessage(HttpStatusCode.BadRequest);
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl()).Returns("TRANSACTION_API_URL");
+            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl()).Returns("http://localhost:5000/api/v1/");
             _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey()).Returns("TRANSACTION_API_KEY");
             _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
                 .ReturnsAsync(message);
@@ -70,7 +70,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways.SuspenseTransaction
         [Fact]
         public async Task GetByIdReturnsNullThrowsException()
         {
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl()).Returns("TRANSACTION_API_URL");
+            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl()).Returns("http://localhost:5000/api/v1/");
             _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey()).Returns("TRANSACTION_API_KEY");
             _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
                 .ReturnsAsync((HttpResponseMessage) null);
@@ -89,7 +89,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways.SuspenseTransaction
             TransactionResponse transactionResponse = _fixture.Create<TransactionResponse>();
             message.Content = new StringContent(JsonConvert.SerializeObject(transactionResponse));
 
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl()).Returns("TRANSACTION_API_URL");
+            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl()).Returns("http://localhost:5000/api/v1/");
             _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey()).Returns("TRANSACTION_API_KEY");
             _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
                 .ReturnsAsync(message);
