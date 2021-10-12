@@ -2,8 +2,9 @@ version: 2.1
 
 orbs:
   aws-ecr: circleci/aws-ecr@3.0.0
-  aws-cli: circleci/aws-cli@0.1.9
+  aws-cli: circleci/aws-cli@2.0.3
   aws_assume_role: lbh-hackit/aws_assume_role@0.1.0
+  aws-parameter-store: circleci/aws-parameter-store@1.0.0
 
 executors:
   docker-python:
@@ -87,7 +88,13 @@ commands:
           command: |
             cd ./FinanceServicesApi/
             sls deploy --stage <<parameters.stage>> --account <<parameters.aws-account>> --conceal
-
+      - run:
+          name: Getting environment variable 
+          command:
+            ACCOUNT_API_URL=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/account-api-url --query Parameter.Value)
+            ACCOUNT_API_TOKEN=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/account-api-token --query Parameter.Value)
+            TRANSACTION_API_URL=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/financial-transactions-api-url --query Parameter.Value)
+            TRANSACTION_API_KEY=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/financial-transactions-api-key --query Parameter.Value)
 jobs:
   check-code-formatting:
     executor: docker-dotnet
@@ -143,18 +150,21 @@ jobs:
   deploy-to-development:
     executor: docker-dotnet
     steps:
+      - aws-cli/install
       - deploy-lambda:
           stage: "development"
           aws-account: $AWS_ACCOUNT_DEVELOPMENT
   deploy-to-staging:
     executor: docker-dotnet
     steps:
+      - aws-cli/install
       - deploy-lambda:
           stage: "staging"
           aws-account: $AWS_ACCOUNT_STAGING
   deploy-to-production:
     executor: docker-dotnet
     steps:
+      - aws-cli/install
       - deploy-lambda:
           stage: "production"
           aws-account: $AWS_ACCOUNT_PRODUCTION

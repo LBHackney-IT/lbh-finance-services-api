@@ -32,7 +32,7 @@ namespace FinanceServicesApi.V1.Gateways.SuspenseTransaction
             var response = await _client.GetAsync(new Uri($"{accountApiUrl}/accounts/{id.ToString()}")).ConfigureAwait(false);
             if (response == null)
             {
-                throw new Exception("The account api is not reachable!");
+                throw new Exception($"The account api is not reachable!{accountApiUrl}");
             }
             else if (response.Content == null)
             {
