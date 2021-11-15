@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Domain.SuspenseTransaction;
 using FinanceServicesApi.V1.Infrastructure;
-using FinanceServicesApi.V1.UseCase.Interfaces.SuspenseTransaction;
+using FinanceServicesApi.V1.UseCase.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace FinanceServicesApi.V1.Controllers

@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.V1.Boundary.Response;
-using FinanceServicesApi.V1.Gateways.SuspenseTransaction;
+using FinanceServicesApi.V1.Gateways;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using FluentAssertions;
@@ -13,7 +13,7 @@ using Moq;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace FinanceServicesApi.Tests.V1.Gateways.SuspenseTransaction
+namespace FinanceServicesApi.Tests.V1.Gateways
 {
     public class TransactionGatewayTests
     {

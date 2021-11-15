@@ -2,13 +2,13 @@ using System;
 using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.V1.Boundary.Response;
-using FinanceServicesApi.V1.Gateways.Interfaces.SuspenseTransaction;
-using FinanceServicesApi.V1.UseCase.SuspenseTransaction;
+using FinanceServicesApi.V1.Gateways.Interfaces;
+using FinanceServicesApi.V1.UseCase;
 using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace FinanceServicesApi.Tests.V1.UseCase.SuspenseTransaction
+namespace FinanceServicesApi.Tests.V1.UseCase
 {
     public class GetTransactionByIdUseCaseTests
     {

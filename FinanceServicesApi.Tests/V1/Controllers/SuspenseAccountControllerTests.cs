@@ -1,19 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.Tests.V1.Helper;
 using FinanceServicesApi.V1.Boundary.Response;
 using FinanceServicesApi.V1.Controllers;
-using FinanceServicesApi.V1.UseCase.Interfaces.SuspenseTransaction;
+using FinanceServicesApi.V1.UseCase.Interfaces;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Moq;
 using Xunit;
 
