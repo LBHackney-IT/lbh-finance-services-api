@@ -1,13 +1,6 @@
-using System;
 using AutoFixture;
-using FinanceServicesApi.V1.Controllers;
 using FinanceServicesApi.V1.Domain.SuspenseTransaction;
-using FinanceServicesApi.V1.Gateways.Interfaces.SuspenseTransaction;
-using FinanceServicesApi.V1.UseCase.Interfaces.SuspenseTransaction;
-using FinanceServicesApi.V1.UseCase.SuspenseTransaction;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Domain

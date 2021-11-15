@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Response;
-using FinanceServicesApi.V1.Gateways.Interfaces.SuspenseTransaction;
+using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Newtonsoft.Json;
 
-namespace FinanceServicesApi.V1.Gateways.SuspenseTransaction
+namespace FinanceServicesApi.V1.Gateways
 {
     public class TransactionGateway : ITransactionGateway
     {
