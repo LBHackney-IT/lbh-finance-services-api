@@ -33,6 +33,11 @@ functions:
       ACCOUNT_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/account-api-token}
       TRANSACTION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/financial-transactions-api-url}
       TRANSACTION_API_KEY: ${ssm:/housing-finance/${self:provider.stage}/financial-transactions-api-key}
+      TENURE_API_URL: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-url}
+      TENURE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-token}
+      FINANCIAL_SUMMARY_API_URL: ${ssm:/housing-finance/${self:provider.stage}/financial-summary-api-url}
+      FINANCIAL_SUMMARY_API_KEY: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-key}
+      # FINANCIAL_SUMMARY_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-token}
     events:
       - http:
           path: /{proxy+}
