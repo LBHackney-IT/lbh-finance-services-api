@@ -14,11 +14,11 @@ namespace FinanceServicesApi.V1.UseCase
             _accountGateway = gateway;
         }
 
-        public Task<AccountResponse> ExecuteAsync(Guid id)
+        public async Task<AccountResponse> ExecuteAsync(Guid id)
         {
-            if (id == Guid.Empty)
-                throw new Exception("The id shouldn't be empty");
-            return _accountGateway.GetById(id);
+            if (id == Guid.Empty || id == null)
+                throw new Exception("The id shouldn't be empty or null.");
+            return await _accountGateway.GetById(id).ConfigureAwait(false);
         }
     }
 }
