@@ -41,7 +41,7 @@ namespace FinanceServicesApi.V1.Infrastructure
         {
             string result = Environment.GetEnvironmentVariable("TENURE_API_URL") ?? string.Empty; ;
             if (string.IsNullOrEmpty(result))
-                throw new Exception("tenure api url shouldn't be null or empty");
+                throw new Exception("Tenure api url shouldn't be null or empty");
             return result;
         }
 
@@ -49,7 +49,7 @@ namespace FinanceServicesApi.V1.Infrastructure
         {
             string result = Environment.GetEnvironmentVariable("TENURE_API_TOKEN") ?? string.Empty; ;
             if (string.IsNullOrEmpty(result))
-                throw new Exception("tenure api key shouldn't be null or empty");
+                throw new Exception("Tenure api token shouldn't be null or empty");
             return result;
         }
 
@@ -57,7 +57,7 @@ namespace FinanceServicesApi.V1.Infrastructure
         {
             string result = Environment.GetEnvironmentVariable("FINANCIAL_SUMMARY_API_URL") ?? string.Empty; ;
             if (string.IsNullOrEmpty(result))
-                throw new Exception("financial summary api url shouldn't be null or empty");
+                throw new Exception("Financial summary api url shouldn't be null or empty");
             return result;
         }
 
@@ -65,7 +65,55 @@ namespace FinanceServicesApi.V1.Infrastructure
         {
             string result = Environment.GetEnvironmentVariable("FINANCIAL_SUMMARY_API_KEY") ?? string.Empty; ;
             if (string.IsNullOrEmpty(result))
-                throw new Exception("financial summary api key shouldn't be null or empty");
+                throw new Exception("Financial summary api key shouldn't be null or empty");
+            return result;
+        }
+
+        public string GetContactDetailsApiUrl()
+        {
+            string result = Environment.GetEnvironmentVariable("CONTACT_DETAILS_API_URL") ?? string.Empty; ;
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("Contact details api url shouldn't be null or empty");
+            return result;
+        }
+
+        public string GetContactDetailsApiToken()
+        {
+            string result = Environment.GetEnvironmentVariable("CONTACT_DETAILS_API_TOKEN") ?? string.Empty; ;
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("Contact detail api token shouldn't be null or empty");
+            return result;
+        }
+
+        public string GetChargeApiUrl()
+        {
+            string result = Environment.GetEnvironmentVariable("CHARGE_API_URL") ?? string.Empty; ;
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("Charge api url shouldn't be null or empty");
+            return result;
+        }
+
+        public string GetChargeApiKey()
+        {
+            string result = Environment.GetEnvironmentVariable("CHARGE_API_KEY") ?? string.Empty; ;
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("Charge api key shouldn't be null or empty");
+            return result;
+        }
+
+        public string GetAssetInformationApiUrl()
+        {
+            string result = Environment.GetEnvironmentVariable("ASSET_INFORMATION_API_URL") ?? string.Empty; ;
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("Asset information api url shouldn't be null or empty");
+            return result;
+        }
+
+        public string GetAssetInformationApiToken()
+        {
+            string result = Environment.GetEnvironmentVariable("ASSET_INFORMATION_API_TOKEN") ?? string.Empty; ;
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("Asset information api token shouldn't be null or empty");
             return result;
         }
     }

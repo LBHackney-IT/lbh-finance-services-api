@@ -10,6 +10,11 @@ namespace FinanceServicesApi.V1.Infrastructure.Interfaces
         public string GetTenureInformationApiToken();
         public string GetFinancialSummaryApiUrl();
         public string GetFinancialSummaryApiKey();
-
+        public string GetContactDetailsApiUrl();
+        public string GetContactDetailsApiToken();
+        public string GetChargeApiUrl();
+        public string GetChargeApiKey();
+        public string GetAssetInformationApiUrl();
+        public string GetAssetInformationApiToken();
     }
 }

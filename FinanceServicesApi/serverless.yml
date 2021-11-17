@@ -36,8 +36,16 @@ functions:
       TENURE_API_URL: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-url}
       TENURE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-token}
       FINANCIAL_SUMMARY_API_URL: ${ssm:/housing-finance/${self:provider.stage}/financial-summary-api-url}
-      FINANCIAL_SUMMARY_API_KEY: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-key}
+      FINANCIAL_SUMMARY_API_KEY: ${ssm:/housing-finance/${self:provider.stage}/financial-summary-api-key}
       # FINANCIAL_SUMMARY_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-token}
+      CHARGE_API_URL: ${ssm:/housing-finance/${self:provider.stage}/charge-api-url}
+      CHARGE_API_KEY: ${ssm:/housing-finance/${self:provider.stage}/charge-api-key}
+      #CHARGE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/charge-api-token}
+      CONTACT_DETAILS_API_URL: ${ssm:/housing-tl/${self:provider.stage}/contact-details-api-url}
+      CONTACT_DETAILS_API_TOKEN: ${ssm:/housing-tl/${self:provider.stage}/charge-api-token}
+      #CHARGE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/charge-api-token}
+      ASSET_INFORMATION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/asset-information-api-url}
+      ASSET_INFORMATION_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/asset-information-api-token}
     events:
       - http:
           path: /{proxy+}
