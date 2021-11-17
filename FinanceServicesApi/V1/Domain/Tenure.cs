@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace FinanceServicesApi.V1.Domain
 {
-    public class Tenure
+    public class AccountTenure
     {
         /// <example>
         ///     31245

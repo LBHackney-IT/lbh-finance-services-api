@@ -46,7 +46,7 @@ namespace FinanceServicesApi.Tests.V1.Boundary.Response
             Assert.IsType<Guid>(account.TargetId);
             Assert.IsType<TargetType>(account.TargetType);
             Assert.IsAssignableFrom<IEnumerable<ConsolidatedCharge>>(account.ConsolidatedCharges);
-            Assert.IsType<Tenure>(account.Tenure);
+            Assert.IsType<AccountTenure>(account.Tenure);
             Assert.IsType<decimal>(account.ConsolidatedBalance);
             #endregion
 
@@ -62,10 +62,10 @@ namespace FinanceServicesApi.Tests.V1.Boundary.Response
             #endregion
 
             #region Tenure
-            var entityTenure = typeof(Tenure);
+            var entityTenure = typeof(AccountTenure);
             entityTenure.GetProperties().Length.Should().Be(4);
 
-            Tenure tenure = _fixture.Create<Tenure>();
+            AccountTenure tenure = _fixture.Create<AccountTenure>();
             Assert.IsType<string>(tenure.FullAddress);
             Assert.IsType<string>(tenure.TenancyId);
             Assert.IsType<string>(tenure.TenancyType);

@@ -96,7 +96,7 @@ namespace FinanceServicesApi.V1.Boundary.Response
         public IEnumerable<ConsolidatedCharge> ConsolidatedCharges { get; set; }
 
         [NotNull]
-        public Tenure Tenure { get; set; }
+        public AccountTenure Tenure { get; set; }
         /// <example>
         ///     2021-03-29T15:10:37.471Z
         /// </example>
