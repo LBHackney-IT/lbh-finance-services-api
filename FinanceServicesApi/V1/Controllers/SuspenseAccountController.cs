@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using FinanceServicesApi.V1.Boundary.Response;
 using FinanceServicesApi.V1.Domain.SuspenseTransaction;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.UseCase.Interfaces;
@@ -25,7 +26,7 @@ namespace FinanceServicesApi.V1.Controllers
             _getTransactionByIdUseCase = getTransactionByIdUseCase;
         }
 
-        [ProducesResponseType(typeof(ConfirmTransferEntity), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ConfirmTransferResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
@@ -60,7 +61,7 @@ namespace FinanceServicesApi.V1.Controllers
                     ModelValidatorHelper.ErrorMessages));
             }
 
-            ConfirmTransferEntity result = Factories.EntityFactory.ToDomain(accountResponse, transactionResponse);
+            ConfirmTransferResponse result = Factories.ResponseFactory.ToResponse(accountResponse, transactionResponse);
             return Ok(result);
             /*if (result != null)
             {

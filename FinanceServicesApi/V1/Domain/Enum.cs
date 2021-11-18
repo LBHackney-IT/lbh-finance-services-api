@@ -42,6 +42,7 @@ namespace FinanceServicesApi.V1.Domain
         Desc
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TransactionType
     {
         Rent,

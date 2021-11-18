@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using FinanceServicesApi.V1.Domain;
 using FinanceServicesApi.V1.Infrastructure;
 
-namespace FinanceServicesApi.V1.Boundary.Response
+namespace FinanceServicesApi.V1.Domain
 {
-    public class AccountResponse
+    public class Account
     {
         /// <summary>
         ///     Foreign reference number to attache to the the parent account.

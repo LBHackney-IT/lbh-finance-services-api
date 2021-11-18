@@ -20,7 +20,7 @@ namespace FinanceServicesApi.V1.Gateways
         }
         public async Task<TenureInformation> GetById(Guid id)
         {
-            if (id == null || id == Guid.Empty)
+            if (id == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
 
             var tenureInformationApiUrl = _getEnvironmentVariables.GetTenureInformationApiUrl().ToString();

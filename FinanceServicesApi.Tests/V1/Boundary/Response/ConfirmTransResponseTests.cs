@@ -3,9 +3,9 @@ using FinanceServicesApi.V1.Domain.SuspenseTransaction;
 using FluentAssertions;
 using Xunit;
 
-namespace FinanceServicesApi.Tests.V1.Domain
+namespace FinanceServicesApi.Tests.V1.Boundary.Response
 {
-    public class ConfirmTransferEntityTests
+    public class ConfirmTransResponseTests
     {
         private readonly Fixture _fixture = new Fixture();
 

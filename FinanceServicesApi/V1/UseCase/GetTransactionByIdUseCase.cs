@@ -17,7 +17,7 @@ namespace FinanceServicesApi.V1.UseCase
 
         public async Task<TransactionResponse> ExecuteAsync(Guid id)
         {
-            if (id == Guid.Empty || id == null)
+            if (id == null)
                 throw new Exception("The id shouldn't be empty or null.");
             return await _gateway.GetById(id).ConfigureAwait(false);
         }

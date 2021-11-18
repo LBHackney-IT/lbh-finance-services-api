@@ -85,7 +85,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             return result;
         }
 
-        public string GetChargeApiUrl()
+        public string GetChargesApiUrl()
         {
             string result = Environment.GetEnvironmentVariable("CHARGE_API_URL") ?? string.Empty; ;
             if (string.IsNullOrEmpty(result))
@@ -93,7 +93,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             return result;
         }
 
-        public string GetChargeApiKey()
+        public string GetChargesApiKey()
         {
             string result = Environment.GetEnvironmentVariable("CHARGE_API_KEY") ?? string.Empty; ;
             if (string.IsNullOrEmpty(result))
@@ -114,6 +114,22 @@ namespace FinanceServicesApi.V1.Infrastructure
             string result = Environment.GetEnvironmentVariable("ASSET_INFORMATION_API_TOKEN") ?? string.Empty; ;
             if (string.IsNullOrEmpty(result))
                 throw new Exception("Asset information api token shouldn't be null or empty");
+            return result;
+        }
+
+        public string GetPersonApiUrl()
+        {
+            string result = Environment.GetEnvironmentVariable("PERSON_API_URL") ?? string.Empty; ;
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("Person api url shouldn't be null or empty");
+            return result;
+        }
+
+        public string GetPersonApiToken()
+        {
+            string result = Environment.GetEnvironmentVariable("PERSON_API_TOKEN") ?? string.Empty; ;
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("Person api token shouldn't be null or empty");
             return result;
         }
     }

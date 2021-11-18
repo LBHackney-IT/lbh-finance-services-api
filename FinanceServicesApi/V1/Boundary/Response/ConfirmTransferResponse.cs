@@ -1,10 +1,8 @@
-using System;
 using System.ComponentModel.DataAnnotations;
-using FinanceServicesApi.V1.Infrastructure;
 
-namespace FinanceServicesApi.V1.Domain.SuspenseTransaction
+namespace FinanceServicesApi.V1.Boundary.Response
 {
-    public class ConfirmTransferEntity
+    public class ConfirmTransferResponse
     {
         [Required]
         public string Payee { get; set; }

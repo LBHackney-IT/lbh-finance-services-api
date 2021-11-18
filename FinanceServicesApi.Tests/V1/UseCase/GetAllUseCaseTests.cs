@@ -1,15 +1,3 @@
-using System.Linq;
-using AutoFixture;
-using FinanceServicesApi.V1.Boundary.Response;
-using FinanceServicesApi.V1.Domain.SuspenseTransaction;
-using FinanceServicesApi.V1.Factories;
-using FinanceServicesApi.V1.Gateways;
-using FinanceServicesApi.V1.UseCase;
-using FluentAssertions;
-using Moq;
-using Xunit;
-
-
 namespace FinanceServicesApi.Tests.V1.UseCase
 {
     public class GetAllUseCaseTests
@@ -28,7 +16,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
         [Fact]
         public void GetsAllFromTheGateway()
         {
-            var stubbedEntities = _fixture.CreateMany<ConfirmTransferEntity>().ToList();
+            var stubbedEntities = _fixture.CreateMany<ConfirmTransferResponse>().ToList();
             _mockGateway.Setup(x => x.GetAll()).Returns(stubbedEntities);
 
             var expectedResponse = new ResponseObjectList { ResponseObjects = stubbedEntities.ToResponse() };

@@ -28,7 +28,7 @@
     <PackageReference Include="AWSXRayRecorder.Handlers.EntityFramework" Version="1.1.0" />
     <PackageReference Include="Hackney.Core.DynamoDb" Version="1.51.0" />
     <PackageReference Include="Hackney.Shared.Asset" Version="0.6.0" />
-    <PackageReference Include="Hackney.Shared.ContactDetails" Version="1.0.1" />
+    <PackageReference Include="Hackney.Shared.Person" Version="0.9.0" />
     <PackageReference Include="Hackney.Shared.Tenure" Version="0.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.HealthChecks" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />

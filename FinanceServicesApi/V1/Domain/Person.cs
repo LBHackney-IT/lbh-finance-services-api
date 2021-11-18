@@ -4,7 +4,7 @@ using FinanceServicesApi.V1.Infrastructure;
 
 namespace FinanceServicesApi.V1.Domain
 {
-    public class Person
+    public class TransactionPerson
     {
         [NonEmptyGuid("PersonId")]
         public Guid Id { get; set; }

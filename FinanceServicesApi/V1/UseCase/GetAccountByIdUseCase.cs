@@ -16,8 +16,6 @@ namespace FinanceServicesApi.V1.UseCase
 
         public async Task<AccountResponse> ExecuteAsync(Guid id)
         {
-            if (id == Guid.Empty || id == null)
-                throw new Exception("The id shouldn't be empty or null.");
             return await _accountGateway.GetById(id).ConfigureAwait(false);
         }
     }

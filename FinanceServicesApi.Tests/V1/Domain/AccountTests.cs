@@ -1,21 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using AutoFixture;
-using FinanceServicesApi.V1.Boundary.Response;
 using FinanceServicesApi.V1.Domain;
-using FinanceServicesApi.V1.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace FinanceServicesApi.Tests.V1.Boundary.Response
+namespace FinanceServicesApi.Tests.V1.Domain
 {
-    public class AccountResponseTests
+    public class AccountTests
     {
         private readonly Fixture _fixture;
 
-        public AccountResponseTests()
+        public AccountTests()
         {
             _fixture = new Fixture();
         }
@@ -25,10 +21,10 @@ namespace FinanceServicesApi.Tests.V1.Boundary.Response
         public void AccountModelHasPropertiesSet()
         {
             #region AccountModel
-            var model = typeof(AccountResponse);
+            var model = typeof(Account);
             model.GetProperties().Length.Should().Be(19);
 
-            AccountResponse account = _fixture.Create<AccountResponse>();
+            Account account = _fixture.Create<Account>();
 
             Assert.IsType<Guid>(account.Id);
             Assert.IsType<AccountStatus>(account.AccountStatus);
