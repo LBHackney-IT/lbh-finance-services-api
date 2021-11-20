@@ -25,11 +25,11 @@ namespace FinanceServicesApi.V1.Factories
             };
         }
 
-        public static ResidentSummaryResponse ToResponse(Person person,List<TenureInformation> tenures,List<Charges> charges,List<ContactDetails> contacts,List<WeeklySummary> summaries,List<Transaction> transactions)
+        public static ResidentSummaryResponse ToResponse(Person person,TenureInformation tenure,List<Charges> charges,List<ContactDetails> contacts,List<WeeklySummary> summaries,List<Transaction> transactions)
         {
             if (summaries == null) throw new ArgumentNullException(nameof(summaries));
             if (person == null) throw new ArgumentNullException(nameof(person));
-            if (tenures == null) throw new ArgumentNullException(nameof(tenures));
+            if (tenure == null) throw new ArgumentNullException(nameof(tenure));
             if (charges == null) throw new ArgumentNullException(nameof(charges));
             if (contacts == null) throw new ArgumentNullException(nameof(contacts));
             return  new ResidentSummaryResponse

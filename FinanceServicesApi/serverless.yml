@@ -42,10 +42,11 @@ functions:
       CHARGE_API_KEY: ${ssm:/housing-finance/${self:provider.stage}/charge-api-key}
       #CHARGE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/charge-api-token}
       CONTACT_DETAILS_API_URL: ${ssm:/housing-tl/${self:provider.stage}/contact-details-api-url-v2}
-      CONTACT_DETAILS_API_TOKEN: ${ssm:/housing-tl/${self:provider.stage}/charge-api-token}
+      CONTACT_DETAILS_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/contact-details-api-token}
       #CHARGE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/charge-api-token}
-      ASSET_INFORMATION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/asset-information-api-url}
-      ASSET_INFORMATION_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/asset-information-api-token}
+      ASSET_INFORMATION_API_URL: ${ssm:/repairs-api/${self:provider.stage}/asset-information-api-url}
+      ASSET_INFORMATION_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/contact-details-api-token}
+      # ${ssm:/repairs-api/${self:provider.stage}/asset-information-api-token}
       PERSON_API_URL: ${ssm:/housing-tl/${self:provider.stage}/person-api-url}
       PERSON_API_TOKEN: ${ssm:/housing-tl/${self:provider.stage}/person-api-token}
     events:
