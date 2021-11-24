@@ -19,29 +19,38 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetChargeByTargetIdUseCase _chargeUseCase;
         private readonly IGetTenureInformationByIdUseCase _tenureUseCase;
         private readonly IGetContactDetailsByTargetIdUseCase _contactUseCase;
+        private readonly IGetAccountByIdUseCase _accountByIdUseCase;
 
         public ResidentSummaryController(IGetPersonByIdUseCase personUseCase
             ,IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase
             ,IGetChargeByTargetIdUseCase chargeUseCase
             ,IGetTenureInformationByIdUseCase tenureUseCase
-            ,IGetContactDetailsByTargetIdUseCase contactUseCase)
+            ,IGetContactDetailsByTargetIdUseCase contactUseCase
+            ,IGetAccountByIdUseCase accountByIdUseCase)
         {
             _personUseCase = personUseCase;
             _financialSummaryUseCase = financialSummaryUseCase;
             _chargeUseCase = chargeUseCase;
             _tenureUseCase = tenureUseCase;
             _contactUseCase = contactUseCase;
+            _accountByIdUseCase = accountByIdUseCase;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">Master Account Id</param>
+        /// <returns></returns>
         [ProducesResponseType(typeof(ConfirmTransferResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
+            var accountResponse = await _accountByIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
             var personResponse =await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
-            var tenureResponse = await _tenureUseCase.ExecuteAsync()
+            /*var tenureResponse = await _tenureUseCase.ExecuteAsync()*/
         }
     }
 }

@@ -74,7 +74,7 @@ namespace FinanceServicesApi.V1.Boundary.Response
         /// <example>
         ///     12/12/12
         /// </example>
-        public DateTime TenureStartDate { get; set; }
+        public DateTime? TenureStartDate { get; set; }
 
         /// <summary>
         /// 

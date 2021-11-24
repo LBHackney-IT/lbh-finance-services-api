@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Response;
+using FinanceServicesApi.V1.Domain;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 
@@ -14,7 +15,7 @@ namespace FinanceServicesApi.V1.UseCase
             _accountGateway = gateway;
         }
 
-        public async Task<AccountResponse> ExecuteAsync(Guid id)
+        public async Task<Account> ExecuteAsync(Guid id)
         {
             return await _accountGateway.GetById(id).ConfigureAwait(false);
         }

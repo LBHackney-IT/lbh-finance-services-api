@@ -2,6 +2,7 @@ using System;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Response;
+using FinanceServicesApi.V1.Domain;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Newtonsoft.Json;
@@ -19,7 +20,7 @@ namespace FinanceServicesApi.V1.Gateways
             _getEnvironmentVariables = getEnvironmentVariables;
         }
 
-        public async Task<AccountResponse> GetById(Guid id)
+        public async Task<Account> GetById(Guid id)
         {
             if (id == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
@@ -39,7 +40,7 @@ namespace FinanceServicesApi.V1.Gateways
                 throw new Exception(response.StatusCode.ToString());
             }
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            AccountResponse accountResponse = JsonConvert.DeserializeObject<AccountResponse>(responseContent);
+            Account accountResponse = JsonConvert.DeserializeObject<Account>(responseContent);
             return accountResponse;
         }
     }
