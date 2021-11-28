@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Response;
+using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.UseCase.Interfaces;
@@ -20,13 +21,15 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetTenureInformationByIdUseCase _tenureUseCase;
         private readonly IGetContactDetailsByTargetIdUseCase _contactUseCase;
         private readonly IGetAccountByIdUseCase _accountByIdUseCase;
+        private readonly IGetTransactionByIdUseCase _transactionByIdUseCase;
 
         public ResidentSummaryController(IGetPersonByIdUseCase personUseCase
             ,IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase
             ,IGetChargeByTargetIdUseCase chargeUseCase
             ,IGetTenureInformationByIdUseCase tenureUseCase
             ,IGetContactDetailsByTargetIdUseCase contactUseCase
-            ,IGetAccountByIdUseCase accountByIdUseCase)
+            ,IGetAccountByIdUseCase accountByIdUseCase
+            ,IGetTransactionByIdUseCase transactionByIdUseCase)
         {
             _personUseCase = personUseCase;
             _financialSummaryUseCase = financialSummaryUseCase;
@@ -34,6 +37,7 @@ namespace FinanceServicesApi.V1.Controllers
             _tenureUseCase = tenureUseCase;
             _contactUseCase = contactUseCase;
             _accountByIdUseCase = accountByIdUseCase;
+            _transactionByIdUseCase = transactionByIdUseCase;
         }
 
         /// <summary>
@@ -49,7 +53,10 @@ namespace FinanceServicesApi.V1.Controllers
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var accountResponse = await _accountByIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            var transactionResponse = await _transactionByIdUseCase.ExecuteAsync()
+            var tenureInformationResponse = await _tenureUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false)
             var personResponse =await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            ResponseFactory.ToResponse(accountResponse,)
             /*var tenureResponse = await _tenureUseCase.ExecuteAsync()*/
         }
     }
