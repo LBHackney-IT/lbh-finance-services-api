@@ -1,10 +1,10 @@
 using AutoFixture;
-using FinanceServicesApi.V1.Domain;
 using FluentAssertions;
 using System;
+using Hackney.Shared.HousingSearch.Domain.Transactions;
 using Xunit;
 
-namespace FinanceServicesApi.Tests.V1.Boundary.Response
+namespace FinanceServicesApi.Tests.V1.Domain
 {
     public class TransactionTests
     {
@@ -36,18 +36,18 @@ namespace FinanceServicesApi.Tests.V1.Boundary.Response
             Assert.IsType<DateTime>(transaction.TransactionDate);
             Assert.IsType<string>(transaction.TransactionSource);
 
-            Assert.IsType<TransactionPerson>(transaction.Person);
-            var personType = typeof(TransactionPerson);
+            Assert.IsType<Person>(transaction.Sender);
+            var personType = typeof(Person);
             personType.GetProperties().Length.Should().Be(2);
-            Assert.IsType<Guid>(transaction.Person.Id);
-            Assert.IsType<string>(transaction.Person.FullName);
+            Assert.IsType<Guid>(transaction.Sender.Id);
+            Assert.IsType<string>(transaction.Sender.FullName);
 
 
             Assert.IsType<SuspenseResolutionInfo>(transaction.SuspenseResolutionInfo);
             var suspenseResolutionInfoType = typeof(SuspenseResolutionInfo);
-            suspenseResolutionInfoType.GetProperties().Length.Should().Be(7);
-            Assert.IsType<DateTime>(transaction.SuspenseResolutionInfo.ApprovedDate);
-            Assert.IsType<DateTime>(transaction.SuspenseResolutionInfo.ConfirmedDate);
+            suspenseResolutionInfoType.GetProperties().Length.Should().Be(700);
+            /*Assert.IsType<DateTime>(transaction.SuspenseResolutionInfo.ApprovedDate);
+            Assert.IsType<DateTime>(transaction.SuspenseResolutionInfo.ConfirmedDate);*/
             Assert.IsType<DateTime>(transaction.SuspenseResolutionInfo.ResolutionDate);
             Assert.IsType<bool>(transaction.SuspenseResolutionInfo.IsApproved);
             Assert.IsType<bool>(transaction.SuspenseResolutionInfo.IsConfirmed);

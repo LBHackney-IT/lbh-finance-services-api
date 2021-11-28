@@ -49,6 +49,8 @@ functions:
       # ${ssm:/repairs-api/${self:provider.stage}/asset-information-api-token}
       PERSON_API_URL: ${ssm:/housing-tl/${self:provider.stage}/person-api-url}
       PERSON_API_TOKEN: ${ssm:/housing-tl/${self:provider.stage}/person-api-token}
+      HOUSING_SEARCH_API: ${ssm:/housing-tl/${self:provider.stage}/search-api-url}
+      HOUSING_SEARCH_API_TOKEN: ${ssm:/housing-tl/${self:provider.stage}/search-api-token}
     events:
       - http:
           path: /{proxy+}

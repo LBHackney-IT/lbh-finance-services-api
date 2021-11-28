@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Response;
-using FinanceServicesApi.V1.Domain.SuspenseTransaction;
+using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -61,16 +59,8 @@ namespace FinanceServicesApi.V1.Controllers
                     ModelValidatorHelper.ErrorMessages));
             }
 
-            ConfirmTransferResponse result = Factories.ResponseFactory.ToResponse(accountResponse, transactionResponse);
-            return Ok(result);
-            /*if (result != null)
-            {
-            }
-            else
-            {
-                *//*This should not happen in any way*//*
-                throw new Exception("Something wrong happened in getting information!");
-            }*/
+            ConfirmTransferResponse result = Factories.ResponseFactory.ToResponse(accountResponse,transactionResponse);
+            return Ok(result); 
         }
     }
 }

@@ -1,6 +1,6 @@
 using System;
 
-namespace FinanceServicesApi.V1.Boundary.Response
+namespace FinanceServicesApi.V1.Boundary.Responses
 {
     public class ResidentSummaryResponse
     {

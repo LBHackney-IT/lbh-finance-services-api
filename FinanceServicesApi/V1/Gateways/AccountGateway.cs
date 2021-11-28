@@ -1,10 +1,9 @@
 using System;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Response;
-using FinanceServicesApi.V1.Domain;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
+using Hackney.Shared.HousingSearch.Domain.Accounts;
 using Newtonsoft.Json;
 
 namespace FinanceServicesApi.V1.Gateways
@@ -25,7 +24,7 @@ namespace FinanceServicesApi.V1.Gateways
             if (id == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
 
-            var accountApiUrl = _getEnvironmentVariables.GetAccountApiUrl().ToString();
+            var accountApiUrl = _getEnvironmentVariables.GetAccountApiUrl();
             var accountApiToken = _getEnvironmentVariables.GetAccountApiToken();
 
             _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", accountApiToken));

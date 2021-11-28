@@ -15,6 +15,13 @@ namespace FinanceServicesApi.V1.UseCase
         {
             _gateway = gateway;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="targetId">Asset id</param>
+        /// <param name="startDate">Start date of the search</param>
+        /// <param name="endDate">End date of the search</param>
+        /// <returns></returns>
         public async Task<List<WeeklySummary>> ExecuteAsync(Guid targetId, DateTime? startDate, DateTime? endDate)
         {
             return await _gateway.GetGetAllByTargetId(targetId, startDate, endDate).ConfigureAwait(false);

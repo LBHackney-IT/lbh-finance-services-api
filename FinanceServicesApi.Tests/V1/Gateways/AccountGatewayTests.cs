@@ -3,12 +3,12 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AutoFixture;
-using FinanceServicesApi.V1.Boundary.Response;
 using FinanceServicesApi.V1.Gateways;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using FluentAssertions;
 using FluentAssertions.Specialized;
+using Hackney.Shared.HousingSearch.Domain.Accounts;
 using Moq;
 using Newtonsoft.Json;
 using Xunit;
@@ -46,7 +46,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         [Fact]
         public void GetByIdWithEmptyIdThrowsArgumentNullException()
         {
-            Func<Task<AccountResponse>> func = async () => await _gateway.GetById(Guid.Empty).ConfigureAwait(false);
+            Func<Task<Account>> func = async () => await _gateway.GetById(Guid.Empty).ConfigureAwait(false);
             func.Should().Throw<ArgumentNullException>();
         }
 
@@ -59,7 +59,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
                 .ReturnsAsync(message);
 
-            Func<Task<AccountResponse>> func = async () => await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            Func<Task<Account>> func = async () => await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
 
             var exception = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
             exception.Should().BeOfType(typeof(ExceptionAssertions<Exception>));
@@ -74,7 +74,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
                 .ReturnsAsync((HttpResponseMessage) null);
 
-            Func<Task<AccountResponse>> func = async () => await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            Func<Task<Account>> func = async () => await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
 
             var exception = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
             exception.Should().BeOfType(typeof(ExceptionAssertions<Exception>));
@@ -82,10 +82,10 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         }
 
         [Fact]
-        public async Task GetByIdWithValidOutputReturnsAccountResponse()
+        public async Task GetByIdWithValidOutputReturnsAccount()
         {
             HttpResponseMessage message = new HttpResponseMessage(HttpStatusCode.OK);
-            AccountResponse accountResponse = _fixture.Create<AccountResponse>();
+            Account accountResponse = _fixture.Create<Account>();
             message.Content = new StringContent(JsonConvert.SerializeObject(accountResponse));
 
             _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl()).Returns("http://localhost:5000/api/v1/");
@@ -108,7 +108,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
 
             _gateway = new AccountGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
 
-            Func<Task<AccountResponse>> func = async () =>
+            Func<Task<Account>> func = async () =>
                 await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
             var exceptionAssertions = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
         }
@@ -124,7 +124,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
 
             _gateway = new AccountGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
 
-            Func<Task<AccountResponse>> func = async () =>
+            Func<Task<Account>> func = async () =>
                 await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
             var exceptionAssertions = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
         }

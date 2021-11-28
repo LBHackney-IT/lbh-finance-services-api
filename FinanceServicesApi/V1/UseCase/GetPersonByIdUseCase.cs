@@ -2,11 +2,11 @@ using System;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase.Interfaces;
-using Hackney.Shared.Person;
+using Hackney.Shared.HousingSearch.Domain.Person;
 
 namespace FinanceServicesApi.V1.UseCase
 {
-    public class GetPersonByIdUseCase: IGetPersonByIdUseCase
+    public class GetPersonByIdUseCase : IGetPersonByIdUseCase
     {
         private readonly IPersonGateway _gateway;
 

@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Response;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase.Interfaces;
+using Hackney.Shared.HousingSearch.Domain.Transactions;
 
 namespace FinanceServicesApi.V1.UseCase
 {
@@ -15,11 +15,13 @@ namespace FinanceServicesApi.V1.UseCase
             _gateway = gateway;
         }
 
-        public async Task<TransactionResponse> ExecuteAsync(Guid id)
+        public async Task<Transaction> ExecuteAsync(Guid id)
         {
-            if (id == null)
-                throw new Exception("The id shouldn't be empty or null.");
-            return await _gateway.GetById(id).ConfigureAwait(false);
+            if (id == Guid.Empty)
+                throw new ArgumentNullException(nameof(id));
+
+            var transactions = await _gateway.GetById(id).ConfigureAwait(false);
+            return transactions;
         }
     }
 }

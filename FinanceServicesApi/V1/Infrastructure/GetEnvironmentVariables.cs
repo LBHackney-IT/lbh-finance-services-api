@@ -1,4 +1,5 @@
 using System;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 
 namespace FinanceServicesApi.V1.Infrastructure
@@ -131,6 +132,36 @@ namespace FinanceServicesApi.V1.Infrastructure
             if (string.IsNullOrEmpty(result))
                 throw new Exception("Person api token shouldn't be null or empty");
             return result;
+        }
+
+        public string GetHousingSearchApi(ESearchBy searchBy)
+        {
+            string result = Environment.GetEnvironmentVariable("HOUSING_SEARCH_API") ?? string.Empty; ;
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("Person api url shouldn't be null or empty");
+            switch (searchBy)
+            {
+                case ESearchBy.ByAccount:
+                    return result + $"/accounts";
+                case ESearchBy.ByAsset:
+                    return result + $"/assets";
+                case ESearchBy.ByCharge:
+                    return result + $"/charges";
+                case ESearchBy.ByPerson:
+                    return result + $"/persons";
+                case ESearchBy.ByTenure:
+                    return result + $"/tenures";
+                case ESearchBy.ByTransaction:
+                    return result + $"/transactions";
+                default:
+                    throw new ArgumentNullException($"{nameof(searchBy).ToString()} is not valid");
+            }
+        }
+
+
+        public string GetHousingSearchApiToken()
+        {
+            throw new NotImplementedException();
         }
     }
 }
