@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Domain;
+using Hackney.Shared.HousingSearch.Domain.Transactions;
 
 namespace FinanceServicesApi.V1.Gateways.Interfaces
 {

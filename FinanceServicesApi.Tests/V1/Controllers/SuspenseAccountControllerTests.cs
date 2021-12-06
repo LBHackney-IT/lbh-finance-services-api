@@ -2,10 +2,11 @@ using System;
 using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.Tests.V1.Helper;
-using FinanceServicesApi.V1.Boundary.Response;
 using FinanceServicesApi.V1.Controllers;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FluentAssertions;
+using Hackney.Shared.HousingSearch.Domain.Accounts;
+using Hackney.Shared.HousingSearch.Domain.Transactions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -47,7 +48,7 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         [Fact]
         public async Task GetAccountByIdWithInvalidResponseThrowsBadRequest()
         {
-            AccountResponse accountResponse = _fixture.Build<AccountResponse>()
+            Account accountResponse = _fixture.Build<Account>()
                 .Without(p => p.CreatedBy)
                 .Create();
             _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
@@ -60,11 +61,11 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         [Fact]
         public async Task GetAccountByIdWithNullResponseThrowsBadRequest()
         {
-            AccountResponse accountResponse = _fixture.Build<AccountResponse>()
+            Account accountResponse = _fixture.Build<Account>()
                 .Without(p => p.CreatedBy)
                 .Create();
             _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
-                .ReturnsAsync((AccountResponse) null);
+                .ReturnsAsync((Account) null);
 
             var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
             result.Should().BeOfType(typeof(NotFoundObjectResult));
@@ -73,11 +74,11 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         [Fact]
         public async Task GetTransactionByIdWithInvalidResponseThrowsBadRequest()
         {
-            AccountResponse accountResponse = _fixture.Build<AccountResponse>().Create();
+            Account accountResponse = _fixture.Build<Account>().Create();
             _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(accountResponse);
 
-            TransactionResponse transactionResponse = _fixture.Build<TransactionResponse>()
+            Transaction transactionResponse = _fixture.Build<Transaction>()
                 .Without(p => p.TransactionDate)
                 .Create();
             _getTransactionByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
@@ -90,13 +91,13 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         [Fact]
         public async Task GetTransactionByIdWithNullResponseThrowsBadRequest()
         {
-            AccountResponse accountResponse = _fixture.Build<AccountResponse>().Create();
+            Account accountResponse = _fixture.Build<Account>().Create();
             _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(accountResponse);
 
-            TransactionResponse transactionResponse = _fixture.Build<TransactionResponse>().Create();
+            Transaction transactionResponse = _fixture.Build<Transaction>().Create();
             _getTransactionByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
-                .ReturnsAsync((TransactionResponse) null);
+                .ReturnsAsync((Transaction) null);
 
             var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
             result.Should().BeOfType(typeof(NotFoundObjectResult));
@@ -105,11 +106,11 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         [Fact]
         public async Task GetByIdWithValidInputReturnsOk()
         {
-            AccountResponse accountResponse = _fixture.Build<AccountResponse>().Create();
+            Account accountResponse = _fixture.Build<Account>().Create();
             _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(accountResponse);
 
-            TransactionResponse transactionResponse = _fixture.Build<TransactionResponse>().Create();
+            Transaction transactionResponse = _fixture.Build<Transaction>().Create();
             _getTransactionByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(transactionResponse);
 

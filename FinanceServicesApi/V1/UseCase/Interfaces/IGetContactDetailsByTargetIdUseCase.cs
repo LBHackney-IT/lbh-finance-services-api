@@ -7,6 +7,6 @@ namespace FinanceServicesApi.V1.UseCase.Interfaces
 {
     public interface IGetContactDetailsByTargetIdUseCase
     {
-        public Task<List<ContactDetails>> ExecuteAsync(Guid targetId);
+        public Task<List<ContactDetail>> ExecuteAsync(Guid targetId);
     }
 }

@@ -18,5 +18,7 @@ namespace FinanceServicesApi.V1.Infrastructure.Interfaces
         public string GetAssetInformationApiToken();
         public string GetPersonApiUrl();
         public string GetPersonApiToken();
+        public string GetSearchApiUrl();
+        public string GetSearchApiAuthKey();
     }
 }

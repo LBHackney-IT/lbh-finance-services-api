@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Response;
+using FinanceServicesApi.V1.Boundary.Requests;
+using FinanceServicesApi.V1.Boundary.Responses;
+using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
@@ -21,7 +23,7 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetTenureInformationByIdUseCase _tenureUseCase;
         private readonly IGetContactDetailsByTargetIdUseCase _contactUseCase;
         private readonly IGetAccountByIdUseCase _accountByIdUseCase;
-        private readonly IGetTransactionByIdUseCase _transactionByIdUseCase;
+        private readonly IGetTransactionByTargetIdUseCase _transactionByTargetIdUseCase;
 
         public ResidentSummaryController(IGetPersonByIdUseCase personUseCase
             ,IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase
@@ -29,7 +31,7 @@ namespace FinanceServicesApi.V1.Controllers
             ,IGetTenureInformationByIdUseCase tenureUseCase
             ,IGetContactDetailsByTargetIdUseCase contactUseCase
             ,IGetAccountByIdUseCase accountByIdUseCase
-            ,IGetTransactionByIdUseCase transactionByIdUseCase)
+            ,IGetTransactionByTargetIdUseCase transactionByTargetIdUseCase)
         {
             _personUseCase = personUseCase;
             _financialSummaryUseCase = financialSummaryUseCase;
@@ -37,27 +39,40 @@ namespace FinanceServicesApi.V1.Controllers
             _tenureUseCase = tenureUseCase;
             _contactUseCase = contactUseCase;
             _accountByIdUseCase = accountByIdUseCase;
-            _transactionByIdUseCase = transactionByIdUseCase;
+            _transactionByTargetIdUseCase = transactionByTargetIdUseCase;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">Master Account Id</param>
+        /// <param name="request">Master Account Id</param>
         /// <returns></returns>
         [ProducesResponseType(typeof(ConfirmTransferResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        [HttpGet("{request}")]
+        public async Task<IActionResult> GetById([FromQuery] ResidentSummaryRequest request)
         {
-            var accountResponse = await _accountByIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
-            var transactionResponse = await _transactionByIdUseCase.ExecuteAsync()
-            var tenureInformationResponse = await _tenureUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false)
-            var personResponse =await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
-            ResponseFactory.ToResponse(accountResponse,)
-            /*var tenureResponse = await _tenureUseCase.ExecuteAsync()*/
+            var accountResponse = await _accountByIdUseCase.ExecuteAsync(request.MasterAccountId).ConfigureAwait(false);
+            var transactionResponse = await _transactionByTargetIdUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
+            var tenureInformationResponse =
+                await _tenureUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
+            var personResponse =await _personUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
+            var chargeResponse = await _chargeUseCase.ExecuteAsync(accountResponse.TargetId, TargetType.Tenure)
+                .ConfigureAwait(false);
+            var contactDetailsResponse = await _contactUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
+            var summaryResponse = await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id,null,null)
+                .ConfigureAwait(false);
+
+            var result = ResponseFactory.ToResponse(personResponse,
+                tenureInformationResponse,
+                accountResponse,
+                chargeResponse,
+                contactDetailsResponse,
+                summaryResponse,
+                transactionResponse);
+            return Ok(result);
         }
     }
 }

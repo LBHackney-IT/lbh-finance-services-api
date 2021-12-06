@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Hackney.Shared.HousingSearch.Domain.Transactions;
 
 namespace FinanceServicesApi.V1.UseCase.Interfaces
 {
-    public interface IGetTransactionByIdUseCase
+    public interface IGetTransactionByTargetIdUseCase
     {
-        public Task<Transaction> ExecuteAsync(Guid id);
+        public Task<List<Transaction>> ExecuteAsync(Guid targetId);
     }
 }

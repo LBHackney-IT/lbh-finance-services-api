@@ -7,7 +7,7 @@ namespace FinanceServicesApi.V1.Gateways.Interfaces
 {
     public interface IContactDetailsGateway
     {
-        public Task<List<ContactDetails>> GetByTargetId(Guid targetId);
+        public Task<List<ContactDetail>> GetByTargetId(Guid targetId);
 
     }
 }

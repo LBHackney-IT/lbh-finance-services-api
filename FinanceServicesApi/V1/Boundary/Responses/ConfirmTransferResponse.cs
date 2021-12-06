@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FinanceServicesApi.V1.Boundary.Response
+namespace FinanceServicesApi.V1.Boundary.Responses
 {
     public class ConfirmTransferResponse
     {

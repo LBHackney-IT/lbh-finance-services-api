@@ -31,7 +31,10 @@ namespace FinanceServicesApi.V1.Domain
         [StringLength(8, MinimumLength = 8, ErrorMessage = "The field BankAccountNumber must be a string with a length exactly equals to 8.")]
         public string BankAccountNumber { get; set; }
 
-        public bool IsSuspense => TargetId == Guid.Empty && SuspenseResolutionInfo.IsApproved && SuspenseResolutionInfo.IsConfirmed;
+        [Required]
+        public string SortCode { get; set; }
+
+        public bool IsSuspense => TargetId == Guid.Empty;
         
         [Range(1, 12)]
         [Required]

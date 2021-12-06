@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using AutoFixture;
-using FinanceServicesApi.V1.Boundary.Response;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase;
 using FluentAssertions;
+using Hackney.Shared.HousingSearch.Domain.Transactions;
 using Moq;
 using Xunit;
 
@@ -24,9 +24,9 @@ namespace FinanceServicesApi.Tests.V1.UseCase
         }
 
         [Fact]
-        public void ExecuteAsyncWithValidIdReturnsAccountResponse()
+        public void ExecuteAsyncWithValidIdReturnsAccount()
         {
-            TransactionResponse transactionResponse = _fixture.Create<TransactionResponse>();
+            Transaction transactionResponse = _fixture.Create<Transaction>();
             Guid id = Guid.NewGuid();
 
             transactionResponse.Id = id;
@@ -44,7 +44,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
         [Fact]
         public async Task ExecuteAsyncWithEmptyIdThrowsException()
         {
-            Func<Task<TransactionResponse>> func = async () => await _sut.ExecuteAsync(Guid.Empty).ConfigureAwait(false);
+            Func<Task<Transaction>> func = async () => await _sut.ExecuteAsync(Guid.Empty).ConfigureAwait(false);
             await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
         }
     }
