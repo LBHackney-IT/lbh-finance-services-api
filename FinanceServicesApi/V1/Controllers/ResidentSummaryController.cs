@@ -26,12 +26,12 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetTransactionByTargetIdUseCase _transactionByTargetIdUseCase;
 
         public ResidentSummaryController(IGetPersonByIdUseCase personUseCase
-            ,IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase
-            ,IGetChargeByTargetIdUseCase chargeUseCase
-            ,IGetTenureInformationByIdUseCase tenureUseCase
-            ,IGetContactDetailsByTargetIdUseCase contactUseCase
-            ,IGetAccountByIdUseCase accountByIdUseCase
-            ,IGetTransactionByTargetIdUseCase transactionByTargetIdUseCase)
+            , IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase
+            , IGetChargeByTargetIdUseCase chargeUseCase
+            , IGetTenureInformationByIdUseCase tenureUseCase
+            , IGetContactDetailsByTargetIdUseCase contactUseCase
+            , IGetAccountByIdUseCase accountByIdUseCase
+            , IGetTransactionByTargetIdUseCase transactionByTargetIdUseCase)
         {
             _personUseCase = personUseCase;
             _financialSummaryUseCase = financialSummaryUseCase;
@@ -58,11 +58,11 @@ namespace FinanceServicesApi.V1.Controllers
             var transactionResponse = await _transactionByTargetIdUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
             var tenureInformationResponse =
                 await _tenureUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
-            var personResponse =await _personUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
+            var personResponse = await _personUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
             var chargeResponse = await _chargeUseCase.ExecuteAsync(accountResponse.TargetId, TargetType.Tenure)
                 .ConfigureAwait(false);
             var contactDetailsResponse = await _contactUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
-            var summaryResponse = await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id,null,null)
+            var summaryResponse = await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id, null, null)
                 .ConfigureAwait(false);
 
             var result = ResponseFactory.ToResponse(personResponse,

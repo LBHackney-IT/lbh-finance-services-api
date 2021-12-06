@@ -6,6 +6,6 @@ namespace FinanceServicesApi.V1.UseCase.Interfaces
 {
     public interface IGetChargeByTargetIdUseCase
     {
-        public Task<Charge> ExecuteAsync(Guid targetId,TargetType targetType);
+        public Task<Charge> ExecuteAsync(Guid targetId, TargetType targetType);
     }
 }

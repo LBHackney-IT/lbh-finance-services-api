@@ -6,7 +6,7 @@ using FinanceServicesApi.V1.UseCase.Interfaces;
 
 namespace FinanceServicesApi.V1.UseCase
 {
-    public class GetChargeByTargetIdUseCase: IGetChargeByTargetIdUseCase
+    public class GetChargeByTargetIdUseCase : IGetChargeByTargetIdUseCase
     {
         private readonly IChargesGateway _gateway;
 

@@ -8,7 +8,7 @@ using Hackney.Shared.Tenure.Domain;
 
 namespace FinanceServicesApi.V1.UseCase
 {
-    public class GetTenureInformationByIdUseCase: IGetTenureInformationByIdUseCase
+    public class GetTenureInformationByIdUseCase : IGetTenureInformationByIdUseCase
     {
         private readonly TenureInformationGateway _gateway;
 

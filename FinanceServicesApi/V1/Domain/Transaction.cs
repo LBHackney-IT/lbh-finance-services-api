@@ -35,7 +35,7 @@ namespace FinanceServicesApi.V1.Domain
         public string SortCode { get; set; }
 
         public bool IsSuspense => TargetId == Guid.Empty;
-        
+
         [Range(1, 12)]
         [Required]
         public int FinancialMonth { get; set; }

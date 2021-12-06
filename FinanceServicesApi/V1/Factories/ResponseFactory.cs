@@ -39,22 +39,22 @@ namespace FinanceServicesApi.V1.Factories
             return new ResidentSummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance ?? 0,
-                HousingBenefit = summaries.Sum(s=>s.HousingBenefitAmount),
-                ServiceCharge = charges.DetailedCharges.Where(c=>c.Type.ToLower()=="service").Sum(c=>c.Amount),
+                HousingBenefit = summaries.Sum(s => s.HousingBenefitAmount),
+                ServiceCharge = charges.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount),
                 DateOfBirth = person.DateOfBirth,
                 PersonId = "Not Detected",
                 LastPaymentAmount = transactions.Last().PaidAmount,
                 LastPaymentDate = transactions.Last(p => p.PaidAmount > 0).TransactionDate,
                 PrimaryTenantAddress = tenure.TenuredAsset.FullAddress,
                 TenancyType = tenure.TenureType.Code,
-                PrimaryTenantEmail = contacts.Where(c=>c.TargetType==TargetType.Person && c.ContactInformation.ContactType==ContactType.Email)
-                    .Select(s=>s.ContactInformation.Value).First(),
+                PrimaryTenantEmail = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
+                    .Select(s => s.ContactInformation.Value).First(),
                 PrimaryTenantName = account?.Tenure.PrimaryTenants.First().FullName,
                 PrimaryTenantPhoneNumber = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
                     .Select(s => s.ContactInformation.Value).First(),
                 TenureId = "Not Detected",
                 TenureStartDate = tenure.StartOfTenureDate,
-                WeeklyTotalCharges = charges.DetailedCharges.Where(c=>c.Type.ToLower()== "weekly").Sum(c=>c.Amount)
+                WeeklyTotalCharges = charges.DetailedCharges.Where(c => c.Type.ToLower() == "weekly").Sum(c => c.Amount)
             };
         }
     }

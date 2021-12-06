@@ -6,6 +6,6 @@ namespace FinanceServicesApi.V1.Gateways.Interfaces
 {
     public interface IChargesGateway
     {
-        public Task<Charge> GetAllByTargetId(Guid targetId,TargetType targetType);
+        public Task<Charge> GetAllByTargetId(Guid targetId, TargetType targetType);
     }
 }
