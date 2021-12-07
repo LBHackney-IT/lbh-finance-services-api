@@ -6,7 +6,7 @@ using Hackney.Shared.HousingSearch.Domain.Transactions;
 
 namespace FinanceServicesApi.V1.UseCase.Interfaces
 {
-    public interface IGetTransactionByTargetIdUseCase
+    public interface IGetLastPaymentTransactionsByTargetIdUseCase
     {
         public Task<List<Transaction>> ExecuteAsync(Guid targetId);
     }

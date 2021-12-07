@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using FinanceServicesApi.V1.Domain;
 using FinanceServicesApi.V1.Infrastructure;
 using FluentAssertions;
+using Hackney.Shared.HousingSearch.Domain.Accounts.Enum;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Infrastructure

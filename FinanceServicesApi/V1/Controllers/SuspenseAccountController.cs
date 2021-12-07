@@ -59,8 +59,8 @@ namespace FinanceServicesApi.V1.Controllers
                     ModelValidatorHelper.ErrorMessages));
             }
 
-            ConfirmTransferResponse result = Factories.ResponseFactory.ToResponse(accountResponse,transactionResponse);
-            return Ok(result); 
+            ConfirmTransferResponse result = Factories.ResponseFactory.ToResponse(accountResponse, transactionResponse);
+            return Ok(result);
         }
     }
 }

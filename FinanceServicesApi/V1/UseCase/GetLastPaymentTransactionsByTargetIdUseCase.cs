@@ -9,11 +9,11 @@ using Hackney.Shared.HousingSearch.Domain.Transactions;
 
 namespace FinanceServicesApi.V1.UseCase
 {
-    public class GetTransactionByTargetIdUseCase : IGetTransactionByTargetIdUseCase
+    public class GetLastPaymentTransactionsByTargetIdUseCase : IGetLastPaymentTransactionsByTargetIdUseCase
     {
         private readonly ITransactionGateway _gateway;
 
-        public GetTransactionByTargetIdUseCase(ITransactionGateway gateway)
+        public GetLastPaymentTransactionsByTargetIdUseCase(ITransactionGateway gateway)
         {
             _gateway = gateway;
         }

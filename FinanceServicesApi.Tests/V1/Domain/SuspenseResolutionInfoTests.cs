@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.V1.Domain;
 using FluentAssertions;
+using Hackney.Shared.HousingSearch.Domain.Transactions;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Domain
@@ -23,12 +24,12 @@ namespace FinanceServicesApi.Tests.V1.Domain
         public void SuspenseResolutionInfoEntityHasPropertiesSet()
         {
             var suspenseResolutionInfoType = typeof(SuspenseResolutionInfo);
-            suspenseResolutionInfoType.GetProperties().Length.Should().Be(7);
+            suspenseResolutionInfoType.GetProperties().Length.Should().Be(5);
 
             SuspenseResolutionInfo suspenseResolutionInfo = _fixture.Create<SuspenseResolutionInfo>();
 
-            Assert.IsType<DateTime>(suspenseResolutionInfo.ApprovedDate);
-            Assert.IsType<DateTime>(suspenseResolutionInfo.ConfirmedDate);
+            /*Assert.IsType<DateTime>(suspenseResolutionInfo.ApprovedDate);
+            Assert.IsType<DateTime>(suspenseResolutionInfo.ConfirmedDate);*/
             Assert.IsType<DateTime>(suspenseResolutionInfo.ResolutionDate);
             Assert.IsType<bool>(suspenseResolutionInfo.IsApproved);
             Assert.IsType<bool>(suspenseResolutionInfo.IsConfirmed);

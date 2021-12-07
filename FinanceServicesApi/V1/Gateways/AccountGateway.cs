@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Boundary.Responses.MetaData;
 using FinanceServicesApi.V1.Gateways.Interfaces;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Hackney.Shared.HousingSearch.Domain.Accounts;
 using Newtonsoft.Json;
@@ -51,12 +52,12 @@ namespace FinanceServicesApi.V1.Gateways
             if (targetId == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(targetId).ToString()} shouldn't be empty or null");
 
-            var searchApiUrl = _getEnvironmentVariables.GetSearchApiUrl().ToString();
-            var searchAuthKey = _getEnvironmentVariables.GetTransactionApiKey();
+            var searchApiUrl = _getEnvironmentVariables.GetHousingSearchApi(ESearchBy.ByTransaction).ToString();
+            var searchAuthKey = _getEnvironmentVariables.GetHousingSearchApiToken();
 
             _client.AddHeader(new HttpHeader<string, string> { Name = "Authorization", Value = searchAuthKey });
 
-            var response = await _client.GetAsync(new Uri($"{searchApiUrl}/search/accounts?TargetId=${targetId.ToString()}")).ConfigureAwait(false);
+            var response = await _client.GetAsync(new Uri($"{searchApiUrl}?TargetId=${targetId.ToString()}")).ConfigureAwait(false);
             if (response == null)
             {
                 throw new Exception("The search api is not reachable!");

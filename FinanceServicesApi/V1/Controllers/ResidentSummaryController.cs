@@ -23,7 +23,7 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetTenureInformationByIdUseCase _tenureUseCase;
         private readonly IGetContactDetailsByTargetIdUseCase _contactUseCase;
         private readonly IGetAccountByIdUseCase _accountByIdUseCase;
-        private readonly IGetTransactionByTargetIdUseCase _transactionByTargetIdUseCase;
+        private readonly IGetLastPaymentTransactionsByTargetIdUseCase _lastPaymentTransactionsByTargetIdUseCase;
 
         public ResidentSummaryController(IGetPersonByIdUseCase personUseCase
             , IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase
@@ -31,7 +31,7 @@ namespace FinanceServicesApi.V1.Controllers
             , IGetTenureInformationByIdUseCase tenureUseCase
             , IGetContactDetailsByTargetIdUseCase contactUseCase
             , IGetAccountByIdUseCase accountByIdUseCase
-            , IGetTransactionByTargetIdUseCase transactionByTargetIdUseCase)
+            , IGetLastPaymentTransactionsByTargetIdUseCase lastPaymentTransactionsByTargetIdUseCase)
         {
             _personUseCase = personUseCase;
             _financialSummaryUseCase = financialSummaryUseCase;
@@ -39,7 +39,7 @@ namespace FinanceServicesApi.V1.Controllers
             _tenureUseCase = tenureUseCase;
             _contactUseCase = contactUseCase;
             _accountByIdUseCase = accountByIdUseCase;
-            _transactionByTargetIdUseCase = transactionByTargetIdUseCase;
+            _lastPaymentTransactionsByTargetIdUseCase = lastPaymentTransactionsByTargetIdUseCase;
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace FinanceServicesApi.V1.Controllers
         public async Task<IActionResult> GetById([FromQuery] ResidentSummaryRequest request)
         {
             var accountResponse = await _accountByIdUseCase.ExecuteAsync(request.MasterAccountId).ConfigureAwait(false);
-            var transactionResponse = await _transactionByTargetIdUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
+            var transactionResponse = await _lastPaymentTransactionsByTargetIdUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
             var tenureInformationResponse =
                 await _tenureUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
             var personResponse = await _personUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);

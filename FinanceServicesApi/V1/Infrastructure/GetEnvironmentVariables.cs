@@ -134,50 +134,36 @@ namespace FinanceServicesApi.V1.Infrastructure
             return result;
         }
 
-        public string GetSearchApiUrl()
+        public string GetHousingSearchApi(ESearchBy searchBy)
         {
             string result = Environment.GetEnvironmentVariable("SEARCH_API_URL") ?? string.Empty; ;
             if (string.IsNullOrEmpty(result))
-                throw new Exception("Search api url shouldn't be null or empty.");
-            return result;
-        }
-
-        public string GetSearchApiAuthKey()
-        {
-            string result = Environment.GetEnvironmentVariable("SEARCH_API_AUTH_KEY") ?? string.Empty; ;
-            if (string.IsNullOrEmpty(result))
-                throw new Exception("Search api authorization api key shouldn't be null or empty.");
-            return result;
-        }
-
-        public string GetHousingSearchApi(ESearchBy searchBy)
-        {
-            string result = Environment.GetEnvironmentVariable("HOUSING_SEARCH_API") ?? string.Empty; ;
-            if (string.IsNullOrEmpty(result))
-                throw new Exception("Person api url shouldn't be null or empty");
+                throw new Exception("Search api url shouldn't be null or empty");
             switch (searchBy)
             {
                 case ESearchBy.ByAccount:
-                    return result + $"/accounts";
+                    return result + $"/search/accounts";
                 case ESearchBy.ByAsset:
-                    return result + $"/assets";
+                    return result + $"/search/assets";
                 case ESearchBy.ByCharge:
-                    return result + $"/charges";
+                    return result + $"/search/charges";
                 case ESearchBy.ByPerson:
-                    return result + $"/persons";
+                    return result + $"/search/persons";
                 case ESearchBy.ByTenure:
-                    return result + $"/tenures";
+                    return result + $"/search/tenures";
                 case ESearchBy.ByTransaction:
-                    return result + $"/transactions";
+                    return result + $"/search/transactions";
                 default:
                     throw new ArgumentNullException($"{nameof(searchBy).ToString()} is not valid");
             }
         }
 
-
         public string GetHousingSearchApiToken()
         {
-            throw new NotImplementedException();
+            string result = Environment.GetEnvironmentVariable("SEARCH_API_AUTH_KEY") ?? string.Empty; ;
+            if (string.IsNullOrEmpty(result))
+                throw new Exception("Search api authorization api key shouldn't be null or empty.");
+            return result;
         }
     }
 }

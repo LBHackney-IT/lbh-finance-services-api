@@ -154,7 +154,7 @@ namespace FinanceServicesApi
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetAccountByIdUseCase, GetAccountByIdUseCase>();
-            services.AddScoped<IGetTransactionByTargetIdUseCase, GetTransactionByTargetIdUseCase>();
+            services.AddScoped<IGetLastPaymentTransactionsByTargetIdUseCase, GetLastPaymentTransactionsByTargetIdUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

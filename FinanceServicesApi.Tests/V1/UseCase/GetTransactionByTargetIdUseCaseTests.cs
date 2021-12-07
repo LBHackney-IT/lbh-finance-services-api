@@ -30,7 +30,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             Guid id = Guid.NewGuid();
 
             Transaction transactionResponse = Transaction.Create(id
-                ,_fixture.Create<Guid>()
+                , _fixture.Create<Guid>()
                 , _fixture.Create<TargetType>()
                 , _fixture.Create<short>()
                 , _fixture.Create<short>()
@@ -42,13 +42,17 @@ namespace FinanceServicesApi.Tests.V1.UseCase
                 , _fixture.Create<string>()
                 , _fixture.Create<string>()
                 , _fixture.Create<bool>()
-                ,SuspenseResolutionInfo.Create(_fixture.Create<DateTime>(), _fixture.Create<bool>(), _fixture.Create<bool>(), _fixture.Create<string>())
+                , SuspenseResolutionInfo.Create(_fixture.Create<DateTime>(), _fixture.Create<bool>(), _fixture.Create<bool>(), _fixture.Create<string>())
                 , _fixture.Create<decimal>()
                 , _fixture.Create<decimal>()
                 , _fixture.Create<decimal>()
                 , _fixture.Create<decimal>()
                 , _fixture.Create<string>()
-                ,Person.Create(_fixture.Create<Guid>(), _fixture.Create<string>())
+                , Sender.Create(_fixture.Create<Guid>(), _fixture.Create<string>())
+                , _fixture.Create<string>()
+                , _fixture.Create<DateTime>()
+                , _fixture.Create<string>()
+                , _fixture.Create<DateTime>()
                 , _fixture.Create<string>());
 
             _transactionGateway.Setup(_ => _.GetById(It.IsAny<Guid>()))

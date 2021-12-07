@@ -5,8 +5,8 @@ using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Domain.FinancialSummary;
 using Hackney.Shared.HousingSearch.Domain.Accounts;
+using Hackney.Shared.HousingSearch.Domain.Person;
 using Hackney.Shared.HousingSearch.Domain.Transactions;
-using Hackney.Shared.Person;
 using Hackney.Shared.Tenure.Domain;
 using TargetType = FinanceServicesApi.V1.Domain.ContactDetails.TargetType;
 
@@ -41,7 +41,7 @@ namespace FinanceServicesApi.V1.Factories
                 CurrentBalance = account?.ConsolidatedBalance ?? 0,
                 HousingBenefit = summaries.Sum(s => s.HousingBenefitAmount),
                 ServiceCharge = charges.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount),
-                DateOfBirth = person.DateOfBirth,
+                DateOfBirth = DateTime.Parse(person.DateOfBirth),
                 PersonId = "Not Detected",
                 LastPaymentAmount = transactions.Last().PaidAmount,
                 LastPaymentDate = transactions.Last(p => p.PaidAmount > 0).TransactionDate,

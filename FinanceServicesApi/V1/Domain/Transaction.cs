@@ -2,6 +2,8 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using FinanceServicesApi.V1.Infrastructure;
+using Hackney.Shared.HousingSearch.Domain.Person;
+using Hackney.Shared.HousingSearch.Domain.Transactions;
 
 namespace FinanceServicesApi.V1.Domain
 {
@@ -57,7 +59,7 @@ namespace FinanceServicesApi.V1.Domain
 
         public string Address { get; set; }
 
-        public TransactionPerson Person { get; set; }
+        public Person Person { get; set; }
 
         public string Fund { get; set; }
 

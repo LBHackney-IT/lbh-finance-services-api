@@ -36,8 +36,8 @@ namespace FinanceServicesApi.Tests.V1.Domain
             Assert.IsType<DateTime>(transaction.TransactionDate);
             Assert.IsType<string>(transaction.TransactionSource);
 
-            Assert.IsType<Person>(transaction.Sender);
-            var personType = typeof(Person);
+            Assert.IsType<Sender>(transaction.Sender);
+            var personType = typeof(Sender);
             personType.GetProperties().Length.Should().Be(2);
             Assert.IsType<Guid>(transaction.Sender.Id);
             Assert.IsType<string>(transaction.Sender.FullName);

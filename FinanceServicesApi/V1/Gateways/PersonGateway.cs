@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
-using Hackney.Shared.Person;
+using Hackney.Shared.HousingSearch.Domain.Person;
 using Newtonsoft.Json;
 
 namespace FinanceServicesApi.V1.Gateways
