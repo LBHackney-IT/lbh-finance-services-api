@@ -2,10 +2,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using FinanceServicesApi.V1.Infrastructure;
-using Hackney.Shared.HousingSearch.Domain.Person;
-using Hackney.Shared.HousingSearch.Domain.Transactions;
+using FinanceServicesApi.V1.Infrastructure.Enums;
+using Hackney.Shared.Person;
 
-namespace FinanceServicesApi.V1.Domain
+namespace FinanceServicesApi.V1.Domain.TransactionModels
 {
     public class Transaction
     {

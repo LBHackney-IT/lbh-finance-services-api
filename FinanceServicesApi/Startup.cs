@@ -149,12 +149,22 @@ namespace FinanceServicesApi
         {
             services.AddScoped<IAccountGateway, AccountGateway>();
             services.AddScoped<ITransactionGateway, TransactionGateway>();
+            services.AddScoped<IPersonGateway, PersonGateway>();
+            services.AddScoped<IFinancialSummaryByTargetIdGateway, FinancialSummaryByTargetIdGateway>();
+            services.AddScoped<IContactDetailsGateway, ContactDetailsGateway>();
+            services.AddScoped<ITenureInformationGateway, TenureInformationGateway>();
+            services.AddScoped<IChargesGateway, ChargesGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetAccountByIdUseCase, GetAccountByIdUseCase>();
             services.AddScoped<IGetLastPaymentTransactionsByTargetIdUseCase, GetLastPaymentTransactionsByTargetIdUseCase>();
+            services.AddScoped<IGetPersonByIdUseCase, GetPersonByIdUseCase>();
+            services.AddScoped<IGetFinancialSummaryByTargetIdUseCase, GetFinancialSummaryByTargetIdUseCase>();
+            services.AddScoped<IGetContactDetailsByTargetIdUseCase, GetContactDetailsByTargetIdUseCase>();
+            services.AddScoped<IGetTenureInformationByIdUseCase, GetTenureInformationByIdUseCase>();
+            services.AddScoped<IGetChargeByTargetIdUseCase, GetChargeByTargetIdUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

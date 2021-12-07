@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Request;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Boundary.Responses.MetaData;
+using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
-using Hackney.Shared.HousingSearch.Domain.Transactions;
 using Newtonsoft.Json;
 
 namespace FinanceServicesApi.V1.Gateways
@@ -31,7 +32,7 @@ namespace FinanceServicesApi.V1.Gateways
             var transactionApiUrl = _getEnvironmentVariables.GetTransactionApiUrl().ToString();
             var transactionApiKey = _getEnvironmentVariables.GetTransactionApiKey();
 
-            _client.AddHeader(new HttpHeader<string, string> { Name = "x-api-key", Value = transactionApiKey });
+            _client.AddAuthorization(new AuthenticationHeaderValue("x-api-key", transactionApiKey));
 
             var response = await _client.GetAsync(new Uri($"{transactionApiUrl}/transactions/{id.ToString()}")).ConfigureAwait(false);
             if (response == null)
@@ -52,17 +53,18 @@ namespace FinanceServicesApi.V1.Gateways
             if (transactionsRequest.TargetId == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(transactionsRequest.TargetId).ToString()} shouldn't be empty or null");
 
-            var searchApiUrl = _getEnvironmentVariables.GetHousingSearchApi(ESearchBy.ByTransaction).ToString();
+            var searchApiUrl = _getEnvironmentVariables.GetHousingSearchApi(SearchBy.ByTransaction).ToString();
             var searchAuthKey = _getEnvironmentVariables.GetHousingSearchApiToken();
 
             _client.AddHeader(new HttpHeader<string, string> { Name = "Authorization", Value = searchAuthKey });
+            //_client.AddAuthorization(new AuthenticationHeaderValue("Authorization", searchAuthKey));
 
             var response = await _client.GetAsync(new Uri($"{searchApiUrl}?" +
-                                                          $"TargetId=${transactionsRequest.TargetId.ToString()}&" +
+                                                          $"TargetId={transactionsRequest.TargetId.ToString()}&" +
                                                           $"Page={transactionsRequest.Page}&" +
                                                           $"PageSize={transactionsRequest.PageSize}&" +
                                                           $"SortBy={transactionsRequest.SortBy}&" +
-                                                          $"IsDesc={transactionsRequest.SortBy}")).ConfigureAwait(false);
+                                                          $"IsDesc={transactionsRequest.IsDesc}")).ConfigureAwait(false);
             if (response == null)
             {
                 throw new Exception("The search api is not reachable!");
@@ -72,8 +74,8 @@ namespace FinanceServicesApi.V1.Gateways
                 throw new Exception(response.StatusCode.ToString());
             }
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var transactionResponse = JsonConvert.DeserializeObject<APIResponse<HousingSearchResponse<Transaction>>>(responseContent);
-            return transactionResponse?.Results.ResponseList;
+            var transactionResponse = JsonConvert.DeserializeObject<APIResponse<GetTransactionListResponse>>(responseContent);
+            return transactionResponse?.Results.Transactions;
         }
     }
 }

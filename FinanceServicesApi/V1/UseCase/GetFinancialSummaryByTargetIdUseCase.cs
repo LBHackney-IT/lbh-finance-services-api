@@ -9,11 +9,11 @@ namespace FinanceServicesApi.V1.UseCase
 {
     public class GetFinancialSummaryByTargetIdUseCase : IGetFinancialSummaryByTargetIdUseCase
     {
-        private readonly IFinancialSummaryGateway _gateway;
+        private readonly IFinancialSummaryByTargetIdGateway _byTargetIdGateway;
 
-        public GetFinancialSummaryByTargetIdUseCase(IFinancialSummaryGateway gateway)
+        public GetFinancialSummaryByTargetIdUseCase(IFinancialSummaryByTargetIdGateway byTargetIdGateway)
         {
-            _gateway = gateway;
+            _byTargetIdGateway = byTargetIdGateway;
         }
         /// <summary>
         /// 
@@ -24,7 +24,7 @@ namespace FinanceServicesApi.V1.UseCase
         /// <returns></returns>
         public async Task<List<WeeklySummary>> ExecuteAsync(Guid targetId, DateTime? startDate, DateTime? endDate)
         {
-            return await _gateway.GetGetAllByTargetId(targetId, startDate, endDate).ConfigureAwait(false);
+            return await _byTargetIdGateway.GetGetAllByTargetId(targetId, startDate, endDate).ConfigureAwait(false);
         }
     }
 }

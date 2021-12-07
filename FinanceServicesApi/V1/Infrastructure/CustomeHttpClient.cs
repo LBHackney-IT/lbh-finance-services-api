@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace FinanceServicesApi.V1.Infrastructure
 
         public void AddHeader(HttpHeader<string, string> header)
         {
+            if (DefaultRequestHeaders.Any(a => a.Key.ToLower() == header.Name.ToLower()))
+                DefaultRequestHeaders.Remove(header.Name);
             DefaultRequestHeaders.Add(header.Name, header.Value);
         }
 

@@ -20,7 +20,7 @@ namespace FinanceServicesApi.V1.Infrastructure.Interfaces
         public string GetAssetInformationApiToken();
         public string GetPersonApiUrl();
         public string GetPersonApiToken();
-        public string GetHousingSearchApi(ESearchBy searchBy);
+        public string GetHousingSearchApi(SearchBy searchBy);
         public string GetHousingSearchApiToken();
     }
 }

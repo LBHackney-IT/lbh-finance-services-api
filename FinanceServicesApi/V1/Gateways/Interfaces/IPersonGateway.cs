@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Hackney.Shared.HousingSearch.Domain.Person;
+using Hackney.Shared.Person;
 
 namespace FinanceServicesApi.V1.Gateways.Interfaces
 {

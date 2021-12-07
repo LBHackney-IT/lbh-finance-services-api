@@ -15,9 +15,10 @@
       "launchUrl": "swagger/index.html",
       "environmentVariables": {
         "DynamoDb_LocalServiceUrl": "http://localhost:8000",
+        "SEARCH_API_AUTH_KEY": "12345",
         "DynamoDb_LocalMode": "true",
-        "HOUSING_SEARCH_API": "http://localhost:5003/api/v1/search",
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SEARCH_API_URL": "http://localhost:5003/api/v1"
       },
       "applicationUrl": "http://localhost:5000"
     }

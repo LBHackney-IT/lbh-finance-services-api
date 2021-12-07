@@ -4,10 +4,10 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Boundary.Responses.MetaData;
+using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
-using Hackney.Shared.HousingSearch.Domain.Accounts;
 using Newtonsoft.Json;
 
 namespace FinanceServicesApi.V1.Gateways
@@ -33,7 +33,7 @@ namespace FinanceServicesApi.V1.Gateways
 
             _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", accountApiToken));
 
-            var response = await _client.GetAsync(new Uri($"{accountApiUrl}/accounts/{id.ToString()}")).ConfigureAwait(false);
+            var response = await _client.GetAsync(new Uri($"{accountApiUrl}/{id.ToString()}")).ConfigureAwait(false);
             if (response == null)
             {
                 throw new Exception($"The account api is not reachable!{accountApiUrl}");
@@ -52,7 +52,7 @@ namespace FinanceServicesApi.V1.Gateways
             if (targetId == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(targetId).ToString()} shouldn't be empty or null");
 
-            var searchApiUrl = _getEnvironmentVariables.GetHousingSearchApi(ESearchBy.ByTransaction).ToString();
+            var searchApiUrl = _getEnvironmentVariables.GetHousingSearchApi(SearchBy.ByTransaction).ToString();
             var searchAuthKey = _getEnvironmentVariables.GetHousingSearchApiToken();
 
             _client.AddHeader(new HttpHeader<string, string> { Name = "Authorization", Value = searchAuthKey });
@@ -67,8 +67,8 @@ namespace FinanceServicesApi.V1.Gateways
                 throw new Exception(response.StatusCode.ToString());
             }
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var transactionResponse = JsonConvert.DeserializeObject<APIResponse<HousingSearchResponse<Account>>>(responseContent);
-            return transactionResponse?.Results.ResponseList;
+            var transactionResponse = JsonConvert.DeserializeObject<APIResponse<GetAccountListResponse>>(responseContent);
+            return transactionResponse?.Results.Accounts;
         }
     }
 }

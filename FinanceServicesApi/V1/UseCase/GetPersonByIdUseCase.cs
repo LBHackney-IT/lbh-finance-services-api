@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase.Interfaces;
-using Hackney.Shared.HousingSearch.Domain.Person;
+using Hackney.Shared.Person;
 
 namespace FinanceServicesApi.V1.UseCase
 {

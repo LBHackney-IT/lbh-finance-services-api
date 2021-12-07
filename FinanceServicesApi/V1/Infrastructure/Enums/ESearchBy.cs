@@ -1,6 +1,6 @@
 namespace FinanceServicesApi.V1.Infrastructure.Enums
 {
-    public enum ESearchBy
+    public enum SearchBy
     {
         ByTransaction, ByAccount, ByTenure, ByPerson, ByAsset, ByCharge
     }

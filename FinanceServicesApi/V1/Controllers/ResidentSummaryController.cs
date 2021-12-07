@@ -45,25 +45,29 @@ namespace FinanceServicesApi.V1.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="request">Master Account Id</param>
+        /// <param name="request">Master Account Id and person id who is the owner of the account</param>
         /// <returns></returns>
         [ProducesResponseType(typeof(ConfirmTransferResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
-        [HttpGet("{request}")]
+        [HttpGet]
         public async Task<IActionResult> GetById([FromQuery] ResidentSummaryRequest request)
         {
-            var accountResponse = await _accountByIdUseCase.ExecuteAsync(request.MasterAccountId).ConfigureAwait(false);
-            var transactionResponse = await _lastPaymentTransactionsByTargetIdUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
+            var accountResponse =
+                await _accountByIdUseCase.ExecuteAsync(request.MasterAccountId).ConfigureAwait(false);
+            var transactionResponse =
+                await _lastPaymentTransactionsByTargetIdUseCase.ExecuteAsync(Guid.Parse("42373628-07e7-4f9d-a755-86968b268d54")/*accountResponse.TargetId*/).ConfigureAwait(false);
             var tenureInformationResponse =
                 await _tenureUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
-            var personResponse = await _personUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
-            var chargeResponse = await _chargeUseCase.ExecuteAsync(accountResponse.TargetId, TargetType.Tenure)
-                .ConfigureAwait(false);
-            var contactDetailsResponse = await _contactUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
-            var summaryResponse = await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id, null, null)
-                .ConfigureAwait(false);
+            var personResponse =
+                await _personUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
+            var chargeResponse =
+                await _chargeUseCase.ExecuteAsync(accountResponse.TargetId, TargetType.Tenure).ConfigureAwait(false);
+            var contactDetailsResponse =
+                await _contactUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
+            var summaryResponse =
+                await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id, null, null).ConfigureAwait(false);
 
             var result = ResponseFactory.ToResponse(personResponse,
                 tenureInformationResponse,

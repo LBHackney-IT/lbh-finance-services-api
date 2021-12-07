@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Request;
+using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase.Interfaces;
-using Hackney.Shared.HousingSearch.Domain.Transactions;
 
 namespace FinanceServicesApi.V1.UseCase
 {
@@ -37,7 +37,7 @@ namespace FinanceServicesApi.V1.UseCase
             {
                 transactions = await _gateway.GetByTargetId(request).ConfigureAwait(false);
                 request.Page++;
-            } while (transactions.Count == 0 || transactions.Any(p => p.PaidAmount > 0));
+            } while (!(transactions.Count == 0 || transactions.Any(p => p.PaidAmount > 0)));
 
             return transactions;
         }

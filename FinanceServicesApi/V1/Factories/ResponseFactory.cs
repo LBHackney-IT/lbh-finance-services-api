@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FinanceServicesApi.V1.Boundary.Responses;
+using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Domain.FinancialSummary;
-using Hackney.Shared.HousingSearch.Domain.Accounts;
-using Hackney.Shared.HousingSearch.Domain.Person;
-using Hackney.Shared.HousingSearch.Domain.Transactions;
+using FinanceServicesApi.V1.Domain.TransactionModels;
+using Hackney.Shared.Person;
 using Hackney.Shared.Tenure.Domain;
 using TargetType = FinanceServicesApi.V1.Domain.ContactDetails.TargetType;
 
@@ -21,7 +21,7 @@ namespace FinanceServicesApi.V1.Factories
                 Address = transaction.Address,
                 ArrearsAfterPayment = account.AccountBalance - transaction.TransactionAmount,
                 CurrentArrears = account.AccountBalance,
-                Payee = transaction.Sender.FullName,
+                Payee = $"{transaction.Person.MiddleName} {transaction.Person.FirstName}",
                 RentAccountNumber = account.PaymentReference,
                 Resident = account.Tenure.PrimaryTenants.First().FullName
             };
@@ -41,7 +41,7 @@ namespace FinanceServicesApi.V1.Factories
                 CurrentBalance = account?.ConsolidatedBalance ?? 0,
                 HousingBenefit = summaries.Sum(s => s.HousingBenefitAmount),
                 ServiceCharge = charges.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount),
-                DateOfBirth = DateTime.Parse(person.DateOfBirth),
+                DateOfBirth = person.DateOfBirth,
                 PersonId = "Not Detected",
                 LastPaymentAmount = transactions.Last().PaidAmount,
                 LastPaymentDate = transactions.Last(p => p.PaidAmount > 0).TransactionDate,

@@ -134,24 +134,24 @@ namespace FinanceServicesApi.V1.Infrastructure
             return result;
         }
 
-        public string GetHousingSearchApi(ESearchBy searchBy)
+        public string GetHousingSearchApi(SearchBy searchBy)
         {
             string result = Environment.GetEnvironmentVariable("SEARCH_API_URL") ?? string.Empty; ;
             if (string.IsNullOrEmpty(result))
                 throw new Exception("Search api url shouldn't be null or empty");
             switch (searchBy)
             {
-                case ESearchBy.ByAccount:
+                case SearchBy.ByAccount:
                     return result + $"/search/accounts";
-                case ESearchBy.ByAsset:
+                case SearchBy.ByAsset:
                     return result + $"/search/assets";
-                case ESearchBy.ByCharge:
+                case SearchBy.ByCharge:
                     return result + $"/search/charges";
-                case ESearchBy.ByPerson:
+                case SearchBy.ByPerson:
                     return result + $"/search/persons";
-                case ESearchBy.ByTenure:
+                case SearchBy.ByTenure:
                     return result + $"/search/tenures";
-                case ESearchBy.ByTransaction:
+                case SearchBy.ByTransaction:
                     return result + $"/search/transactions";
                 default:
                     throw new ArgumentNullException($"{nameof(searchBy).ToString()} is not valid");
