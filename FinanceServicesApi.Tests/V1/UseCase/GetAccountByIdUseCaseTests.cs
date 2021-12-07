@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase;
 using FluentAssertions;
 using Hackney.Shared.HousingSearch.Domain.Accounts;
-using Hackney.Shared.HousingSearch.Domain.Accounts.Enum;
 using Moq;
 using Xunit;
 
@@ -28,35 +26,8 @@ namespace FinanceServicesApi.Tests.V1.UseCase
         [Fact]
         public void ExecuteAsyncWithValidIdReturnsAccount()
         {
+            Account accountResponse = _fixture.Create<Account>();
             Guid id = Guid.NewGuid();
-
-            Account accountResponse = Account.Create(id
-                , _fixture.Create<Guid>()
-                , _fixture.Create<string>()
-                , _fixture.Create<TargetType>()
-                , _fixture.Create<Guid>()
-                , _fixture.Create<AccountType>()
-                , _fixture.Create<RentGroupType>()
-                , _fixture.Create<string>()
-                , _fixture.Create<decimal>()
-                , _fixture.Create<decimal>()
-                , _fixture.Create<string>()
-                , _fixture.Create<string>()
-                , _fixture.Create<DateTime>()
-                , _fixture.Create<DateTime>()
-                , _fixture.Create<DateTime>()
-                , _fixture.Create<DateTime>()
-                , _fixture.Create<AccountStatus>()
-                , new List<ConsolidatedCharge>(2)
-                {
-                    {ConsolidatedCharge.Create(_fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<decimal>())},
-                    {ConsolidatedCharge.Create(_fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<decimal>())}
-                }
-                , Tenure.Create(_fixture.Create<string>(), _fixture.Create<TenureType>(), _fixture.Create<string>(), new List<PrimaryTenant>(2)
-                {
-                    {PrimaryTenant.Create(_fixture.Create<Guid>(),_fixture.Create<string>())},
-                    {PrimaryTenant.Create(_fixture.Create<Guid>(),_fixture.Create<string>())}
-                }));
 
             _accountGateway.Setup(_ => _.GetById(It.IsAny<Guid>()))
                 .ReturnsAsync(accountResponse);
@@ -65,7 +36,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             _accountGateway.Verify(_ => _.GetById(It.IsAny<Guid>()), Times.Once);
             response.Should().NotBeNull();
             response.Result.Should().BeEquivalentTo(accountResponse);
-            response.Result.Id.Should().Be(id);
+            response.Result.Id.Should().NotBeEmpty();
         }
 
         [Fact]

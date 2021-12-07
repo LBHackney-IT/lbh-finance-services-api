@@ -6,8 +6,8 @@ using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Domain.FinancialSummary;
 using Hackney.Shared.HousingSearch.Domain.Accounts;
 using Hackney.Shared.HousingSearch.Domain.Transactions;
+using Hackney.Shared.Person;
 using Hackney.Shared.Tenure.Domain;
-using Person = Hackney.Shared.HousingSearch.Domain.Person.Person;
 using TargetType = FinanceServicesApi.V1.Domain.ContactDetails.TargetType;
 
 namespace FinanceServicesApi.V1.Factories
@@ -27,43 +27,34 @@ namespace FinanceServicesApi.V1.Factories
             };
         }
 
-        public static ResidentSummaryResponse ToResponse(Person person
-            , TenureInformation tenure
-            , Account accounts
-            , Domain.Charges.Charge charges
-            , List<ContactDetails> contacts
-            , List<WeeklySummary> summaries
-            , List<Transaction> transactions)
+        public static ResidentSummaryResponse ToResponse(Person person, TenureInformation tenure, Account account, Domain.Charges.Charge charges, List<ContactDetail> contacts, List<WeeklySummary> summaries, List<Transaction> transactions)
         {
             if (summaries == null) throw new ArgumentNullException(nameof(summaries));
-            if (transactions == null) throw new ArgumentNullException(nameof(transactions));
             if (person == null) throw new ArgumentNullException(nameof(person));
             if (tenure == null) throw new ArgumentNullException(nameof(tenure));
-            if (accounts == null) throw new ArgumentNullException(nameof(accounts));
+            if (account == null) throw new ArgumentNullException(nameof(account));
             if (charges == null) throw new ArgumentNullException(nameof(charges));
             if (contacts == null) throw new ArgumentNullException(nameof(contacts));
 
-            /*var masterAccount = accounts.First(a => a.AccountType == AccountType.Master);*/
-
             return new ResidentSummaryResponse
             {
-                CurrentBalance = accounts?.ConsolidatedBalance ?? 0,
-                HousingBenefit = summaries.Sum(s=>s.HousingBenefitAmount),
-                ServiceCharge = charges.DetailedCharges.Where(c=>c.Type.ToLower()=="service").Sum(c=>c.Amount),
-                DateOfBirth = DateTime.Parse(person.DateOfBirth),
+                CurrentBalance = account?.ConsolidatedBalance ?? 0,
+                HousingBenefit = summaries.Sum(s => s.HousingBenefitAmount),
+                ServiceCharge = charges.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount),
+                DateOfBirth = person.DateOfBirth,
                 PersonId = "Not Detected",
                 LastPaymentAmount = transactions.Last().PaidAmount,
                 LastPaymentDate = transactions.Last(p => p.PaidAmount > 0).TransactionDate,
                 PrimaryTenantAddress = tenure.TenuredAsset.FullAddress,
                 TenancyType = tenure.TenureType.Code,
-                PrimaryTenantEmail = contacts.Where(c=>c.TargetType==TargetType.Person && c.ContactInformation.ContactType==ContactType.Email)
-                    .Select(s=>s.ContactInformation.Value).First(),
-                PrimaryTenantName = accounts?.Tenure.PrimaryTenants.First().FullName,
+                PrimaryTenantEmail = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
+                    .Select(s => s.ContactInformation.Value).First(),
+                PrimaryTenantName = account?.Tenure.PrimaryTenants.First().FullName,
                 PrimaryTenantPhoneNumber = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
                     .Select(s => s.ContactInformation.Value).First(),
                 TenureId = "Not Detected",
                 TenureStartDate = tenure.StartOfTenureDate,
-                WeeklyTotalCharges = charges.DetailedCharges.Where(c=>c.Type.ToLower()== "weekly").Sum(c=>c.Amount)
+                WeeklyTotalCharges = charges.DetailedCharges.Where(c => c.Type.ToLower() == "weekly").Sum(c => c.Amount)
             };
         }
     }

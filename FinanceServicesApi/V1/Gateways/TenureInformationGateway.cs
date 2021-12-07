@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace FinanceServicesApi.V1.Gateways
 {
-    public class TenureInformationGateway: ITenureInformationGateway
+    public class TenureInformationGateway : ITenureInformationGateway
     {
         private readonly ICustomeHttpClient _client;
         private readonly IGetEnvironmentVariables _getEnvironmentVariables;

@@ -1,5 +1,5 @@
 using AutoFixture;
-using FinanceServicesApi.V1.Domain.SuspenseTransaction;
+using FinanceServicesApi.V1.Boundary.Responses;
 using FluentAssertions;
 using Xunit;
 
@@ -12,10 +12,10 @@ namespace FinanceServicesApi.Tests.V1.Boundary.Response
         [Fact]
         public void ConfirmTransferEntityHasPropertiesSet()
         {
-            var confirmTransferEntity = typeof(ConfirmTransferEntity);
+            var confirmTransferEntity = typeof(ConfirmTransferResponse);
             confirmTransferEntity.GetProperties().Length.Should().Be(7);
 
-            var entity = _fixture.Create<ConfirmTransferEntity>();
+            var entity = _fixture.Create<ConfirmTransferResponse>();
             Assert.IsType<string>(entity.Address);
             Assert.IsType<decimal>(entity.ArrearsAfterPayment);
             Assert.IsType<decimal>(entity.CurrentArrears);
@@ -27,7 +27,7 @@ namespace FinanceServicesApi.Tests.V1.Boundary.Response
         [Fact]
         public void AccountAlwaysReturnsSuspense()
         {
-            var entity = _fixture.Create<ConfirmTransferEntity>();
+            var entity = _fixture.Create<ConfirmTransferResponse>();
             entity.Account.Should().Be("Suspense");
         }
 

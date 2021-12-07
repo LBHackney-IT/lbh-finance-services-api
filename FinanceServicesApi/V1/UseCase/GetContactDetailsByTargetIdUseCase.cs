@@ -15,7 +15,7 @@ namespace FinanceServicesApi.V1.UseCase
         {
             _gateway = gateway;
         }
-        public async Task<List<ContactDetails>> ExecuteAsync(Guid targetId)
+        public async Task<List<ContactDetail>> ExecuteAsync(Guid targetId)
         {
             return await _gateway.GetByTargetId(targetId).ConfigureAwait(false);
         }
