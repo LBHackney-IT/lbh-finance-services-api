@@ -1,26 +1,20 @@
 using System;
-using System.Collections.Generic;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Responses;
-using FinanceServicesApi.V1.Boundary.Responses.MetaData;
+using Amazon.DynamoDBv2.DataModel;
 using FinanceServicesApi.V1.Domain.AccountModels;
+using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
-using FinanceServicesApi.V1.Infrastructure.Enums;
-using FinanceServicesApi.V1.Infrastructure.Interfaces;
-using Newtonsoft.Json;
+using FinanceServicesApi.V1.Infrastructure.Entities;
 
 namespace FinanceServicesApi.V1.Gateways
 {
     public class AccountGateway : IAccountGateway
     {
-        private readonly ICustomeHttpClient _client;
-        private readonly IGetEnvironmentVariables _getEnvironmentVariables;
+        private readonly IDynamoDBContext _dynamoDbContext;
 
-        public AccountGateway(ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
+        public AccountGateway(IDynamoDBContext dynamoDbContext)
         {
-            _client = client;
-            _getEnvironmentVariables = getEnvironmentVariables;
+            _dynamoDbContext = dynamoDbContext;
         }
 
         public async Task<Account> GetById(Guid id)
@@ -28,47 +22,9 @@ namespace FinanceServicesApi.V1.Gateways
             if (id == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
 
-            var accountApiUrl = _getEnvironmentVariables.GetAccountApiUrl().ToString();
-            var accountApiToken = _getEnvironmentVariables.GetAccountApiToken();
+            var result = await _dynamoDbContext.LoadAsync<AccountDbEntity>(id).ConfigureAwait(false);
 
-            _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", accountApiToken));
-
-            var response = await _client.GetAsync(new Uri($"{accountApiUrl}/{id.ToString()}")).ConfigureAwait(false);
-            if (response == null)
-            {
-                throw new Exception($"The account api is not reachable!{accountApiUrl}");
-            }
-            else if (response.Content == null)
-            {
-                throw new Exception(response.StatusCode.ToString());
-            }
-            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Account accountResponse = JsonConvert.DeserializeObject<Account>(responseContent);
-            return accountResponse;
+            return result?.ToDomain();
         }
-
-        /*public async Task<List<Account>> GetByTargetId(Guid targetId)
-        {
-            if (targetId == Guid.Empty)
-                throw new ArgumentNullException($"the {nameof(targetId).ToString()} shouldn't be empty or null");
-
-            var searchApiUrl = _getEnvironmentVariables.GetHousingSearchApi(SearchBy.ByTransaction).ToString();
-            var searchAuthKey = _getEnvironmentVariables.GetHousingSearchApiToken();
-
-            _client.AddHeader(new HttpHeader<string, string> { Name = "Authorization", Value = searchAuthKey });
-
-            var response = await _client.GetAsync(new Uri($"{searchApiUrl}?TargetId=${targetId.ToString()}")).ConfigureAwait(false);
-            if (response == null)
-            {
-                throw new Exception("The search api is not reachable!");
-            }
-            else if (response.Content == null)
-            {
-                throw new Exception(response.StatusCode.ToString());
-            }
-            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var transactionResponse = JsonConvert.DeserializeObject<APIResponse<GetAccountListResponse>>(responseContent);
-            return transactionResponse?.Results.Accounts;
-        }*/
     }
 }
