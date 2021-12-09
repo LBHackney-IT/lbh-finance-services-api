@@ -47,7 +47,7 @@ namespace FinanceServicesApi.V1.Gateways
             return accountResponse;
         }
 
-        public async Task<List<Account>> GetByTargetId(Guid targetId)
+        /*public async Task<List<Account>> GetByTargetId(Guid targetId)
         {
             if (targetId == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(targetId).ToString()} shouldn't be empty or null");
@@ -69,6 +69,6 @@ namespace FinanceServicesApi.V1.Gateways
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var transactionResponse = JsonConvert.DeserializeObject<APIResponse<GetAccountListResponse>>(responseContent);
             return transactionResponse?.Results.Accounts;
-        }
+        }*/
     }
 }
