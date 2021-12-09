@@ -1,8 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
+using Amazon.Util;
+using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Domain.FinancialSummary;
+using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
+using FinanceServicesApi.V1.Infrastructure;
+using FinanceServicesApi.V1.Infrastructure.Entities;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Newtonsoft.Json;
 
@@ -10,36 +21,67 @@ namespace FinanceServicesApi.V1.Gateways
 {
     public class FinancialSummaryByTargetIdGateway : IFinancialSummaryByTargetIdGateway
     {
-        private readonly ICustomeHttpClient _client;
-        private readonly IGetEnvironmentVariables _getEnvironmentVariables;
+        private const string Targetid = "target_id";
+        public string PaginationToken { get; set; } = "{}";
 
-        public FinancialSummaryByTargetIdGateway(ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
+        private readonly IAmazonDynamoDB _amazonDynamoDb;
+        private readonly IDynamoDBContext _dynamoDbContext;
+
+        public FinancialSummaryByTargetIdGateway(IAmazonDynamoDB amazonDynamoDb,IDynamoDBContext dynamoDbContext)
         {
-            _client = client;
-            _getEnvironmentVariables = getEnvironmentVariables;
+            _amazonDynamoDb = amazonDynamoDb;
+            _dynamoDbContext = dynamoDbContext;
         }
         public async Task<List<WeeklySummary>> GetGetAllByTargetId(Guid targetId, DateTime? startDate, DateTime? endDate)
         {
             if (targetId == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(targetId).ToString()} shouldn't be empty or null");
 
-            var financialSummaryApiUrl = _getEnvironmentVariables.GetFinancialSummaryApiUrl();
-            var financialSummaryApiKey = _getEnvironmentVariables.GetFinancialSummaryApiKey();
+            var dbWeeklySummary = new List<WeeklySummaryDbEntity>();
+            var table = _dynamoDbContext.GetTargetTable<WeeklySummaryDbEntity>();
 
-            _client.AddHeader(new HttpHeader<string, string> { Name = "x-api-key", Value = financialSummaryApiKey });
+            var queryConfig = new QueryOperationConfig
+            {
+                BackwardSearch = true,
+                ConsistentRead = true,
+                Filter = new QueryFilter(Targetid, QueryOperator.Equal, targetId),
+                PaginationToken = PaginationToken
+            };
+            queryConfig.Filter.AddCondition("summary_type", QueryOperator.Equal, SummaryType.WeeklySummary.ToString());
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                queryConfig.Filter.AddCondition("submit_date", QueryOperator.Between, startDate.Value.ToString(AWSSDKUtils.ISO8601DateFormat), endDate.Value.ToString(AWSSDKUtils.ISO8601DateFormat));
+            }
 
-            var response = await _client.GetAsync(new Uri($"{financialSummaryApiUrl}/api/v1/weekly-summary?targetid={targetId.ToString()}&startDate={startDate.ToString()}&endDate={endDate.ToString()}")).ConfigureAwait(false);
-            if (response == null)
+            do
             {
-                throw new Exception("The financial summary api is not reachable!");
+                var search = table.Query(queryConfig);
+                PaginationToken = search.PaginationToken;
+                var resultsSet = await search.GetNextSetAsync().ConfigureAwait(false);
+                if (resultsSet.Any())
+                {
+                    dbWeeklySummary.AddRange(_dynamoDbContext.FromDocuments<WeeklySummaryDbEntity>(resultsSet));
+
+                }
             }
-            else if (response.Content == null)
+            while (!string.Equals(PaginationToken, "{}", StringComparison.Ordinal));
+
+            return dbWeeklySummary.ToDomain();
+
+            /*QueryRequest request = new QueryRequest
             {
-                throw new Exception(response.StatusCode.ToString());
-            }
-            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var fsResponse = JsonConvert.DeserializeObject<List<WeeklySummary>>(responseContent);
-            return fsResponse;
+                TableName = "FinancialSummaries",
+                *//*IndexName = "target_id",*//*
+                KeyConditionExpression = "target_id = :V_target_id",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                {
+                    {":V_target_id",new AttributeValue{S = targetId.ToString()}}
+                },
+                ScanIndexForward = true
+            };
+
+            var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
+            return response.ToWeeklySummary();*/
         }
     }
 }

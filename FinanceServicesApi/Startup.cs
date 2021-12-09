@@ -165,7 +165,7 @@ namespace FinanceServicesApi
             services.AddScoped<IGetFinancialSummaryByTargetIdUseCase, GetFinancialSummaryByTargetIdUseCase>();
             services.AddScoped<IGetContactDetailsByTargetIdUseCase, GetContactDetailsByTargetIdUseCase>();
             services.AddScoped<IGetTenureInformationByIdUseCase, GetTenureInformationByIdUseCase>();
-            services.AddScoped<IGetChargeByTargetIdUseCase, GetChargeByTargetIdUseCase>();
+            services.AddScoped<IGetChargeByAssetIdUseCase, GetChargeByAssetIdUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

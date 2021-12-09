@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Amazon.DynamoDBv2.Model;
+using FinanceServicesApi.V1.Domain.Charges;
+using FinanceServicesApi.V1.Domain.FinancialSummary;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 
@@ -69,6 +72,71 @@ namespace FinanceServicesApi.V1.Infrastructure
             }
 
             return transactions;
+        }
+
+        public static List<WeeklySummary> ToWeeklySummary(this QueryResponse response)
+        {
+            if (response is null)
+            {
+                throw new ArgumentNullException(nameof(response));
+            }
+
+            List<WeeklySummary> weeklySummaries = new List<WeeklySummary>();
+
+            foreach (Dictionary<string, AttributeValue> item in response.Items)
+            {
+                weeklySummaries.Add(new WeeklySummary
+                {
+                    Id = Guid.Parse(item["id"].S),
+                    TargetId = Guid.Parse(item["target_id"].S),
+                    PeriodNo = short.Parse(item["period_no"].N),
+                    FinancialYear = short.Parse(item["financial_year"].N),
+                    FinancialMonth = short.Parse(item["financial_month"].N),
+                    WeekStartDate = DateTime.Parse(item["week_start_date"].S),
+                    ChargedAmount = decimal.Parse(item["charged_amount"].N, CultureInfo.InvariantCulture),
+                    PaidAmount = decimal.Parse(item["paid_amount"].N, CultureInfo.InvariantCulture),
+                    BalanceAmount = decimal.Parse(item["balance_amount"].N, CultureInfo.InvariantCulture),
+                    HousingBenefitAmount = decimal.Parse(item["housing_benefit_amount"].N, CultureInfo.InvariantCulture),
+                    SubmitDate = DateTime.Parse(item["submit_date"].S),
+                });
+            }
+
+            return weeklySummaries;
+        }
+
+        public static List<Charge> ToCharge(this QueryResponse response)
+        {
+            var chargesList = new List<Charge>();
+            foreach (Dictionary<string, AttributeValue> item in response.Items)
+            {
+                var detailCharges = new List<DetailedCharges>();
+                var innerItem = item["detailed_charges"].L;
+                foreach (var detail in innerItem)
+                {
+                    detailCharges.Add(new DetailedCharges
+                    {
+                        Amount = Convert.ToDecimal(detail.M["amount"].N),
+                        ChargeCode = detail.M["chargeCode"].S,
+                        ChargeType = Enum.Parse<ChargeType>(detail.M["chargeType"].S),
+                        Type = detail.M["type"].S,
+                        SubType = detail.M["subType"].S,
+                        Frequency = detail.M["frequency"].S,
+                        StartDate = DateTime.Parse(detail.M["startDate"].S),
+                        EndDate = DateTime.Parse(detail.M["endDate"].S)
+                    });
+                }
+
+                chargesList.Add(new Charge
+                {
+                    Id = Guid.Parse(item["id"].S),
+                    TargetId = Guid.Parse(item["target_id"].S),
+                    ChargeGroup = Enum.Parse<ChargeGroup>(item["charge_group"].S),
+                    TargetType = Enum.Parse<TargetType>(item["target_type"].S),
+                    DetailedCharges = detailCharges
+                });
+            }
+
+            return chargesList;
         }
     }
 }

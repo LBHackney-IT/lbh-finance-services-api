@@ -1,5 +1,3 @@
-using FinanceServicesApi.V1.Boundary.Request;
-using FinanceServicesApi.V1.Domain;
 using FinanceServicesApi.V1.Infrastructure.Entities;
 using System.Collections.Generic;
 using System.Linq;

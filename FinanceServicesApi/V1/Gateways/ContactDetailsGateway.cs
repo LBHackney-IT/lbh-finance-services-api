@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
@@ -28,7 +29,7 @@ namespace FinanceServicesApi.V1.Gateways
             var contactDetailsApiToken = _getEnvironmentVariables.GetContactDetailsApiToken();
 
             _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", contactDetailsApiToken));
-            var response = await _client.GetAsync(new Uri($"{contactDetailsApiUrl}/api/v2/contactDetails/TargetId={targetId.ToString()}")).ConfigureAwait(false);
+            var response = await _client.GetAsync(new Uri($"{contactDetailsApiUrl}/contactDetails?TargetId={targetId.ToString()}")).ConfigureAwait(false);
             if (response == null)
             {
                 throw new Exception("The contact details api is not reachable!");
@@ -38,8 +39,8 @@ namespace FinanceServicesApi.V1.Gateways
                 throw new Exception(response.StatusCode.ToString());
             }
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var contactDetailsResponse = JsonConvert.DeserializeObject<List<ContactDetail>>(responseContent);
-            return contactDetailsResponse;
+            var contactDetailsResponse = JsonConvert.DeserializeObject<GetContactDetailsResponse>(responseContent);
+            return contactDetailsResponse?.Results;
         }
     }
 }

@@ -1,8 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Requests;
+using FinanceServicesApi.V1.Boundary.Request;
 using FinanceServicesApi.V1.Boundary.Responses;
-using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
@@ -19,7 +18,7 @@ namespace FinanceServicesApi.V1.Controllers
     {
         private readonly IGetPersonByIdUseCase _personUseCase;
         private readonly IGetFinancialSummaryByTargetIdUseCase _financialSummaryUseCase;
-        private readonly IGetChargeByTargetIdUseCase _chargeUseCase;
+        private readonly IGetChargeByAssetIdUseCase _chargeUseCase;
         private readonly IGetTenureInformationByIdUseCase _tenureUseCase;
         private readonly IGetContactDetailsByTargetIdUseCase _contactUseCase;
         private readonly IGetAccountByIdUseCase _accountByIdUseCase;
@@ -27,7 +26,7 @@ namespace FinanceServicesApi.V1.Controllers
 
         public ResidentSummaryController(IGetPersonByIdUseCase personUseCase
             , IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase
-            , IGetChargeByTargetIdUseCase chargeUseCase
+            , IGetChargeByAssetIdUseCase chargeUseCase
             , IGetTenureInformationByIdUseCase tenureUseCase
             , IGetContactDetailsByTargetIdUseCase contactUseCase
             , IGetAccountByIdUseCase accountByIdUseCase
@@ -63,11 +62,11 @@ namespace FinanceServicesApi.V1.Controllers
             var personResponse =
                 await _personUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
             var chargeResponse =
-                await _chargeUseCase.ExecuteAsync(accountResponse.TargetId, TargetType.Tenure).ConfigureAwait(false);
+                await _chargeUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
             var contactDetailsResponse =
                 await _contactUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
             var summaryResponse =
-                await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id, null, null).ConfigureAwait(false);
+                await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow).ConfigureAwait(false);
 
             var result = ResponseFactory.ToResponse(personResponse,
                 tenureInformationResponse,

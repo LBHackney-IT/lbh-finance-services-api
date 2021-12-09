@@ -6,9 +6,9 @@ using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Domain.FinancialSummary;
 using FinanceServicesApi.V1.Domain.TransactionModels;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using Hackney.Shared.Person;
 using Hackney.Shared.Tenure.Domain;
-using TargetType = FinanceServicesApi.V1.Domain.ContactDetails.TargetType;
 
 namespace FinanceServicesApi.V1.Factories
 {
@@ -27,7 +27,7 @@ namespace FinanceServicesApi.V1.Factories
             };
         }
 
-        public static ResidentSummaryResponse ToResponse(Person person, TenureInformation tenure, Account account, Domain.Charges.Charge charges, List<ContactDetail> contacts, List<WeeklySummary> summaries, List<Transaction> transactions)
+        public static ResidentSummaryResponse ToResponse(Person person, TenureInformation tenure, Account account, List<Domain.Charges.Charge> charges, List<ContactDetail> contacts, List<WeeklySummary> summaries, List<Transaction> transactions)
         {
             if (summaries == null) throw new ArgumentNullException(nameof(summaries));
             if (person == null) throw new ArgumentNullException(nameof(person));
@@ -39,8 +39,8 @@ namespace FinanceServicesApi.V1.Factories
             return new ResidentSummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance ?? 0,
-                HousingBenefit = summaries.Sum(s => s.HousingBenefitAmount),
-                ServiceCharge = charges.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount),
+                HousingBenefit = summaries.OrderBy(o=>o.SubmitDate).Last().HousingBenefitAmount,
+                ServiceCharge = charges.Sum(p=>p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
                 DateOfBirth = person.DateOfBirth,
                 PersonId = "Not Detected",
                 LastPaymentAmount = transactions.Last().PaidAmount,
@@ -48,13 +48,13 @@ namespace FinanceServicesApi.V1.Factories
                 PrimaryTenantAddress = tenure.TenuredAsset.FullAddress,
                 TenancyType = tenure.TenureType.Code,
                 PrimaryTenantEmail = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
-                    .Select(s => s.ContactInformation.Value).First(),
+                    .Select(s => s.ContactInformation.Value).FirstOrDefault()??"",
                 PrimaryTenantName = account?.Tenure.PrimaryTenants.First().FullName,
                 PrimaryTenantPhoneNumber = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
-                    .Select(s => s.ContactInformation.Value).First(),
+                    .Select(s => s.ContactInformation.Value).FirstOrDefault()??"",
                 TenureId = "Not Detected",
                 TenureStartDate = tenure.StartOfTenureDate,
-                WeeklyTotalCharges = charges.DetailedCharges.Where(c => c.Type.ToLower() == "weekly").Sum(c => c.Amount)
+                WeeklyTotalCharges = charges.Sum(p=>p.DetailedCharges.Where(c => c.Type.ToLower() == "weekly").Sum(c => c.Amount))
             };
         }
     }

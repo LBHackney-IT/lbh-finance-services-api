@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 namespace FinanceServicesApi.V1.Infrastructure.Enums
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum TargetType
+    public enum SubType
     {
-        Tenure,
-        Person,
-        Organisation,
-        Asset,
-        Block,
-        Estate
+        CorrespondenceAddress,
+        Mobile,
+        Home,
+        Work,
+        Other,
+        Landline
     }
 }

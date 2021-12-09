@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using FinanceServicesApi.V1.Infrastructure;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 
 namespace FinanceServicesApi.V1.Domain.Charges
 {

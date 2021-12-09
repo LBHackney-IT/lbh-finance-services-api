@@ -1,4 +1,5 @@
 using System;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 
 namespace FinanceServicesApi.V1.Domain.ContactDetails
 {

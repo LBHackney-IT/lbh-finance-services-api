@@ -120,7 +120,7 @@ namespace FinanceServicesApi.V1.Infrastructure
 
         public string GetPersonApiUrl()
         {
-            string result = Environment.GetEnvironmentVariable("PERSON_API_URL") ?? string.Empty; ;
+            string result = Environment.GetEnvironmentVariable("PERSON_API_URL") ?? string.Empty;
             if (string.IsNullOrEmpty(result))
                 throw new Exception("Person api url shouldn't be null or empty.");
             return result;
@@ -128,7 +128,7 @@ namespace FinanceServicesApi.V1.Infrastructure
 
         public string GetPersonApiToken()
         {
-            string result = Environment.GetEnvironmentVariable("PERSON_API_TOKEN") ?? string.Empty; ;
+            string result = Environment.GetEnvironmentVariable("PERSON_API_TOKEN") ?? string.Empty;
             if (string.IsNullOrEmpty(result))
                 throw new Exception("Person api token shouldn't be null or empty.");
             return result;

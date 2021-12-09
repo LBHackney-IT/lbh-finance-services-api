@@ -1,4 +1,5 @@
 using Amazon.DynamoDBv2.DataModel;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using Hackney.Core.DynamoDb.Converters;
 
 namespace FinanceServicesApi.V1.Domain.ContactDetails

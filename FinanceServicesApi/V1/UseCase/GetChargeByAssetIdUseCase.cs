@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Gateways.Interfaces;
@@ -6,18 +7,18 @@ using FinanceServicesApi.V1.UseCase.Interfaces;
 
 namespace FinanceServicesApi.V1.UseCase
 {
-    public class GetChargeByTargetIdUseCase : IGetChargeByTargetIdUseCase
+    public class GetChargeByAssetIdUseCase : IGetChargeByAssetIdUseCase
     {
         private readonly IChargesGateway _gateway;
 
-        public GetChargeByTargetIdUseCase(IChargesGateway gateway)
+        public GetChargeByAssetIdUseCase(IChargesGateway gateway)
         {
             _gateway = gateway;
         }
 
-        public async Task<Charge> ExecuteAsync(Guid targetId, TargetType targetType)
+        public async Task<List<Charge>> ExecuteAsync(Guid assetId)
         {
-            return await _gateway.GetAllByTargetId(targetId, targetType).ConfigureAwait(false);
+            return await _gateway.GetAllByAssetId(assetId).ConfigureAwait(false);
         }
     }
 }
