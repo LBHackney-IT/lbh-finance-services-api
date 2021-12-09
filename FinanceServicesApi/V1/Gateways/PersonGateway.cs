@@ -24,8 +24,8 @@ namespace FinanceServicesApi.V1.Gateways
             if (id == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
 
-            var personApiUrl = _getEnvironmentVariables.GetAccountApiUrl().ToString();
-            var personApiToken = _getEnvironmentVariables.GetAccountApiToken();
+            var personApiUrl = _getEnvironmentVariables.GetPersonApiUrl().ToString();
+            var personApiToken = _getEnvironmentVariables.GetPersonApiToken();
 
             _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", personApiToken));
 
