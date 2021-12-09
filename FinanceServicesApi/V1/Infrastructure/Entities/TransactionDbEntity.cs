@@ -4,7 +4,6 @@ using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Conventers;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using Hackney.Core.DynamoDb.Converters;
-using Hackney.Shared.Person;
 
 namespace FinanceServicesApi.V1.Infrastructure.Entities
 {
@@ -13,12 +12,10 @@ namespace FinanceServicesApi.V1.Infrastructure.Entities
     {
 
 
-        [DynamoDBRangeKey]
-        [DynamoDBProperty(AttributeName = "id")]
+        [DynamoDBRangeKey(AttributeName = "id")]
         public Guid Id { get; set; }
 
-        [DynamoDBHashKey]
-        [DynamoDBProperty(AttributeName = "target_id")]
+        [DynamoDBHashKey(AttributeName = "target_id")]
         public Guid TargetId { get; set; }
 
         [DynamoDBProperty(AttributeName = "target_type", Converter = typeof(DynamoDbEnumConverter<TargetType>))]
@@ -75,8 +72,8 @@ namespace FinanceServicesApi.V1.Infrastructure.Entities
         [DynamoDBProperty(AttributeName = "address")]
         public string Address { get; set; }
 
-        [DynamoDBProperty(AttributeName = "person", Converter = typeof(DynamoDbObjectConverter<Person>))]
-        public Person Person { get; set; }
+        [DynamoDBProperty(AttributeName = "person", Converter = typeof(DynamoDbObjectConverter<TransactionPerson>))]
+        public TransactionPerson Person { get; set; }
 
         [DynamoDBProperty(AttributeName = "fund")]
         public string Fund { get; set; }

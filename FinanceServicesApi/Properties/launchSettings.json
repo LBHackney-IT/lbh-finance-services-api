@@ -22,7 +22,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "SEARCH_API_URL": "http://localhost:5003/api/v1"
       },
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "http://localhost:5007"
     }
   }
 }

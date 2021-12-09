@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Enums;
-using Hackney.Shared.Person;
 
 namespace FinanceServicesApi.V1.Domain.TransactionModels
 {
@@ -59,7 +58,7 @@ namespace FinanceServicesApi.V1.Domain.TransactionModels
 
         public string Address { get; set; }
 
-        public Person Person { get; set; }
+        public TransactionPerson Person { get; set; }
 
         public string Fund { get; set; }
 

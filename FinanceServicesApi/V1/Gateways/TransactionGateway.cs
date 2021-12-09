@@ -2,13 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.Model;
 using FinanceServicesApi.V1.Boundary.Request;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Boundary.Responses.MetaData;
+using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
+using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Entities;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
@@ -19,12 +23,14 @@ namespace FinanceServicesApi.V1.Gateways
     public class TransactionGateway : ITransactionGateway
     {
         private readonly IDynamoDBContext _dynamoDbContext;
+        private readonly IAmazonDynamoDB _amazonDynamoDb;
         private readonly ICustomeHttpClient _client;
         private readonly IGetEnvironmentVariables _getEnvironmentVariables;
 
-        public TransactionGateway(IDynamoDBContext dynamoDbContext, ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
+        public TransactionGateway(IDynamoDBContext dynamoDbContext,IAmazonDynamoDB amazonDynamoDb, ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
         {
             _dynamoDbContext = dynamoDbContext;
+            _amazonDynamoDb = amazonDynamoDb;
             _client = client;
             _getEnvironmentVariables = getEnvironmentVariables;
         }
@@ -58,9 +64,26 @@ namespace FinanceServicesApi.V1.Gateways
             if (transactionsRequest.TargetId == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(transactionsRequest.TargetId).ToString()} shouldn't be empty or null");
 
-            var data = await _dynamoDbContext.LoadAsync<List<TransactionDbEntity>>(transactionsRequest.TargetId).ConfigureAwait(false);
+            QueryRequest request = new QueryRequest
+            {
+                TableName = "Transactions",
+                /*IndexName = "target_id",*/
+                KeyConditionExpression = "target_id = :V_target_id",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                {
+                    {":V_target_id",new AttributeValue{S = transactionsRequest.TargetId.ToString()}}
+                },
+                ScanIndexForward = true
+            };
 
-            return data?.ToDomain();
+            var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
+            List<Transaction> data = response.ToTransactions();
+
+            return data;
+
+            /*var data = await _dynamoDbContext.LoadAsync<TransactionDbEntity>(transactionsRequest.TargetId,Guid.NewGuid()).ConfigureAwait(false);
+
+            return data?.ToDomain();*/
 
             /*var searchApiUrl = _getEnvironmentVariables.GetHousingSearchApi(SearchBy.ByTransaction).ToString();
             var searchAuthKey = _getEnvironmentVariables.GetHousingSearchApiToken();

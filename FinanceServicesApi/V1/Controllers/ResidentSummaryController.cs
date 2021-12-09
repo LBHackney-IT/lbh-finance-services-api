@@ -57,7 +57,7 @@ namespace FinanceServicesApi.V1.Controllers
             var accountResponse =
                 await _accountByIdUseCase.ExecuteAsync(request.MasterAccountId).ConfigureAwait(false);
             var transactionResponse =
-                await _lastPaymentTransactionsByTargetIdUseCase.ExecuteAsync(Guid.Parse("42373628-07e7-4f9d-a755-86968b268d54")/*accountResponse.TargetId*/).ConfigureAwait(false);
+                await _lastPaymentTransactionsByTargetIdUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
             var tenureInformationResponse =
                 await _tenureUseCase.ExecuteAsync(Guid.Parse("7495acd4-29af-49ad-8984-f30766f507af")/*accountResponse.TargetId*/).ConfigureAwait(false);
             var personResponse =

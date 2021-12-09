@@ -21,7 +21,7 @@ namespace FinanceServicesApi.V1.Factories
                 Address = transaction.Address,
                 ArrearsAfterPayment = account.AccountBalance - transaction.TransactionAmount,
                 CurrentArrears = account.AccountBalance,
-                Payee = $"{transaction.Person.MiddleName} {transaction.Person.FirstName}",
+                Payee = transaction.Person.FullName,
                 RentAccountNumber = account.PaymentReference,
                 Resident = account.Tenure.PrimaryTenants.First().FullName
             };
