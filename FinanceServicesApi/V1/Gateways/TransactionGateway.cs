@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2.DataModel;
 using FinanceServicesApi.V1.Boundary.Request;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Boundary.Responses.MetaData;
 using FinanceServicesApi.V1.Domain.TransactionModels;
+using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
+using FinanceServicesApi.V1.Infrastructure.Entities;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Newtonsoft.Json;
@@ -15,11 +18,13 @@ namespace FinanceServicesApi.V1.Gateways
 {
     public class TransactionGateway : ITransactionGateway
     {
+        private readonly IDynamoDBContext _dynamoDbContext;
         private readonly ICustomeHttpClient _client;
         private readonly IGetEnvironmentVariables _getEnvironmentVariables;
 
-        public TransactionGateway(ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
+        public TransactionGateway(IDynamoDBContext dynamoDbContext, ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
         {
+            _dynamoDbContext = dynamoDbContext;
             _client = client;
             _getEnvironmentVariables = getEnvironmentVariables;
         }
@@ -53,7 +58,11 @@ namespace FinanceServicesApi.V1.Gateways
             if (transactionsRequest.TargetId == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(transactionsRequest.TargetId).ToString()} shouldn't be empty or null");
 
-            var searchApiUrl = _getEnvironmentVariables.GetHousingSearchApi(SearchBy.ByTransaction).ToString();
+            var data = await _dynamoDbContext.LoadAsync<List<TransactionDbEntity>>(transactionsRequest.TargetId).ConfigureAwait(false);
+
+            return data?.ToDomain();
+
+            /*var searchApiUrl = _getEnvironmentVariables.GetHousingSearchApi(SearchBy.ByTransaction).ToString();
             var searchAuthKey = _getEnvironmentVariables.GetHousingSearchApiToken();
 
             _client.AddHeader(new HttpHeader<string, string> { Name = "Authorization", Value = searchAuthKey });
@@ -75,7 +84,7 @@ namespace FinanceServicesApi.V1.Gateways
             }
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var transactionResponse = JsonConvert.DeserializeObject<APIResponse<GetTransactionListResponse>>(responseContent);
-            return transactionResponse?.Results.Transactions;
+            return transactionResponse?.Results.Transactions;*/
         }
     }
 }

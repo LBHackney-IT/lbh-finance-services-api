@@ -13,7 +13,7 @@ namespace FinanceServicesApi.V1.Domain.TransactionModels
 
         [AllowNull]
         public Guid TargetId { get; set; }
-
+        public TargetType TargetType { get; set; }
         [Range(1, 53)]
         public short PeriodNo { get; set; }
 
@@ -40,11 +40,11 @@ namespace FinanceServicesApi.V1.Domain.TransactionModels
 
         [Range(1, 12)]
         [Required]
-        public int FinancialMonth { get; set; }
+        public short FinancialMonth { get; set; }
 
         [Range(1, int.MaxValue)]
         [Required]
-        public int FinancialYear { get; set; }
+        public short FinancialYear { get; set; }
 
         [Range(0.0, 999999999999)]
         public decimal PaidAmount { get; set; }
@@ -65,5 +65,12 @@ namespace FinanceServicesApi.V1.Domain.TransactionModels
 
         [AllowNull]
         public SuspenseResolutionInfo SuspenseResolutionInfo { get; set; }
+        public string LastUpdatedBy { get; set; }
+
+        public DateTime LastUpdatedAt { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public string CreatedBy { get; set; }
     }
 }

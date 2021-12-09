@@ -12,6 +12,7 @@ using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using FinanceServicesApi.V1.UseCase;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FinanceServicesApi.Versioning;
+using Hackney.Core.DynamoDb;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -113,7 +114,7 @@ namespace FinanceServicesApi
             });
 
             ConfigureLogging(services, Configuration);
-
+            services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
             RegisterInfraService(services);
