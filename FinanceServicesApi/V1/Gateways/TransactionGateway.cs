@@ -21,7 +21,7 @@ namespace FinanceServicesApi.V1.Gateways
         private readonly IAmazonDynamoDB _amazonDynamoDb;
         private readonly IDynamoDBContext _dynamoDbContext;
 
-        public TransactionGateway(IAmazonDynamoDB amazonDynamoDb,IDynamoDBContext dynamoDbContext)
+        public TransactionGateway(IAmazonDynamoDB amazonDynamoDb, IDynamoDBContext dynamoDbContext)
         {
             _amazonDynamoDb = amazonDynamoDb;
             _dynamoDbContext = dynamoDbContext;
@@ -49,7 +49,7 @@ namespace FinanceServicesApi.V1.Gateways
 
             QueryRequest request = new QueryRequest
             {
-                TableName = "Transactions", 
+                TableName = "Transactions",
                 KeyConditionExpression = "target_id = :V_target_id",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
@@ -61,7 +61,7 @@ namespace FinanceServicesApi.V1.Gateways
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
             List<Transaction> data = response.ToTransactions();
 
-            return data; 
+            return data;
         }
     }
 }

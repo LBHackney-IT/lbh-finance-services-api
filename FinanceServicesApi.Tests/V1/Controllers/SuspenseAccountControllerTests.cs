@@ -88,20 +88,20 @@ namespace FinanceServicesApi.Tests.V1.Controllers
             result.Should().BeOfType(typeof(BadRequestObjectResult));
         }*/
 
-/*        [Fact]
-        public async Task GetTransactionByIdWithNullResponseThrowsBadRequest()
-        {
-            Account accountResponse = _fixture.Build<Account>().Create();
-            _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(accountResponse);
+        /*        [Fact]
+                public async Task GetTransactionByIdWithNullResponseThrowsBadRequest()
+                {
+                    Account accountResponse = _fixture.Build<Account>().Create();
+                    _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                        .ReturnsAsync(accountResponse);
 
-            Transaction transactionResponse = _fixture.Build<Transaction>().Create();
-            _getTransactionByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
-                .ReturnsAsync((Transaction) null);
+                    Transaction transactionResponse = _fixture.Build<Transaction>().Create();
+                    _getTransactionByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                        .ReturnsAsync((Transaction) null);
 
-            var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
-            result.Should().BeOfType(typeof(NotFoundObjectResult));
-        }*/
+                    var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
+                    result.Should().BeOfType(typeof(NotFoundObjectResult));
+                }*/
 
         /*[Fact]
         public async Task GetByIdWithValidInputReturnsOk()
