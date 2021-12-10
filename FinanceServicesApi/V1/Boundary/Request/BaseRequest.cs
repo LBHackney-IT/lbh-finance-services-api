@@ -8,5 +8,9 @@ namespace FinanceServicesApi.V1.Boundary.Request
         /// The master account id which includes all relevant child accounts
         /// </summary>
         public Guid MasterAccountId { get; set; }
+        /// <summary>
+        /// The owner of the account
+        /// </summary>
+        public Guid PersonId { get; set; }
     }
 }

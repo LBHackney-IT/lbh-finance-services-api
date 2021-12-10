@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Amazon.Runtime.Internal;
 using FinanceServicesApi.V1.Boundary.Request;
 using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
+using FinanceServicesApi.V1.Domain.PropertySummary;
 using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.UseCase.Interfaces;
+using Hackney.Shared.Tenure.Domain;
 using Microsoft.AspNetCore.Http;
 
 namespace FinanceServicesApi.V1.Controllers
@@ -20,7 +23,7 @@ namespace FinanceServicesApi.V1.Controllers
     public class PropertySummaryController : BaseController
     {
         private readonly IGetPersonByIdUseCase _personUseCase;
-        private readonly IGetFinancialSummaryByTargetIdUseCase _financialSummaryUseCase;
+        /*private readonly IGetFinancialSummaryByTargetIdUseCase _financialSummaryUseCase;*/
         private readonly IGetChargeByAssetIdUseCase _chargeUseCase;
         private readonly IGetTenureInformationByIdUseCase _tenureUseCase;
         private readonly IGetContactDetailsByTargetIdUseCase _contactUseCase;
@@ -29,7 +32,7 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetAssetByIdUseCase _assetUseCase;
 
         public PropertySummaryController(IGetPersonByIdUseCase personUseCase
-            , IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase
+            /*, IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase*/
             , IGetChargeByAssetIdUseCase chargeUseCase
             , IGetTenureInformationByIdUseCase tenureUseCase
             , IGetContactDetailsByTargetIdUseCase contactUseCase
@@ -38,7 +41,7 @@ namespace FinanceServicesApi.V1.Controllers
             , IGetAssetByIdUseCase assetByIdUseCase)
         {
             _personUseCase = personUseCase;
-            _financialSummaryUseCase = financialSummaryUseCase;
+            /*_financialSummaryUseCase = financialSummaryUseCase;*/
             _chargeUseCase = chargeUseCase;
             _tenureUseCase = tenureUseCase;
             _contactUseCase = contactUseCase;
@@ -62,6 +65,8 @@ namespace FinanceServicesApi.V1.Controllers
             var accountResponse =
                 await _accountUseCase.ExecuteAsync(request.MasterAccountId).ConfigureAwait(false);
 
+            var assetResponse = await _assetUseCase.ExecuteAsync(request.AssetId).ConfigureAwait(false);
+
             var transactionResponse = (accountResponse == null || accountResponse.TargetId == Guid.Empty) ? null :
                 await _transactionUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
 
@@ -73,26 +78,29 @@ namespace FinanceServicesApi.V1.Controllers
                                  tenureInformationResponse.TenuredAsset.Id == Guid.Empty) ? null :
                 await _chargeUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
 
-            var contactDetailsResponse = (accountResponse == null ||
-                                          accountResponse.Tenure==null ||
-                                          accountResponse.Tenure.PrimaryTenants.ToList().Count==0) ?null:
-                await _contactUseCase.ExecuteAsync(accountResponse.
-                    Tenure.
-                    PrimaryTenants.
-                    First().Id).ConfigureAwait(false);
+            var personResponse = await _personUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
+            List<TenureInformation> tenantsResponse = new AutoConstructedList<TenureInformation>();
 
-            var summaryResponse = (tenureInformationResponse == null ||
+            if (personResponse?.Tenures != null)
+                foreach (var t in personResponse.Tenures)
+                {
+                    tenantsResponse.Add(await _tenureUseCase.ExecuteAsync(t.Id).ConfigureAwait(false));
+                }
+
+            var contactDetailsResponse = await _contactUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
+
+            /*var summaryResponse = (tenureInformationResponse == null ||
                                    tenureInformationResponse.TenuredAsset == null ||
                                    tenureInformationResponse.TenuredAsset.Id == Guid.Empty) ? null :
-                await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow).ConfigureAwait(false);
+                await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow).ConfigureAwait(false);*/
 
-            var result = ResponseFactory.ToResponse(personResponse,
-                tenureInformationResponse,
+            var result = ResponseFactory.ToResponse(tenureInformationResponse,
                 accountResponse,
                 chargeResponse,
                 contactDetailsResponse,
-                summaryResponse,
-                transactionResponse);
+                transactionResponse,
+                assetResponse,
+                tenantsResponse);
             return Ok(result);
         }
 
@@ -106,11 +114,13 @@ namespace FinanceServicesApi.V1.Controllers
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet("tenants/{id}")]
-        public async Task<IActionResult> GetAssetsByPersonId(Guid id)
+        public async Task<IActionResult> GetTenantsByAssetId(Guid id)
         {
             if (id == Guid.Empty)
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
                     $"{nameof(id).ToString()} cannot be empty."));
+
+
 
             var personData = await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
             if (personData == null)

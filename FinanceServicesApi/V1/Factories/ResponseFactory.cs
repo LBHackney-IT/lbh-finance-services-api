@@ -8,6 +8,7 @@ using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Domain.FinancialSummary;
+using FinanceServicesApi.V1.Domain.PropertySummary;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using Hackney.Shared.Asset.Domain;
@@ -31,7 +32,12 @@ namespace FinanceServicesApi.V1.Factories
             };
         }
 
-        public static ResidentSummaryResponse ToResponse(Person person, TenureInformation tenure, Account account, List<Domain.Charges.Charge> charges, List<ContactDetail> contacts, List<WeeklySummary> summaries, List<Transaction> transactions)
+        public static ResidentSummaryResponse ToResponse(Person person,
+            TenureInformation tenure,
+            Account account,
+            List<Domain.Charges.Charge> charges,
+            List<ContactDetail> contacts,
+            List<Transaction> transactions)
         {
             /*if (summaries == null) throw new ArgumentNullException(nameof(summaries));
             if (person == null) throw new ArgumentNullException(nameof(person));
@@ -43,7 +49,7 @@ namespace FinanceServicesApi.V1.Factories
             return new ResidentSummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance,
-                HousingBenefit = summaries.Count == 0 ? 0 : summaries.OrderBy(o => o.SubmitDate).Last().HousingBenefitAmount,
+                HousingBenefit = transactions.Sum(s=>s.HousingBenefitAmount),
                 ServiceCharge = charges.Count == 0 ? 0 : charges.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
                 DateOfBirth = person?.DateOfBirth,
                 PersonId = "-",
@@ -66,9 +72,9 @@ namespace FinanceServicesApi.V1.Factories
             Account account,
             List<Charge> charges,
             List<ContactDetail> contacts,
-            WeeklySummary summaries,
             List<Transaction> transactions,
-            Asset asset)
+            Asset asset,
+            List<TenureInformation> tenants)
         {
             /*if (summaries == null) throw new ArgumentNullException(nameof(summaries));
             if (person == null) throw new ArgumentNullException(nameof(person));
@@ -78,7 +84,7 @@ namespace FinanceServicesApi.V1.Factories
             if (contacts == null) throw new ArgumentNullException(nameof(contacts));*/
 
             var firstMondayOfApril = new DateTime(DateTime.UtcNow.Year, 1, 1);
-            while (firstMondayOfApril.DayOfWeek < DayOfWeek.Monday)
+            while (firstMondayOfApril.DayOfWeek != DayOfWeek.Monday)
             {
                 firstMondayOfApril = firstMondayOfApril.AddDays(1);
             }
@@ -92,19 +98,19 @@ namespace FinanceServicesApi.V1.Factories
             return new PropertySummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance,
-                HousingBenefit = summaries?.HousingBenefitAmount,
+                HousingBenefit = transactions.Sum(s=>s.HousingBenefitAmount),
                 ServiceCharge = charges.Count == 0 ? 0 : charges.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
                 TenancyType = tenure?.TenureType.Code,
-                PrimaryTenantEmail = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
+                PrimaryTenantEmail = contacts?.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
                     .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
                 PrimaryTenantName = account?.Tenure.PrimaryTenants.First().FullName,
-                PrimaryTenantPhoneNumber = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
+                PrimaryTenantPhoneNumber = contacts?.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
                     .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
                 Rent = tenure?.Charges.Rent,
-                Address = asset.AssetAddress,
+                Address = asset?.AssetAddress,
                 Prn = tenure?.PaymentReference,
                 PropertyReference = tenure?.TenuredAsset?.PropertyReference,
-                PropertySize = asset.AssetCharacteristics.NumberOfBedrooms,
+                PropertySize = asset?.AssetCharacteristics?.NumberOfBedrooms??0,
                 TenancyStartDate = tenure?.StartOfTenureDate,
                 YearToDate = ytd,
                 WeeklyTotalCharges = charges.Sum(p =>
@@ -119,7 +125,11 @@ namespace FinanceServicesApi.V1.Factories
                             c.StartDate>=firstMondayOfApril &&
                             c.EndDate>=DateTime.UtcNow &&
                             c.SubType.ToLower() == "rent" &&
-                            c.Type.ToLower() == "weekly").Amount)
+                            c.Type.ToLower() == "weekly").Amount),
+                PropertyDetails = tenants?.Select(p=>new PropertyDetails
+                {
+                    
+                }).ToList()
             };
         }
 

@@ -102,5 +102,6 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// </example>
         public string PrimaryTenantEmail { get; set; }
         public int PropertySize { get; set; }
+        public PropertyDetails PropertyDetails { get; set; }
     }
 }

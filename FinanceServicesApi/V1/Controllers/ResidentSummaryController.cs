@@ -19,7 +19,7 @@ namespace FinanceServicesApi.V1.Controllers
     public class ResidentSummaryController : BaseController
     {
         private readonly IGetPersonByIdUseCase _personUseCase;
-        private readonly IGetFinancialSummaryByTargetIdUseCase _financialSummaryUseCase;
+        /*private readonly IGetFinancialSummaryByTargetIdUseCase _financialSummaryUseCase;*/
         private readonly IGetChargeByAssetIdUseCase _chargeUseCase;
         private readonly IGetTenureInformationByIdUseCase _tenureUseCase;
         private readonly IGetContactDetailsByTargetIdUseCase _contactUseCase;
@@ -28,7 +28,7 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetAssetByIdUseCase _assetUseCase;
 
         public ResidentSummaryController(IGetPersonByIdUseCase personUseCase
-            , IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase
+            /*, IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase*/
             , IGetChargeByAssetIdUseCase chargeUseCase
             , IGetTenureInformationByIdUseCase tenureUseCase
             , IGetContactDetailsByTargetIdUseCase contactUseCase
@@ -37,7 +37,7 @@ namespace FinanceServicesApi.V1.Controllers
             , IGetAssetByIdUseCase assetByIdUseCase)
         {
             _personUseCase = personUseCase;
-            _financialSummaryUseCase = financialSummaryUseCase;
+            /*_financialSummaryUseCase = financialSummaryUseCase;*/
             _chargeUseCase = chargeUseCase;
             _tenureUseCase = tenureUseCase;
             _contactUseCase = contactUseCase;
@@ -78,17 +78,16 @@ namespace FinanceServicesApi.V1.Controllers
             var contactDetailsResponse =
                 await _contactUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
 
-            var summaryResponse = (tenureInformationResponse == null ||
+            /*var summaryResponse = (tenureInformationResponse == null ||
                                    tenureInformationResponse.TenuredAsset == null ||
                                    tenureInformationResponse.TenuredAsset.Id == Guid.Empty) ? null :
-                await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow).ConfigureAwait(false);
+                await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow).ConfigureAwait(false);*/
 
             var result = ResponseFactory.ToResponse(personResponse,
                 tenureInformationResponse,
                 accountResponse,
                 chargeResponse,
                 contactDetailsResponse,
-                summaryResponse,
                 transactionResponse);
             return Ok(result);
         }
