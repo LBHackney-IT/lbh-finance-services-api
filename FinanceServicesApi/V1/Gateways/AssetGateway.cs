@@ -11,12 +11,12 @@ using Newtonsoft.Json;
 
 namespace FinanceServicesApi.V1.Gateways
 {
-    public class AssetGateway: IAssetGateway
+    public class AssetGateway : IAssetGateway
     {
         private readonly ICustomeHttpClient _client;
         private readonly IGetEnvironmentVariables _getEnvironmentVariables;
 
-        public AssetGateway(ICustomeHttpClient client,IGetEnvironmentVariables getEnvironmentVariables)
+        public AssetGateway(ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
         {
             _client = client;
             _getEnvironmentVariables = getEnvironmentVariables;

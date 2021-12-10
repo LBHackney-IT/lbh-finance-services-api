@@ -41,7 +41,7 @@ namespace FinanceServicesApi.V1.Gateways
             {
                 var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var personResponse = JsonConvert.DeserializeObject<Person>(responseContent);
-                return personResponse; 
+                return personResponse;
             }
 
             return null;

@@ -70,13 +70,13 @@ namespace FinanceServicesApi.V1.Factories
                 LastUpdatedBy = transactionDbEntity.LastUpdatedBy
             };
         }
- 
+
         public static List<Transaction> ToDomain(this IEnumerable<TransactionDbEntity> databaseEntity)
         {
             return databaseEntity.Select(p => p.ToDomain())
                                  .OrderBy(x => x.TransactionDate)
                                  .ToList();
-        } 
+        }
 
         public static List<TransactionDbEntity> ToDatabaseList(this List<Transaction> transactions)
         {

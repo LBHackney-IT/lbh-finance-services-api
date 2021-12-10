@@ -27,7 +27,7 @@ namespace FinanceServicesApi.V1.Gateways
         private readonly IAmazonDynamoDB _amazonDynamoDb;
         private readonly IDynamoDBContext _dynamoDbContext;
 
-        public FinancialSummaryByTargetIdGateway(IAmazonDynamoDB amazonDynamoDb,IDynamoDBContext dynamoDbContext)
+        public FinancialSummaryByTargetIdGateway(IAmazonDynamoDB amazonDynamoDb, IDynamoDBContext dynamoDbContext)
         {
             _amazonDynamoDb = amazonDynamoDb;
             _dynamoDbContext = dynamoDbContext;

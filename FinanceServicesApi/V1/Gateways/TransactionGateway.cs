@@ -27,7 +27,7 @@ namespace FinanceServicesApi.V1.Gateways
         private readonly ICustomeHttpClient _client;
         private readonly IGetEnvironmentVariables _getEnvironmentVariables;
 
-        public TransactionGateway(IDynamoDBContext dynamoDbContext,IAmazonDynamoDB amazonDynamoDb, ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
+        public TransactionGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb, ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
         {
             _dynamoDbContext = dynamoDbContext;
             _amazonDynamoDb = amazonDynamoDb;

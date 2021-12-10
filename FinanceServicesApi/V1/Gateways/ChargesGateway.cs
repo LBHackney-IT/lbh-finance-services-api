@@ -18,7 +18,7 @@ namespace FinanceServicesApi.V1.Gateways
         private readonly IAmazonDynamoDB _amazonDynamoDb;
         private readonly IGetEnvironmentVariables _getEnvironmentVariables;
 
-        public ChargesGateway(ICustomeHttpClient client, IAmazonDynamoDB amazonDynamoDb ,IGetEnvironmentVariables getEnvironmentVariables)
+        public ChargesGateway(ICustomeHttpClient client, IAmazonDynamoDB amazonDynamoDb, IGetEnvironmentVariables getEnvironmentVariables)
         {
             _client = client;
             _amazonDynamoDb = amazonDynamoDb;

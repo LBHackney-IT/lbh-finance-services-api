@@ -6,7 +6,7 @@ using Hackney.Shared.Asset.Domain;
 
 namespace FinanceServicesApi.V1.UseCase
 {
-    public class GetAssetByIdUseCase: IGetAssetByIdUseCase
+    public class GetAssetByIdUseCase : IGetAssetByIdUseCase
     {
         private readonly IAssetGateway _gateway;
 
