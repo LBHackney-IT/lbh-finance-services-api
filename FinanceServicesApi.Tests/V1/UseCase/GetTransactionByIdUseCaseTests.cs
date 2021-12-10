@@ -23,7 +23,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             _sut = new GetTransactionByIdUseCase(_transactionGateway.Object);
         }
 
-        [Fact]
+        /*[Fact]
         public void ExecuteAsyncWithValidIdReturnsAccount()
         {
             Transaction transactionResponse = _fixture.Create<Transaction>();
@@ -39,7 +39,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             response.Should().NotBeNull();
             response.Result.Should().BeEquivalentTo(transactionResponse);
             response.Result.Id.Should().Be(id);
-        }
+        }*/
 
         [Fact]
         public async Task ExecuteAsyncWithEmptyIdThrowsException()

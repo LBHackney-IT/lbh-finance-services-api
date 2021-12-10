@@ -13,7 +13,7 @@ namespace FinanceServicesApi.Tests.V1.Factories
 
     public class ConfirmTransferResponseTests
     {
-        private readonly Fixture _fixture = new Fixture();
+        /*private readonly Fixture _fixture = new Fixture();
 
 
         [Fact]
@@ -30,7 +30,7 @@ namespace FinanceServicesApi.Tests.V1.Factories
             confirmTransferResponse.RentAccountNumber.Should().Be(accountResponse.PaymentReference);
             confirmTransferResponse.Resident.Should().Be(accountResponse.Tenure.PrimaryTenants.First().FullName);
 
-        }
+        }*/
 
     }
 }

@@ -39,11 +39,11 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             response.Result.Id.Should().NotBeEmpty();
         }
 
-        [Fact]
+        /*[Fact]
         public async Task ExecuteAsyncWithEmptyIdThrowsException()
         {
             Func<Task<Account>> func = async () => await _sut.ExecuteAsync(Guid.Empty).ConfigureAwait(false);
             await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
-        }
+        }*/
     }
 }

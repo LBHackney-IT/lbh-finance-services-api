@@ -23,7 +23,7 @@ namespace FinanceServicesApi.Tests.V1.Domain
         {
             #region AccountModel
             var model = typeof(Account);
-            model.GetProperties().Length.Should().Be(19);
+            model.GetProperties().Length.Should().Be(20);
 
             Account account = _fixture.Create<Account>();
 
@@ -65,7 +65,7 @@ namespace FinanceServicesApi.Tests.V1.Domain
             AccountTenureSubSet tenure = _fixture.Create<AccountTenureSubSet>();
             Assert.IsType<string>(tenure.FullAddress);
             Assert.IsType<string>(tenure.TenureId);
-            Assert.IsType<string>(tenure.TenureType);
+            Assert.IsType<TenureType>(tenure.TenureType);
             Assert.IsAssignableFrom<IEnumerable<PrimaryTenants>>(tenure.PrimaryTenants);
             #endregion
 
