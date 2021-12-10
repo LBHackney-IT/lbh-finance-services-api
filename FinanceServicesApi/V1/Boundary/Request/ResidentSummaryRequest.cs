@@ -2,14 +2,10 @@ using System;
 
 namespace FinanceServicesApi.V1.Boundary.Request
 {
-    public class ResidentSummaryRequest
+    public class ResidentSummaryRequest : BaseRequest
     {
         /// <summary>
-        /// The master account id which includes all relevant child accounts
-        /// </summary>
-        public Guid MasterAccountId { get; set; }
-        /// <summary>
-        /// The owner of the account's personId
+        /// The owner of the account
         /// </summary>
         public Guid PersonId { get; set; }
     }

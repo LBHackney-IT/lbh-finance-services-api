@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Request;
-using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
 using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;

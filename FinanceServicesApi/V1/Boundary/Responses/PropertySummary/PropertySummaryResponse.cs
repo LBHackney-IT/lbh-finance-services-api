@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using FinanceServicesApi.V1.Domain.PropertySummary;
+using Hackney.Shared.Asset.Domain;
 
 namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 {
@@ -12,21 +13,21 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// <example>
         ///     15 Marcon Court, Amhurst Rd, Hackney, London E8 1ND
         /// </example>
-        public string Address { get; set; }
+        public AssetAddress Address { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <example>
         ///     1235.12
         /// </example>
-        public decimal CurrentBalance { get; set; }
+        public decimal? CurrentBalance { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <example>
         ///     125.54
         /// </example>
-        public decimal Rent { get; set; }
+        public float? Rent { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -40,14 +41,14 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// <example>
         ///     54.25
         /// </example>
-        public decimal HousingBenefit { get; set; }
+        public decimal? HousingBenefit { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <example>
         /// 56425.25
         /// </example>
-        public decimal YearToDate { get; set; }
+        public decimal? YearToDate { get; set; }
 
         /// <summary>
         /// 
@@ -77,7 +78,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         ///     HRA SEC
         /// </example>
         public string TenancyType { get; set; }
-        public DateTime TenancyStartDate { get; set; }
+        public DateTime? TenancyStartDate { get; set; }
         public string PropertyReference { get; set; }
         /// <summary>
         /// 
@@ -101,6 +102,5 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// </example>
         public string PrimaryTenantEmail { get; set; }
         public int PropertySize { get; set; }
-        public List<PropertyDetails> PropertyDetails { get; set; }
     }
 }
