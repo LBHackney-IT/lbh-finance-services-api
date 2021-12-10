@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoFixture;
-using FinanceServicesApi.V1.Domain;
+using FinanceServicesApi.V1.Domain.TransactionModels;
 using FluentAssertions;
-using Hackney.Shared.HousingSearch.Domain.Transactions;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Domain

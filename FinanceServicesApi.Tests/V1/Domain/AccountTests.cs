@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using AutoFixture;
+using FinanceServicesApi.V1.Domain.AccountModels;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FluentAssertions;
-using Hackney.Shared.HousingSearch.Domain.Accounts;
-using Hackney.Shared.HousingSearch.Domain.Accounts.Enum;
 using Xunit;
-using RentGroupType = FinanceServicesApi.V1.Domain.RentGroupType;
 
 namespace FinanceServicesApi.Tests.V1.Domain
 {
@@ -44,7 +43,7 @@ namespace FinanceServicesApi.Tests.V1.Domain
             Assert.IsType<Guid>(account.TargetId);
             Assert.IsType<TargetType>(account.TargetType);
             Assert.IsAssignableFrom<IEnumerable<ConsolidatedCharge>>(account.ConsolidatedCharges);
-            Assert.IsType<Tenure>(account.Tenure);
+            Assert.IsType<AccountTenureSubSet>(account.Tenure);
             Assert.IsType<decimal>(account.ConsolidatedBalance);
             #endregion
 
@@ -60,21 +59,21 @@ namespace FinanceServicesApi.Tests.V1.Domain
             #endregion
 
             #region Tenure
-            var entityTenure = typeof(Tenure);
+            var entityTenure = typeof(AccountTenureSubSet);
             entityTenure.GetProperties().Length.Should().Be(4);
 
-            Tenure tenure = _fixture.Create<Tenure>();
+            AccountTenureSubSet tenure = _fixture.Create<AccountTenureSubSet>();
             Assert.IsType<string>(tenure.FullAddress);
             Assert.IsType<string>(tenure.TenureId);
             Assert.IsType<string>(tenure.TenureType);
-            Assert.IsAssignableFrom<IEnumerable<PrimaryTenant>>(tenure.PrimaryTenants);
+            Assert.IsAssignableFrom<IEnumerable<PrimaryTenants>>(tenure.PrimaryTenants);
             #endregion
 
             #region PrimaryTenant
-            var entityPrimaryTenant = typeof(PrimaryTenant);
+            var entityPrimaryTenant = typeof(PrimaryTenants);
             entityPrimaryTenant.GetProperties().Length.Should().Be(2);
 
-            PrimaryTenant primaryTenant = _fixture.Create<PrimaryTenant>();
+            PrimaryTenants primaryTenant = _fixture.Create<PrimaryTenants>();
             Assert.IsType<string>(primaryTenant.FullName);
             Assert.IsType<Guid>(primaryTenant.Id);
             #endregion

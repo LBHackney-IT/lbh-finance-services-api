@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using AutoFixture;
+using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase;
 using FluentAssertions;
-using Hackney.Shared.HousingSearch.Domain.Accounts;
 using Moq;
 using Xunit;
 

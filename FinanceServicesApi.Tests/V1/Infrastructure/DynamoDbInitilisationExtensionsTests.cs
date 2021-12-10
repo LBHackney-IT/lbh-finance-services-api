@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
+using Hackney.Core.DynamoDb;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Infrastructure

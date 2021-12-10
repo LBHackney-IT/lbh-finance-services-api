@@ -1,7 +1,9 @@
 using AutoFixture;
 using FluentAssertions;
 using System;
-using Hackney.Shared.HousingSearch.Domain.Transactions;
+using Bogus;
+using FinanceServicesApi.V1.Domain.TransactionModels;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Domain
@@ -36,11 +38,11 @@ namespace FinanceServicesApi.Tests.V1.Domain
             Assert.IsType<DateTime>(transaction.TransactionDate);
             Assert.IsType<string>(transaction.TransactionSource);
 
-            Assert.IsType<Sender>(transaction.Sender);
-            var personType = typeof(Sender);
+            Assert.IsType<Person>(transaction.Person);
+            var personType = typeof(Person);
             personType.GetProperties().Length.Should().Be(2);
-            Assert.IsType<Guid>(transaction.Sender.Id);
-            Assert.IsType<string>(transaction.Sender.FullName);
+            Assert.IsType<Guid>(transaction.Person.Id);
+            Assert.IsType<string>(transaction.Person.FullName);
 
 
             Assert.IsType<SuspenseResolutionInfo>(transaction.SuspenseResolutionInfo);

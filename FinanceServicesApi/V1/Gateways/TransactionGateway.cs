@@ -6,15 +6,11 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.Model;
 using FinanceServicesApi.V1.Boundary.Request;
-using FinanceServicesApi.V1.Boundary.Responses;
-using FinanceServicesApi.V1.Boundary.Responses.MetaData;
-using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Entities;
-using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Newtonsoft.Json;
 
@@ -22,17 +18,13 @@ namespace FinanceServicesApi.V1.Gateways
 {
     public class TransactionGateway : ITransactionGateway
     {
-        private readonly IDynamoDBContext _dynamoDbContext;
         private readonly IAmazonDynamoDB _amazonDynamoDb;
-        private readonly ICustomeHttpClient _client;
-        private readonly IGetEnvironmentVariables _getEnvironmentVariables;
+        private readonly IDynamoDBContext _dynamoDbContext;
 
-        public TransactionGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb, ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
+        public TransactionGateway(IAmazonDynamoDB amazonDynamoDb,IDynamoDBContext dynamoDbContext)
         {
-            _dynamoDbContext = dynamoDbContext;
             _amazonDynamoDb = amazonDynamoDb;
-            _client = client;
-            _getEnvironmentVariables = getEnvironmentVariables;
+            _dynamoDbContext = dynamoDbContext;
         }
 
         public async Task<Transaction> GetById(Guid id)
@@ -40,23 +32,14 @@ namespace FinanceServicesApi.V1.Gateways
             if (id == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
 
-            var transactionApiUrl = _getEnvironmentVariables.GetTransactionApiUrl().ToString();
-            var transactionApiKey = _getEnvironmentVariables.GetTransactionApiKey();
+            var response = await _dynamoDbContext.LoadAsync<TransactionDbEntity>(Guid.Empty, id).ConfigureAwait(false);
 
-            _client.AddAuthorization(new AuthenticationHeaderValue("x-api-key", transactionApiKey));
-
-            var response = await _client.GetAsync(new Uri($"{transactionApiUrl}/transactions/{id.ToString()}")).ConfigureAwait(false);
             if (response == null)
             {
                 throw new Exception("The transaction api is not reachable!");
             }
-            else if (response.Content == null)
-            {
-                throw new Exception(response.StatusCode.ToString());
-            }
-            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Transaction transactionResponse = JsonConvert.DeserializeObject<Transaction>(responseContent);
-            return transactionResponse;
+
+            return response.ToDomain();
         }
 
         public async Task<List<Transaction>> GetByTargetId(TransactionsRequest transactionsRequest)
@@ -66,8 +49,7 @@ namespace FinanceServicesApi.V1.Gateways
 
             QueryRequest request = new QueryRequest
             {
-                TableName = "Transactions",
-                /*IndexName = "target_id",*/
+                TableName = "Transactions", 
                 KeyConditionExpression = "target_id = :V_target_id",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
@@ -79,35 +61,7 @@ namespace FinanceServicesApi.V1.Gateways
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
             List<Transaction> data = response.ToTransactions();
 
-            return data;
-
-            /*var data = await _dynamoDbContext.LoadAsync<TransactionDbEntity>(transactionsRequest.TargetId,Guid.NewGuid()).ConfigureAwait(false);
-
-            return data?.ToDomain();*/
-
-            /*var searchApiUrl = _getEnvironmentVariables.GetHousingSearchApi(SearchBy.ByTransaction).ToString();
-            var searchAuthKey = _getEnvironmentVariables.GetHousingSearchApiToken();
-
-            _client.AddHeader(new HttpHeader<string, string> { Name = "Authorization", Value = searchAuthKey });
-            //_client.AddAuthorization(new AuthenticationHeaderValue("Authorization", searchAuthKey));
-
-            var response = await _client.GetAsync(new Uri($"{searchApiUrl}?" +
-                                                          $"TargetId={transactionsRequest.TargetId.ToString()}&" +
-                                                          $"Page={transactionsRequest.Page}&" +
-                                                          $"PageSize={transactionsRequest.PageSize}&" +
-                                                          $"SortBy={transactionsRequest.SortBy}&" +
-                                                          $"IsDesc={transactionsRequest.IsDesc}")).ConfigureAwait(false);
-            if (response == null)
-            {
-                throw new Exception("The search api is not reachable!");
-            }
-            else if (response.Content == null)
-            {
-                throw new Exception(response.StatusCode.ToString());
-            }
-            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var transactionResponse = JsonConvert.DeserializeObject<APIResponse<GetTransactionListResponse>>(responseContent);
-            return transactionResponse?.Results.Transactions;*/
+            return data; 
         }
     }
 }
