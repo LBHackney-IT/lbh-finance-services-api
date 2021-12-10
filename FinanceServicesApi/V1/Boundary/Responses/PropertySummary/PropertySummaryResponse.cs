@@ -1,65 +1,75 @@
 using System;
+using System.Collections.Generic;
+using FinanceServicesApi.V1.Domain.PropertySummary;
 
-namespace FinanceServicesApi.V1.Boundary.Responses
+namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 {
-    public class ResidentSummaryResponse
+    public class PropertySummaryResponse
     {
         /// <summary>
-        ///     The last balance of the all accounts of the person
+        /// 
         /// </summary>
         /// <example>
-        ///     3215.32
+        ///     15 Marcon Court, Amhurst Rd, Hackney, London E8 1ND
+        /// </example>
+        public string Address { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     1235.12
         /// </example>
         public decimal CurrentBalance { get; set; }
-
         /// <summary>
         /// 
         /// </summary>
         /// <example>
-        ///     314.25
+        ///     125.54
         /// </example>
-        public decimal WeeklyTotalCharges { get; set; }
-
+        public decimal Rent { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <example>
-        ///     23.71
+        /// 23.71
         /// </example>
         public decimal ServiceCharge { get; set; }
-
         /// <summary>
         /// 
         /// </summary>
         /// <example>
-        ///     36.14
+        ///     54.25
         /// </example>
         public decimal HousingBenefit { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        /// 56425.25
+        /// </example>
+        public decimal YearToDate { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         /// <example>
-        ///     02/05/21
+        ///     5642.25     
         /// </example>
-        public DateTime LastPaymentDate { get; set; }
-
+        public decimal WeeklyTotalCharges { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <example>
-        ///     105.37
+        ///     5682.58
         /// </example>
-        public decimal LastPaymentAmount { get; set; }
-
+        public decimal YearlyRentDebits { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <example>
-        ///     123456789
+        ///     231852456
         /// </example>
-        public string TenureId { get; set; }
-
+        public string Prn { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -67,23 +77,8 @@ namespace FinanceServicesApi.V1.Boundary.Responses
         ///     HRA SEC
         /// </example>
         public string TenancyType { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>
-        ///     12/12/12
-        /// </example>
-        public DateTime? TenureStartDate { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>
-        ///     123456789
-        /// </example>
-        public string PersonId { get; set; }
-
+        public DateTime TenancyStartDate { get; set; }
+        public string PropertyReference { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -91,7 +86,6 @@ namespace FinanceServicesApi.V1.Boundary.Responses
         ///     Kian Hayward
         /// </example>
         public string PrimaryTenantName { get; set; }
-
         /// <summary>
         /// 
         /// </summary>
@@ -99,7 +93,6 @@ namespace FinanceServicesApi.V1.Boundary.Responses
         ///     01234 567 890
         /// </example>
         public string PrimaryTenantPhoneNumber { get; set; }
-
         /// <summary>
         /// 
         /// </summary>
@@ -107,21 +100,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses
         ///     Kian.h@temp.com
         /// </example>
         public string PrimaryTenantEmail { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>
-        ///     15 Marcon
-        /// </example>
-        public string PrimaryTenantAddress { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <example>
-        ///     12/12/12
-        /// </example>
-        public DateTime? DateOfBirth { get; set; }
+        public int PropertySize { get; set; }
+        public List<PropertyDetails> PropertyDetails { get; set; }
     }
 }

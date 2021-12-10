@@ -37,9 +37,14 @@ namespace FinanceServicesApi.V1.Gateways
             {
                 throw new Exception(response.StatusCode.ToString());
             }
-            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var personResponse = JsonConvert.DeserializeObject<Person>(responseContent);
-            return personResponse;
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var personResponse = JsonConvert.DeserializeObject<Person>(responseContent);
+                return personResponse; 
+            }
+
+            return null;
         }
     }
 }
