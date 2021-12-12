@@ -1,4 +1,5 @@
 using System;
+using Hackney.Shared.Tenure.Domain;
 
 namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 {
@@ -45,7 +46,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// <example>
         ///     HRA SEC
         /// </example>
-        public string TenancyType { get; set; }
+        public TenureType TenancyType { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -60,6 +61,6 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         ///     2
         /// </example>
         public short TimeInPropertyM { get; set; }
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
     }
 }

@@ -7,8 +7,6 @@ using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Domain.ContactDetails;
-using FinanceServicesApi.V1.Domain.FinancialSummary;
-using FinanceServicesApi.V1.Domain.PropertySummary;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using Hackney.Shared.Asset.Domain;
@@ -39,17 +37,10 @@ namespace FinanceServicesApi.V1.Factories
             List<ContactDetail> contacts,
             List<Transaction> transactions)
         {
-            /*if (summaries == null) throw new ArgumentNullException(nameof(summaries));
-            if (person == null) throw new ArgumentNullException(nameof(person));
-            if (tenure == null) throw new ArgumentNullException(nameof(tenure));
-            if (account == null) throw new ArgumentNullException(nameof(account));
-            if (charges == null) throw new ArgumentNullException(nameof(charges));
-            if (contacts == null) throw new ArgumentNullException(nameof(contacts));*/
-
             return new ResidentSummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance,
-                HousingBenefit = transactions.Sum(s=>s.HousingBenefitAmount),
+                HousingBenefit = transactions.Sum(s => s.HousingBenefitAmount),
                 ServiceCharge = charges.Count == 0 ? 0 : charges.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
                 DateOfBirth = person?.DateOfBirth,
                 PersonId = "-",
@@ -64,7 +55,10 @@ namespace FinanceServicesApi.V1.Factories
                 PrimaryTenantPhoneNumber = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
                     .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
                 TenureStartDate = tenure?.StartOfTenureDate,
-                WeeklyTotalCharges = charges.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "weekly").Sum(c => c.Amount))
+                WeeklyTotalCharges = charges.Sum(p =>
+                    p.DetailedCharges.Where(c =>
+                        c.Frequency.ToLower() == "weekly" &&
+                        c.Type.ToLower() == "service").Sum(c => c.Amount))
             };
         }
 
@@ -73,16 +67,8 @@ namespace FinanceServicesApi.V1.Factories
             List<Charge> charges,
             List<ContactDetail> contacts,
             List<Transaction> transactions,
-            Asset asset,
-            List<TenureInformation> tenants)
+            Asset asset)
         {
-            /*if (summaries == null) throw new ArgumentNullException(nameof(summaries));
-            if (person == null) throw new ArgumentNullException(nameof(person));
-            if (tenure == null) throw new ArgumentNullException(nameof(tenure));
-            if (account == null) throw new ArgumentNullException(nameof(account));
-            if (charges == null) throw new ArgumentNullException(nameof(charges));
-            if (contacts == null) throw new ArgumentNullException(nameof(contacts));*/
-
             var firstMondayOfApril = new DateTime(DateTime.UtcNow.Year, 1, 1);
             while (firstMondayOfApril.DayOfWeek != DayOfWeek.Monday)
             {
@@ -93,43 +79,45 @@ namespace FinanceServicesApi.V1.Factories
                 .Where(p =>
                     p.TransactionDate >= firstMondayOfApril)
                 .Sum(p =>
-                    p.ChargedAmount- p.PaidAmount-p.HousingBenefitAmount);
+                    p.ChargedAmount - p.PaidAmount - p.HousingBenefitAmount);
 
             return new PropertySummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance,
-                HousingBenefit = transactions.Sum(s=>s.HousingBenefitAmount),
+                HousingBenefit = transactions.Sum(s => s.HousingBenefitAmount),
                 ServiceCharge = charges.Count == 0 ? 0 : charges.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
                 TenancyType = tenure?.TenureType.Code,
-                PrimaryTenantEmail = contacts?.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
-                    .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
+                PrimaryTenantEmail = contacts?.Where(c =>
+                        c.TargetType == TargetType.Person &&
+                        c.ContactInformation.ContactType == ContactType.Email)
+                    .Select(s =>
+                        s.ContactInformation.Value).FirstOrDefault() ?? "",
                 PrimaryTenantName = account?.Tenure.PrimaryTenants.First().FullName,
-                PrimaryTenantPhoneNumber = contacts?.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
-                    .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
+                PrimaryTenantPhoneNumber = contacts?.Where(c =>
+                        c.TargetType == TargetType.Person &&
+                        c.ContactInformation.ContactType == ContactType.Phone)
+                    .Select(s =>
+                        s.ContactInformation.Value).FirstOrDefault() ?? "",
                 Rent = tenure?.Charges.Rent,
                 Address = asset?.AssetAddress,
                 Prn = tenure?.PaymentReference,
                 PropertyReference = tenure?.TenuredAsset?.PropertyReference,
-                PropertySize = asset?.AssetCharacteristics?.NumberOfBedrooms??0,
+                PropertySize = asset?.AssetCharacteristics?.NumberOfBedrooms ?? 0,
                 TenancyStartDate = tenure?.StartOfTenureDate,
                 YearToDate = ytd,
                 WeeklyTotalCharges = charges.Sum(p =>
                     p.DetailedCharges.Where(c =>
-                        c.EndDate>=DateTime.UtcNow &&
-                        c.SubType.ToLower() == "service" &&
-                        c.Type.ToLower() == "weekly").Sum(c => c.Amount)),
+                        c.EndDate >= DateTime.UtcNow &&
+                        c.Type.ToLower() == "service" &&
+                        c.Frequency.ToLower() == "weekly").Sum(c => c.Amount)),
 
                 YearlyRentDebits = charges.Sum(p =>
                     p.DetailedCharges
                         .Last(c =>
-                            c.StartDate>=firstMondayOfApril &&
-                            c.EndDate>=DateTime.UtcNow &&
-                            c.SubType.ToLower() == "rent" &&
-                            c.Type.ToLower() == "weekly").Amount),
-                PropertyDetails = tenants?.Select(p=>new PropertyDetails
-                {
-                    
-                }).ToList()
+                            c.StartDate >= firstMondayOfApril &&
+                            c.EndDate >= DateTime.UtcNow &&
+                            c.Type.ToLower() == "rent" &&
+                            c.Frequency.ToLower() == "weekly").Amount)
             };
         }
 
@@ -145,6 +133,59 @@ namespace FinanceServicesApi.V1.Factories
                 ServiceCharge = tenure?.Charges?.ServiceCharge,
                 Staircasing = -1,
                 TenancyType = tenure?.TenureType
+            };
+        }
+
+        public static PropertySummaryTenantsResponse ToResponse(TenureInformation tenants, List<ContactDetail> contacts)
+        {
+            return new PropertySummaryTenantsResponse()
+            {
+                FullAddress = tenants.TenuredAsset.FullAddress,
+                Email = contacts?.Where(c =>
+                        c.TargetType == TargetType.Person &&
+                        c.ContactInformation.ContactType == ContactType.Email)
+                    .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "-",
+                FullName = tenants.HouseholdMembers.First(f => f.IsResponsible)?.FullName ?? "-",
+                StartDate = tenants.StartOfTenureDate,
+                TenancyType = tenants.TenureType,
+                PhoneNumber = contacts?.Where(c =>
+                        c.TargetType == TargetType.Person &&
+                        c.ContactInformation.ContactType == ContactType.Phone)
+                    .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "-",
+                TenancyId = tenants.TenureType?.Code ?? "",
+                TimeInPropertyY = (short) ((tenants.EndOfTenureDate ?? DateTime.UtcNow).Year - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Year),
+                TimeInPropertyM = (short) (((tenants.EndOfTenureDate ?? DateTime.UtcNow).Year - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Year) * 12 +
+                                  (tenants.EndOfTenureDate ?? DateTime.UtcNow).Month - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Month)
+            };
+        }
+
+        public static PropertyDetailsResponse ToResponse(Asset asset, List<Charge> charges)
+        {
+            List<DetailedCharges> chargesList = new List<DetailedCharges>();
+            charges.ForEach(p =>
+            {
+                chargesList.AddRange(p.DetailedCharges);
+            });
+
+            var weeklyCharges = chargesList.Where(c =>
+                c.EndDate >= DateTime.UtcNow &&
+                c.Type.ToLower() == "service" &&
+                c.Frequency.ToLower() == "weekly").Sum(s => s.Amount);
+
+            return new PropertyDetailsResponse()
+            {
+                Bedrooms = asset.AssetCharacteristics.NumberOfBedrooms,
+                FullAddress = $"{asset.AssetAddress.AddressLine1} {asset.AssetAddress.AddressLine2} {asset.AssetAddress.AddressLine3} asset.AssetAddress.AddressLine4",
+                PropertyValue = -1,
+                RentModel = "-",
+                The999Value = -1,
+                ExtraCharges = chargesList.Select(p => new ExtraCharge
+                {
+                    Name = p.Type,
+                    Value = p.Amount
+                }).ToList(),
+                WeeklyCharge = weeklyCharges,
+                YearlyCharge = weeklyCharges * 52
             };
         }
     }

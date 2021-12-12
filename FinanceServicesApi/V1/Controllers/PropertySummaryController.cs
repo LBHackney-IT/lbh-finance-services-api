@@ -5,8 +5,9 @@ using System.Net;
 using System.Threading.Tasks;
 using Amazon.Runtime.Internal;
 using FinanceServicesApi.V1.Boundary.Request;
+using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
 using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
-using FinanceServicesApi.V1.Domain.PropertySummary;
+using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
@@ -99,8 +100,7 @@ namespace FinanceServicesApi.V1.Controllers
                 chargeResponse,
                 contactDetailsResponse,
                 transactionResponse,
-                assetResponse,
-                tenantsResponse);
+                assetResponse);
             return Ok(result);
         }
 
@@ -109,7 +109,7 @@ namespace FinanceServicesApi.V1.Controllers
         /// </summary>
         /// <param name="id">Person Id</param>
         /// <returns></returns>
-        [ProducesResponseType(typeof(ResidentAssetsResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<PropertySummaryTenantsResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
@@ -118,21 +118,48 @@ namespace FinanceServicesApi.V1.Controllers
         {
             if (id == Guid.Empty)
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
-                    $"{nameof(id).ToString()} cannot be empty."));
-
-
+                    $"{nameof(id).ToString()} cannot be empty.")); 
 
             var personData = await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
             if (personData == null)
                 return NotFound(id);
-            List<ResidentAssetsResponse> responses = new List<ResidentAssetsResponse>();
+            List<PropertySummaryTenantsResponse> response = new List<PropertySummaryTenantsResponse>();
             foreach (var t in personData.Tenures)
             {
-                var assetData = await _assetUseCase.ExecuteAsync(Guid.Parse(t.AssetId)).ConfigureAwait(false);
                 var tenureData = await _tenureUseCase.ExecuteAsync(t.Id).ConfigureAwait(false);
-                responses.Add(ResponseFactory.ToResponse(assetData, tenureData));
+                List<ContactDetail> accountContactDetails = new List<ContactDetail>();
+                var targetId = tenureData?.HouseholdMembers?.First(p => p.IsResponsible)?.Id??Guid.Empty;
+                if (targetId != Guid.Empty)
+                    accountContactDetails.AddRange(await _contactUseCase.ExecuteAsync(targetId).ConfigureAwait(false));
+
+                response.Add(ResponseFactory.ToResponse(tenureData, accountContactDetails));
             }
-            return Ok(responses);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">Asset id</param>
+        /// <returns>PropertyDetails</returns>
+        [ProducesResponseType(typeof(PropertyDetailsResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> GetPropertyDetailsByAssetId(Guid id)
+        {
+            if (id == Guid.Empty)
+                return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
+                    $"{nameof(id).ToString()} cannot be empty."));
+
+            var assetData = await _assetUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            if (assetData == null)
+                return NotFound(id);
+
+            var chargeData = await _chargeUseCase.ExecuteAsync(id).ConfigureAwait(false);
+
+            return Ok(ResponseFactory.ToResponse(assetData, chargeData));
         }
     }
 }

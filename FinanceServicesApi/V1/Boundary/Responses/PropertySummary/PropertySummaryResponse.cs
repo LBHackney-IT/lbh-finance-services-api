@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using FinanceServicesApi.V1.Domain.PropertySummary;
 using Hackney.Shared.Asset.Domain;
 
 namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
@@ -102,6 +100,5 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// </example>
         public string PrimaryTenantEmail { get; set; }
         public int PropertySize { get; set; }
-        public PropertyDetails PropertyDetails { get; set; }
     }
 }

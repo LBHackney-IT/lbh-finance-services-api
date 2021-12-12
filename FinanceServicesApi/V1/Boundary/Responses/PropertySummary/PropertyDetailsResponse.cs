@@ -1,6 +1,9 @@
+using System.Collections.Generic;
+using FinanceServicesApi.V1.Domain.Charges;
+
 namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 {
-    public class PropertyetailsResponse
+    public class PropertyDetailsResponse
     {
         /// <summary>
         /// 
@@ -51,5 +54,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         ///     6760
         /// </example>
         public decimal YearlyCharge { get; set; }
+
+        public List<ExtraCharge> ExtraCharges { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace FinanceServicesApi.V1.Domain.Charges
         [Required]
         public string Frequency { get; set; }
 
-        [Range(0, (double) decimal.MaxValue, ErrorMessage = "The amount value is wrong")]
+        [GreatAndEqualThan("0")]
         public decimal Amount { get; set; }
 
         [RequiredDateTime]
