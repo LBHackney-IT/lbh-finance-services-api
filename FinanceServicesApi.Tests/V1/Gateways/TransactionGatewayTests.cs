@@ -1,4 +1,5 @@
 using System;
+using System.Transactions;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using AutoFixture;
@@ -12,7 +13,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
     {
         private readonly Mock<IDynamoDBContext> _dynamoDBContext;
         private readonly Mock<IAmazonDynamoDB> _amazonDynamoDB;
-        private readonly Mock<IGetEnvironmentVariables> _getEnvironmentVariables;
+        private readonly Mock<IGetEnvironmentVariables<Transaction>> _getEnvironmentVariables;
         private TransactionGateway _gateway;
         private readonly Fixture _fixture;
 
@@ -21,12 +22,12 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _fixture = new Fixture();
             _dynamoDBContext = new Mock<IDynamoDBContext>();
             _amazonDynamoDB = new Mock<IAmazonDynamoDB>();
-            _getEnvironmentVariables = new Mock<IGetEnvironmentVariables>();
+            _getEnvironmentVariables = new Mock<IGetEnvironmentVariables<Transaction>>();
 
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl())
-                .Returns(Environment.GetEnvironmentVariable("TRANSACTION_API_URL"));
+            _getEnvironmentVariables.Setup(_ => _.GetUrl())
+                .Returns(It.IsAny<Uri>());
 
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey())
+            _getEnvironmentVariables.Setup(_ => _.GetToken())
                 .Returns(Environment.GetEnvironmentVariable("TRANSACTION_API_KEY"));
 
             _gateway = new TransactionGateway(_amazonDynamoDB.Object, _dynamoDBContext.Object);

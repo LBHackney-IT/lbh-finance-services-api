@@ -20,7 +20,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
     public class AccountGatewayTests
     {
         private readonly Mock<IDynamoDBContext> _dynamoDBContext;
-        private readonly Mock<IGetEnvironmentVariables> _getEnvironmentVariables;
+        private readonly Mock<IGetEnvironmentVariables<Account>> _getEnvironmentVariables;
         private AccountGateway _gateway;
         private readonly Fixture _fixture;
 
@@ -29,12 +29,12 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _fixture = new Fixture();
             _dynamoDBContext = new Mock<IDynamoDBContext>();
 
-            _getEnvironmentVariables = new Mock<IGetEnvironmentVariables>();
+            _getEnvironmentVariables = new Mock<IGetEnvironmentVariables<Account>>();
 
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl())
-                .Returns(Environment.GetEnvironmentVariable("ACCOUNT_API_URL"));
+            _getEnvironmentVariables.Setup(_ => _.GetUrl())
+                .Returns(It.IsAny<Uri>());
 
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl())
+            _getEnvironmentVariables.Setup(_ => _.GetToken())
                 .Returns(Environment.GetEnvironmentVariable("ACCOUNT_API_URL"));
 
             _gateway = new AccountGateway(_dynamoDBContext.Object);

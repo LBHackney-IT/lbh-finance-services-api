@@ -86,7 +86,7 @@ namespace FinanceServicesApi.V1.Controllers
             var result = ResponseFactory.ToResponse(tenureInformationResponse,
                 accountResponse,
                 chargeResponse,
-                contactDetailsResponse,
+                contactDetailsResponse?.Results,
                 transactionResponse,
                 assetResponse);
             return Ok(result);
@@ -118,7 +118,11 @@ namespace FinanceServicesApi.V1.Controllers
                 List<ContactDetail> accountContactDetails = new List<ContactDetail>();
                 var targetId = tenureData?.HouseholdMembers?.First(p => p.IsResponsible)?.Id ?? Guid.Empty;
                 if (targetId != Guid.Empty)
-                    accountContactDetails.AddRange(await _contactUseCase.ExecuteAsync(targetId).ConfigureAwait(false));
+                {
+                    var tmpData = await _contactUseCase.ExecuteAsync(targetId).ConfigureAwait(false);
+                    if (tmpData?.Results != null)
+                        accountContactDetails.AddRange(tmpData.Results);
+                }
 
                 response.Add(ResponseFactory.ToResponse(tenureData, accountContactDetails));
             }
