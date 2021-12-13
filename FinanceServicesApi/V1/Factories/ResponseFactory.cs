@@ -89,7 +89,7 @@ namespace FinanceServicesApi.V1.Factories
                 p.DetailedCharges.Where(c =>
                     c.EndDate >= DateTime.UtcNow &&
                     c.Type.ToLower() == "rent" &&
-                    c.Frequency.ToLower() == "weekly").Sum(c => c.Amount))*52;
+                    c.Frequency.ToLower() == "weekly").Sum(c => c.Amount)) * 52;
             return new PropertySummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance,

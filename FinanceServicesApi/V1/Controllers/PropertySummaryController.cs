@@ -106,7 +106,7 @@ namespace FinanceServicesApi.V1.Controllers
         {
             if (id == Guid.Empty)
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
-                    $"{nameof(id).ToString()} cannot be empty.")); 
+                    $"{nameof(id).ToString()} cannot be empty."));
 
             var personData = await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
             if (personData == null)
@@ -116,7 +116,7 @@ namespace FinanceServicesApi.V1.Controllers
             {
                 var tenureData = await _tenureUseCase.ExecuteAsync(t.Id).ConfigureAwait(false);
                 List<ContactDetail> accountContactDetails = new List<ContactDetail>();
-                var targetId = tenureData?.HouseholdMembers?.First(p => p.IsResponsible)?.Id??Guid.Empty;
+                var targetId = tenureData?.HouseholdMembers?.First(p => p.IsResponsible)?.Id ?? Guid.Empty;
                 if (targetId != Guid.Empty)
                     accountContactDetails.AddRange(await _contactUseCase.ExecuteAsync(targetId).ConfigureAwait(false));
 

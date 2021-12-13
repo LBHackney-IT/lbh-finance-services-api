@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FinanceServicesApi.V1.Boundary.Request
 {
-    public class PropertySummaryRequest:BaseRequest
+    public class PropertySummaryRequest : BaseRequest
     {
         /// <summary>
         ///     The tenured asset in the provided account
