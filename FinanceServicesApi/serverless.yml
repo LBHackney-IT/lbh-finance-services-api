@@ -33,6 +33,24 @@ functions:
       ACCOUNT_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/account-api-token}
       TRANSACTION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/financial-transactions-api-url}
       TRANSACTION_API_KEY: ${ssm:/housing-finance/${self:provider.stage}/financial-transactions-api-key}
+      TENURE_API_URL: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-url}
+      TENURE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-token}
+      FINANCIAL_SUMMARY_API_URL: ${ssm:/housing-finance/${self:provider.stage}/financial-summary-api-url}
+      FINANCIAL_SUMMARY_API_KEY: ${ssm:/housing-finance/${self:provider.stage}/financial-summary-api-key}
+      # FINANCIAL_SUMMARY_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-token}
+      CHARGE_API_URL: ${ssm:/housing-finance/${self:provider.stage}/charge-api-url}
+      CHARGE_API_KEY: ${ssm:/housing-finance/${self:provider.stage}/charge-api-key}
+      #CHARGE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/charge-api-token}
+      CONTACT_DETAILS_API_URL: ${ssm:/housing-tl/${self:provider.stage}/contact-details-api-url-v2}
+      CONTACT_DETAILS_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/contact-details-api-token}
+      #CHARGE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/charge-api-token}
+      ASSET_INFORMATION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/asset-information-api-url}
+      ASSET_INFORMATION_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/asset-information-api-token}
+      # ${ssm:/repairs-api/${self:provider.stage}/asset-information-api-token}
+      PERSON_API_URL: ${ssm:/housing-tl/${self:provider.stage}/person-api-url}
+      PERSON_API_TOKEN: ${ssm:/housing-tl/${self:provider.stage}/person-api-token}
+      SEARCH_API_URL: ${ssm:/housing-tl/${self:provider.stage}/search-api-url}
+      SEARCH_API_AUTH_KEY: ${ssm:/housing-tl/${self:provider.stage}/search-api-auth-key}
     events:
       - http:
           path: /{proxy+}

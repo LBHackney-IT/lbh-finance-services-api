@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Response;
+using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 
@@ -15,11 +15,13 @@ namespace FinanceServicesApi.V1.UseCase
             _gateway = gateway;
         }
 
-        public Task<TransactionResponse> ExecuteAsync(Guid id)
+        public async Task<Transaction> ExecuteAsync(Guid id)
         {
             if (id == Guid.Empty)
-                throw new Exception("The id shouldn't be empty");
-            return _gateway.GetById(id);
+                throw new ArgumentNullException(nameof(id));
+
+            var transactions = await _gateway.GetById(id).ConfigureAwait(false);
+            return transactions;
         }
     }
 }

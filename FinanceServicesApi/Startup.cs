@@ -12,6 +12,7 @@ using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using FinanceServicesApi.V1.UseCase;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FinanceServicesApi.Versioning;
+using Hackney.Core.DynamoDb;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -113,7 +114,7 @@ namespace FinanceServicesApi
             });
 
             ConfigureLogging(services, Configuration);
-
+            services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
             RegisterInfraService(services);
@@ -149,12 +150,24 @@ namespace FinanceServicesApi
         {
             services.AddScoped<IAccountGateway, AccountGateway>();
             services.AddScoped<ITransactionGateway, TransactionGateway>();
+            services.AddScoped<IPersonGateway, PersonGateway>();
+            services.AddScoped<IFinancialSummaryByTargetIdGateway, FinancialSummaryByTargetIdGateway>();
+            services.AddScoped<IContactDetailsGateway, ContactDetailsGateway>();
+            services.AddScoped<ITenureInformationGateway, TenureInformationGateway>();
+            services.AddScoped<IChargesGateway, ChargesGateway>();
+            services.AddScoped<IAssetGateway, AssetGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetAccountByIdUseCase, GetAccountByIdUseCase>();
-            services.AddScoped<IGetTransactionByIdUseCase, GetTransactionByIdUseCase>();
+            services.AddScoped<IGetLastPaymentTransactionsByTargetIdUseCase, GetLastPaymentTransactionsByTargetIdUseCase>();
+            services.AddScoped<IGetPersonByIdUseCase, GetPersonByIdUseCase>();
+            services.AddScoped<IGetFinancialSummaryByTargetIdUseCase, GetFinancialSummaryByTargetIdUseCase>();
+            services.AddScoped<IGetContactDetailsByTargetIdUseCase, GetContactDetailsByTargetIdUseCase>();
+            services.AddScoped<IGetTenureInformationByIdUseCase, GetTenureInformationByIdUseCase>();
+            services.AddScoped<IGetChargeByAssetIdUseCase, GetChargeByAssetIdUseCase>();
+            services.AddScoped<IGetAssetByIdUseCase, GetAssetByIdUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

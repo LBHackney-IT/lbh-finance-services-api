@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoFixture;
-using FinanceServicesApi.V1.Domain;
+using FinanceServicesApi.V1.Domain.TransactionModels;
 using FluentAssertions;
 using Xunit;
 
@@ -23,12 +20,12 @@ namespace FinanceServicesApi.Tests.V1.Domain
         public void SuspenseResolutionInfoEntityHasPropertiesSet()
         {
             var suspenseResolutionInfoType = typeof(SuspenseResolutionInfo);
-            suspenseResolutionInfoType.GetProperties().Length.Should().Be(7);
+            suspenseResolutionInfoType.GetProperties().Length.Should().Be(5);
 
             SuspenseResolutionInfo suspenseResolutionInfo = _fixture.Create<SuspenseResolutionInfo>();
 
-            Assert.IsType<DateTime>(suspenseResolutionInfo.ApprovedDate);
-            Assert.IsType<DateTime>(suspenseResolutionInfo.ConfirmedDate);
+            /*Assert.IsType<DateTime>(suspenseResolutionInfo.ApprovedDate);
+            Assert.IsType<DateTime>(suspenseResolutionInfo.ConfirmedDate);*/
             Assert.IsType<DateTime>(suspenseResolutionInfo.ResolutionDate);
             Assert.IsType<bool>(suspenseResolutionInfo.IsApproved);
             Assert.IsType<bool>(suspenseResolutionInfo.IsConfirmed);

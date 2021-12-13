@@ -1,46 +1,30 @@
 using System;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Response;
+using Amazon.DynamoDBv2.DataModel;
+using FinanceServicesApi.V1.Domain.AccountModels;
+using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
-using FinanceServicesApi.V1.Infrastructure.Interfaces;
-using Newtonsoft.Json;
+using FinanceServicesApi.V1.Infrastructure.Entities;
 
 namespace FinanceServicesApi.V1.Gateways
 {
     public class AccountGateway : IAccountGateway
     {
-        private readonly ICustomeHttpClient _client;
-        private readonly IGetEnvironmentVariables _getEnvironmentVariables;
+        private readonly IDynamoDBContext _dynamoDbContext;
 
-        public AccountGateway(ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
+        public AccountGateway(IDynamoDBContext dynamoDbContext)
         {
-            _client = client;
-            _getEnvironmentVariables = getEnvironmentVariables;
+            _dynamoDbContext = dynamoDbContext;
         }
 
-        public async Task<AccountResponse> GetById(Guid id)
+        public async Task<Account> GetById(Guid id)
         {
-            if (id == null || id == Guid.Empty)
+            if (id == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
 
-            var accountApiUrl = _getEnvironmentVariables.GetAccountApiUrl().ToString();
-            var accountApiToken = _getEnvironmentVariables.GetAccountApiToken();
+            var result = await _dynamoDbContext.LoadAsync<AccountDbEntity>(id).ConfigureAwait(false);
 
-            _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", accountApiToken));
-
-            var response = await _client.GetAsync(new Uri($"{accountApiUrl}/accounts/{id.ToString()}")).ConfigureAwait(false);
-            if (response == null)
-            {
-                throw new Exception($"The account api is not reachable!{accountApiUrl}");
-            }
-            else if (response.Content == null)
-            {
-                throw new Exception(response.StatusCode.ToString());
-            }
-            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            AccountResponse accountResponse = JsonConvert.DeserializeObject<AccountResponse>(responseContent);
-            return accountResponse;
+            return result?.ToDomain();
         }
     }
 }

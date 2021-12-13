@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using FinanceServicesApi.V1.Domain;
 using FinanceServicesApi.V1.Infrastructure;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FluentAssertions;
 using Xunit;
 

@@ -1,3 +1,5 @@
+using FinanceServicesApi.V1.Infrastructure.Enums;
+
 namespace FinanceServicesApi.V1.Infrastructure.Interfaces
 {
     public interface IGetEnvironmentVariables
@@ -6,5 +8,19 @@ namespace FinanceServicesApi.V1.Infrastructure.Interfaces
         public string GetAccountApiToken();
         public string GetTransactionApiUrl();
         public string GetTransactionApiKey();
+        public string GetTenureInformationApiUrl();
+        public string GetTenureInformationApiToken();
+        public string GetFinancialSummaryApiUrl();
+        public string GetFinancialSummaryApiKey();
+        public string GetContactDetailsApiUrl();
+        public string GetContactDetailsApiToken();
+        public string GetChargesApiUrl();
+        public string GetChargesApiKey();
+        public string GetAssetInformationApiUrl();
+        public string GetAssetInformationApiToken();
+        public string GetPersonApiUrl();
+        public string GetPersonApiToken();
+        public string GetHousingSearchApi(SearchBy searchBy);
+        public string GetHousingSearchApiToken();
     }
 }

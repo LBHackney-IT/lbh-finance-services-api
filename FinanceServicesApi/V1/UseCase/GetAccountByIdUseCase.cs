@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Response;
+using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 
@@ -14,11 +14,9 @@ namespace FinanceServicesApi.V1.UseCase
             _accountGateway = gateway;
         }
 
-        public Task<AccountResponse> ExecuteAsync(Guid id)
+        public async Task<Account> ExecuteAsync(Guid id)
         {
-            if (id == Guid.Empty)
-                throw new Exception("The id shouldn't be empty");
-            return _accountGateway.GetById(id);
+            return await _accountGateway.GetById(id).ConfigureAwait(false);
         }
     }
 }

@@ -1,7 +1,16 @@
 using System;
+using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Response;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.Model;
+using FinanceServicesApi.V1.Boundary.Request;
+using FinanceServicesApi.V1.Domain.TransactionModels;
+using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
+using FinanceServicesApi.V1.Infrastructure;
+using FinanceServicesApi.V1.Infrastructure.Entities;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Newtonsoft.Json;
 
@@ -9,37 +18,50 @@ namespace FinanceServicesApi.V1.Gateways
 {
     public class TransactionGateway : ITransactionGateway
     {
-        private readonly ICustomeHttpClient _client;
-        private readonly IGetEnvironmentVariables _getEnvironmentVariables;
+        private readonly IAmazonDynamoDB _amazonDynamoDb;
+        private readonly IDynamoDBContext _dynamoDbContext;
 
-        public TransactionGateway(ICustomeHttpClient client, IGetEnvironmentVariables getEnvironmentVariables)
+        public TransactionGateway(IAmazonDynamoDB amazonDynamoDb, IDynamoDBContext dynamoDbContext)
         {
-            _client = client;
-            _getEnvironmentVariables = getEnvironmentVariables;
+            _amazonDynamoDb = amazonDynamoDb;
+            _dynamoDbContext = dynamoDbContext;
         }
 
-        public async Task<TransactionResponse> GetById(Guid id)
+        public async Task<Transaction> GetById(Guid id)
         {
-            if (id == null || id == Guid.Empty)
+            if (id == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
 
-            var transactionApiUrl = _getEnvironmentVariables.GetTransactionApiUrl().ToString();
-            var transactionApiKey = _getEnvironmentVariables.GetTransactionApiKey();
+            var response = await _dynamoDbContext.LoadAsync<TransactionDbEntity>(Guid.Empty, id).ConfigureAwait(false);
 
-            _client.AddHeader(new HttpHeader<string, string> { Name = "x-api-key", Value = transactionApiKey });
-
-            var response = await _client.GetAsync(new Uri($"{transactionApiUrl}/transactions/{id.ToString()}")).ConfigureAwait(false);
             if (response == null)
             {
                 throw new Exception("The transaction api is not reachable!");
             }
-            else if (response.Content == null)
+
+            return response.ToDomain();
+        }
+
+        public async Task<List<Transaction>> GetByTargetId(TransactionsRequest transactionsRequest)
+        {
+            if (transactionsRequest.TargetId == Guid.Empty)
+                throw new ArgumentNullException($"the {nameof(transactionsRequest.TargetId).ToString()} shouldn't be empty or null");
+
+            QueryRequest request = new QueryRequest
             {
-                throw new Exception(response.StatusCode.ToString());
-            }
-            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            TransactionResponse transactionResponse = JsonConvert.DeserializeObject<TransactionResponse>(responseContent);
-            return transactionResponse;
+                TableName = "Transactions",
+                KeyConditionExpression = "target_id = :V_target_id",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                {
+                    {":V_target_id",new AttributeValue{S = transactionsRequest.TargetId.ToString()}}
+                },
+                ScanIndexForward = true
+            };
+
+            var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
+            List<Transaction> data = response.ToTransactions();
+
+            return data;
         }
     }
 }
