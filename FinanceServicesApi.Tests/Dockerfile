@@ -4,10 +4,12 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 ENV DOTNET_CLI_TELEMETRY_OPTOUT='true'
 
 ENV DynamoDb_LocalMode='true'
-
+ARG LBHPACKAGESTOKEN
+ENV LBHPACKAGESTOKEN=$LBHPACKAGESTOKEN
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
+COPY /NuGet.Config /root/.nuget/NuGet/NuGet.Config
 COPY ./FinanceServicesApi.sln ./
 COPY ./FinanceServicesApi/FinanceServicesApi.csproj ./FinanceServicesApi/
 COPY ./FinanceServicesApi.Tests/FinanceServicesApi.Tests.csproj ./FinanceServicesApi.Tests/
