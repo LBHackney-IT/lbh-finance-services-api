@@ -80,7 +80,16 @@ namespace FinanceServicesApi.V1.Factories
                     p.TransactionDate >= firstMondayOfApril)
                 .Sum(p =>
                     p.ChargedAmount - p.PaidAmount - p.HousingBenefitAmount);
-
+            var wtc = charges.Sum(p =>
+                p.DetailedCharges.Where(c =>
+                    c.EndDate >= DateTime.UtcNow &&
+                    c.Type.ToLower() == "service" &&
+                    c.Frequency.ToLower() == "weekly").Sum(c => c.Amount));
+            var yrd = charges.Sum(p =>
+                p.DetailedCharges.Where(c =>
+                    c.EndDate >= DateTime.UtcNow &&
+                    c.Type.ToLower() == "rent" &&
+                    c.Frequency.ToLower() == "weekly").Sum(c => c.Amount))*52;
             return new PropertySummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance,
@@ -105,19 +114,8 @@ namespace FinanceServicesApi.V1.Factories
                 PropertySize = asset?.AssetCharacteristics?.NumberOfBedrooms ?? 0,
                 TenancyStartDate = tenure?.StartOfTenureDate,
                 YearToDate = ytd,
-                WeeklyTotalCharges = charges.Sum(p =>
-                    p.DetailedCharges.Where(c =>
-                        c.EndDate >= DateTime.UtcNow &&
-                        c.Type.ToLower() == "service" &&
-                        c.Frequency.ToLower() == "weekly").Sum(c => c.Amount)),
-
-                YearlyRentDebits = charges.Sum(p =>
-                    p.DetailedCharges
-                        .Last(c =>
-                            c.StartDate >= firstMondayOfApril &&
-                            c.EndDate >= DateTime.UtcNow &&
-                            c.Type.ToLower() == "rent" &&
-                            c.Frequency.ToLower() == "weekly").Amount)
+                WeeklyTotalCharges = wtc,
+                YearlyRentDebits = yrd
             };
         }
 

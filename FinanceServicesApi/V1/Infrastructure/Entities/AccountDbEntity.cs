@@ -10,10 +10,8 @@ namespace FinanceServicesApi.V1.Infrastructure.Entities
     [DynamoDBTable("Accounts", LowerCamelCaseProperties = true)]
     public class AccountDbEntity
     {
-        [DynamoDBHashKey(AttributeName = "target_id")]
-        public Guid TargetId { get; set; }
-
-        [DynamoDBRangeKey(AttributeName = "id")]
+        [DynamoDBHashKey]
+        [DynamoDBProperty(AttributeName = "id")]
         public Guid Id { get; set; }
 
         [DynamoDBProperty(AttributeName = "parent_account_id")]
@@ -28,6 +26,8 @@ namespace FinanceServicesApi.V1.Infrastructure.Entities
         [DynamoDBProperty(AttributeName = "target_type", Converter = typeof(DynamoDbEnumConverter<TargetType>))]
         public TargetType TargetType { get; set; }
 
+        [DynamoDBProperty(AttributeName = "target_id")]
+        public Guid TargetId { get; set; }
 
         [DynamoDBProperty(AttributeName = "account_type", Converter = typeof(DynamoDbEnumConverter<AccountType>))]
         public AccountType AccountType { get; set; }

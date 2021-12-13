@@ -80,20 +80,8 @@ namespace FinanceServicesApi.V1.Controllers
                 await _chargeUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
 
             var personResponse = await _personUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
-            List<TenureInformation> tenantsResponse = new AutoConstructedList<TenureInformation>();
-
-            if (personResponse?.Tenures != null)
-                foreach (var t in personResponse.Tenures)
-                {
-                    tenantsResponse.Add(await _tenureUseCase.ExecuteAsync(t.Id).ConfigureAwait(false));
-                }
 
             var contactDetailsResponse = await _contactUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
-
-            /*var summaryResponse = (tenureInformationResponse == null ||
-                                   tenureInformationResponse.TenuredAsset == null ||
-                                   tenureInformationResponse.TenuredAsset.Id == Guid.Empty) ? null :
-                await _financialSummaryUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow).ConfigureAwait(false);*/
 
             var result = ResponseFactory.ToResponse(tenureInformationResponse,
                 accountResponse,
