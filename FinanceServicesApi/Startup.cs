@@ -14,7 +14,9 @@ using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using FinanceServicesApi.V1.UseCase;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FinanceServicesApi.Versioning;
+using Hackney.Core.Authorization;
 using Hackney.Core.DynamoDb;
+using Hackney.Core.JWT;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Person;
 using Hackney.Shared.Tenure.Domain;
@@ -122,6 +124,7 @@ namespace FinanceServicesApi
             services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
+            services.AddTokenFactory();
             RegisterInfraService(services);
         }
 
@@ -220,6 +223,7 @@ namespace FinanceServicesApi
                 }
             });
             app.UseSwagger();
+            app.UseGoogleGroupAuthorization();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {

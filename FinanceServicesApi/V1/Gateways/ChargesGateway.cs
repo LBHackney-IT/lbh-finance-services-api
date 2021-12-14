@@ -20,6 +20,7 @@ namespace FinanceServicesApi.V1.Gateways
         {
             _amazonDynamoDb = amazonDynamoDb;
         }
+
         public async Task<List<Charge>> GetAllByAssetId(Guid assetId)
         {
             if (assetId == Guid.Empty)

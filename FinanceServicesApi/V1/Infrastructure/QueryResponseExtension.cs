@@ -74,7 +74,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             return transactions;
         }
 
-        public static List<WeeklySummary> ToWeeklySummary(this QueryResponse response)
+        /*public static List<WeeklySummary> ToWeeklySummary(this QueryResponse response)
         {
             if (response is null)
             {
@@ -102,7 +102,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             }
 
             return weeklySummaries;
-        }
+        }*/
 
         public static List<Charge> ToCharge(this QueryResponse response)
         {

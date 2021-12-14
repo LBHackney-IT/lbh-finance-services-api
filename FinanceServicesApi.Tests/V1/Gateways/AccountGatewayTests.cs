@@ -1,135 +1,70 @@
 using System;
-using System.Net;
-using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.Model;
 using AutoFixture;
+using FinanceServicesApi.Tests.V1.Helper;
 using FinanceServicesApi.V1.Domain.AccountModels;
+using FinanceServicesApi.V1.Domain.Charges;
+using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways;
 using FinanceServicesApi.V1.Infrastructure;
-using FinanceServicesApi.V1.Infrastructure.Interfaces;
+using FinanceServicesApi.V1.Infrastructure.Entities;
 using FluentAssertions;
-using FluentAssertions.Specialized;
 using Moq;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Gateways
 {
     public class AccountGatewayTests
     {
-        private readonly Mock<IDynamoDBContext> _dynamoDBContext;
-        private readonly Mock<IGetEnvironmentVariables<Account>> _getEnvironmentVariables;
-        private AccountGateway _gateway;
+        private readonly Mock<DynamoDBContext> _dynamoDbContext;
         private readonly Fixture _fixture;
+        private AccountGateway _sut;
 
         public AccountGatewayTests()
         {
             _fixture = new Fixture();
-            _dynamoDBContext = new Mock<IDynamoDBContext>();
-
-            _getEnvironmentVariables = new Mock<IGetEnvironmentVariables<Account>>();
-
-            _getEnvironmentVariables.Setup(_ => _.GetUrl())
-                .Returns(It.IsAny<Uri>());
-
-            _getEnvironmentVariables.Setup(_ => _.GetToken())
-                .Returns(Environment.GetEnvironmentVariable("ACCOUNT_API_URL"));
-
-            _gateway = new AccountGateway(_dynamoDBContext.Object);
-        }
-        [Fact]
-        public void ConstructorGetsApiUrlAndApiTokenFromEnvironment()
-        {
-            _gateway = new AccountGateway(new DynamoDBContext(new AmazonDynamoDBClient()));
-            Assert.True(true);
+            _dynamoDbContext = new Mock<DynamoDBContext>();
+            _sut = new AccountGateway(_dynamoDbContext.Object);
         }
 
         [Fact]
-        public void GetByIdWithEmptyIdThrowsArgumentNullException()
+        public void GetByIdWithEmptyInputReturnsException()
         {
-            Func<Task<Account>> func = async () => await _gateway.GetById(Guid.Empty).ConfigureAwait(false);
+            Func<Task<Account>> func = async () => await _sut.GetById(Guid.Empty).ConfigureAwait(false);
             func.Should().Throw<ArgumentNullException>();
         }
 
-        /*[Fact]
-        public async Task GetByIdReturnsBadRequestThrowsException()
-        {
-            HttpResponseMessage message = new HttpResponseMessage(HttpStatusCode.BadRequest);
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl()).Returns("http://localhost:5000/api/v1/");
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiToken()).Returns("ACCOUNT_API_TOKEN");
-            _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
-                .ReturnsAsync(message);
-
-            Func<Task<Account>> func = async () => await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
-
-            var exception = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
-            exception.Should().BeOfType(typeof(ExceptionAssertions<Exception>));
-            exception.Which.Message.Should().Be("BadRequest");
-        }
-
         [Fact]
-        public async Task GetByIdReturnsNullThrowsException()
+        public void GetByIdWitValidInputReturnsData()
         {
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl()).Returns("http://localhost:5000/api/v1/");
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiToken()).Returns("ACCOUNT_API_TOKEN");
-            _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
-                .ReturnsAsync((HttpResponseMessage) null);
+            AccountDbEntity response = _fixture.Create<AccountDbEntity>();
 
-            Func<Task<Account>> func = async () => await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            _dynamoDbContext.Setup(_ => _.LoadAsync<AccountDbEntity>(It.IsAny<Guid>(),CancellationToken.None))
+                .ReturnsAsync(response);
 
-            var exception = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
-            exception.Should().BeOfType(typeof(ExceptionAssertions<Exception>));
-            exception.Which.Message.Should().Contain("The account api is not reachable!");
-        }
+            Func<Task<Account>> func = async () => await _sut.GetById(Guid.NewGuid()).ConfigureAwait(false);
 
-        [Fact]
-        public async Task GetByIdWithValidOutputReturnsAccount()
-        {
-            HttpResponseMessage message = new HttpResponseMessage(HttpStatusCode.OK);
-            Account accountResponse = _fixture.Create<Account>();
-            message.Content = new StringContent(JsonConvert.SerializeObject(accountResponse));
-
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl()).Returns("http://localhost:5000/api/v1/");
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiToken()).Returns("ACCOUNT_API_TOKEN");
-            _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>())).ReturnsAsync(message);
-
-            var result = await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            var result = func.Invoke();
             result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(accountResponse);
+            result.Result.Should().BeEquivalentTo(response.ToDomain());
         }
 
-        [Fact]
-        public async Task GetByIdWithEmptyApiUrlThrowsException()
+        /*[Fact]
+        public void GetAllByAssetIdWitNonExistsIdReturnsEmptyList()
         {
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl())
-                .Returns(String.Empty);
+            QueryResponse response = FakeDataHelper.MockQueryResponse<Charge>(0);
 
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiToken())
-                .Returns(Environment.GetEnvironmentVariable("ACCOUNT_API_TOKEN"));
+            _amazonDynamoDb.Setup(_ => _.QueryAsync(It.IsAny<QueryRequest>(), CancellationToken.None))
+                .ReturnsAsync(response);
 
-            _gateway = new AccountGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
-
-            Func<Task<Account>> func = async () =>
-                await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
-            var exceptionAssertions = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task GetByIdWithEmptyApiKeyThrowsException()
-        {
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiUrl())
-                .Returns(Environment.GetEnvironmentVariable("ACCOUNT_API_URL"));
-
-            _getEnvironmentVariables.Setup(_ => _.GetAccountApiToken())
-                .Returns(String.Empty);
-
-            _gateway = new AccountGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
-
-            Func<Task<Account>> func = async () =>
-                await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
-            var exceptionAssertions = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
+            Func<Task<List<Charge>>> func = async () => await _sut.GetAllByAssetId(Guid.NewGuid()).ConfigureAwait(false);
+            var result = func.Invoke();
+            result.Should().NotBeNull();
+            result.Result.Count.Should().Be(0);
         }*/
 
     }
