@@ -43,6 +43,7 @@ functions:
       PERSON_API_TOKEN: ${ssm:/housing-tl/${self:provider.stage}/person-api-token}
       SEARCH_API_URL: ${ssm:/housing-tl/${self:provider.stage}/search-api-url}
       SEARCH_API_AUTH_KEY: ${ssm:/housing-tl/${self:provider.stage}/search-api-auth-key}
+      REQUIRED_GOOGL_GROUPS: ${ssm:/housing-finance/${self:provider.stage}/authorization/required-google-groups}
     events:
       - http:
           path: /{proxy+}

@@ -20,6 +20,6 @@ namespace FinanceServicesApi.V1.Infrastructure
             if (string.IsNullOrEmpty(result))
                 throw new Exception("Tenure api token shouldn't be null or empty.");
             return result;
-        } 
+        }
     }
 }

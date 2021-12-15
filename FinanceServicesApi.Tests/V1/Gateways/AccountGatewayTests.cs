@@ -43,7 +43,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         {
             AccountDbEntity response = _fixture.Create<AccountDbEntity>();
 
-            _dynamoDbContext.Setup(_ => _.LoadAsync<AccountDbEntity>(It.IsAny<Guid>(),CancellationToken.None))
+            _dynamoDbContext.Setup(_ => _.LoadAsync<AccountDbEntity>(It.IsAny<Guid>(), CancellationToken.None))
                 .ReturnsAsync(response);
 
             Func<Task<Account>> func = async () => await _sut.GetById(Guid.NewGuid()).ConfigureAwait(false);

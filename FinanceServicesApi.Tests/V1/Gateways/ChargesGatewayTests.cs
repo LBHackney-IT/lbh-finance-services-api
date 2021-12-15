@@ -38,8 +38,8 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         public void GetAllByAssetIdWitValidInputReturnsData()
         {
             QueryResponse response = FakeDataHelper.MockQueryResponse<Charge>(1);
-            
-            _amazonDynamoDb.Setup(_ =>_.QueryAsync(It.IsAny<QueryRequest>(),CancellationToken.None))
+
+            _amazonDynamoDb.Setup(_ => _.QueryAsync(It.IsAny<QueryRequest>(), CancellationToken.None))
                 .ReturnsAsync(response);
 
             Func<Task<List<Charge>>> func = async () => await _sut.GetAllByAssetId(Guid.NewGuid()).ConfigureAwait(false);

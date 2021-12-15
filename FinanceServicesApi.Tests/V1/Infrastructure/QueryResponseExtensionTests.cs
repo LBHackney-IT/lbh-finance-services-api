@@ -30,7 +30,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         public void ToDomainWithNonCorrespondingDataTypeThrowsException()
         {
             QueryResponse response = FakeDataHelper.MockQueryResponse<Transaction>(5);
-            Assert.Throws<System.Collections.Generic.KeyNotFoundException>(()=> response.ToCharge());
+            Assert.Throws<System.Collections.Generic.KeyNotFoundException>(() => response.ToCharge());
         }
     }
 }

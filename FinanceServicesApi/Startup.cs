@@ -135,14 +135,14 @@ namespace FinanceServicesApi
             services.AddScoped<IGetEnvironmentVariables<Asset>, GetAssetEnvironmentVariables>();
             services.AddScoped<IGetEnvironmentVariables<Person>, GetPersonEnvironmentVariables>();
             services.AddScoped<IGetEnvironmentVariables<GetContactDetailsResponse>, GetContactEnvironmentVariables>();
-            services.AddScoped<IHousingData<TenureInformation>,HousingData<TenureInformation>>();
-            services.AddScoped<IHousingData<Asset>,HousingData<Asset>>();
-            services.AddScoped<IHousingData<Person>,HousingData<Person>>();
-            services.AddScoped<IHousingData<GetContactDetailsResponse>,HousingData<GetContactDetailsResponse>>();
-            services.AddScoped<IGenerateUrl<TenureInformation>,TenureUrlGenerator>();
-            services.AddScoped<IGenerateUrl<Asset>,AssetUrlGenerator>();
-            services.AddScoped<IGenerateUrl<Person>,PersonUrlGenerator>();
-            services.AddScoped<IGenerateUrl<GetContactDetailsResponse>,ContactDetailUrlGenerator>();
+            services.AddScoped<IHousingData<TenureInformation>, HousingData<TenureInformation>>();
+            services.AddScoped<IHousingData<Asset>, HousingData<Asset>>();
+            services.AddScoped<IHousingData<Person>, HousingData<Person>>();
+            services.AddScoped<IHousingData<GetContactDetailsResponse>, HousingData<GetContactDetailsResponse>>();
+            services.AddScoped<IGenerateUrl<TenureInformation>, TenureUrlGenerator>();
+            services.AddScoped<IGenerateUrl<Asset>, AssetUrlGenerator>();
+            services.AddScoped<IGenerateUrl<Person>, PersonUrlGenerator>();
+            services.AddScoped<IGenerateUrl<GetContactDetailsResponse>, ContactDetailUrlGenerator>();
         }
 
         private static void ConfigureLogging(IServiceCollection services, IConfiguration configuration)
