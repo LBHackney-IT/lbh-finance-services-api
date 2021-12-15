@@ -87,7 +87,7 @@ namespace FinanceServicesApi.V1.Controllers
                 tenureInformationResponse,
                 accountResponse,
                 chargeResponse,
-                contactDetailsResponse,
+                contactDetailsResponse?.Results,
                 transactionResponse);
             return Ok(result);
         }

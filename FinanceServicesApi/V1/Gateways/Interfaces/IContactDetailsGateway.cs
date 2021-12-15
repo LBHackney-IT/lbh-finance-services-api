@@ -1,13 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Domain.ContactDetails;
+using FinanceServicesApi.V1.Boundary.Responses;
 
 namespace FinanceServicesApi.V1.Gateways.Interfaces
 {
     public interface IContactDetailsGateway
     {
-        public Task<List<ContactDetail>> GetByTargetId(Guid targetId);
+        public Task<GetContactDetailsResponse> GetByTargetId(Guid targetId);
 
     }
 }

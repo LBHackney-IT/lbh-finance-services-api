@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using FinanceServicesApi.V1;
+using FinanceServicesApi.V1.Boundary.Responses;
+using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Gateways;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure;
@@ -12,7 +14,12 @@ using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using FinanceServicesApi.V1.UseCase;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FinanceServicesApi.Versioning;
+using Hackney.Core.Authorization;
 using Hackney.Core.DynamoDb;
+using Hackney.Core.JWT;
+using Hackney.Shared.Asset.Domain;
+using Hackney.Shared.Person;
+using Hackney.Shared.Tenure.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -117,13 +124,25 @@ namespace FinanceServicesApi
             services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
+            services.AddTokenFactory();
             RegisterInfraService(services);
         }
 
         private static void RegisterInfraService(IServiceCollection services)
         {
             services.AddScoped<ICustomeHttpClient, CustomeHttpClient>();
-            services.AddScoped<IGetEnvironmentVariables, GetEnvironmentVariables>();
+            services.AddScoped<IGetEnvironmentVariables<TenureInformation>, GetTenureEnvironmentVariables>();
+            services.AddScoped<IGetEnvironmentVariables<Asset>, GetAssetEnvironmentVariables>();
+            services.AddScoped<IGetEnvironmentVariables<Person>, GetPersonEnvironmentVariables>();
+            services.AddScoped<IGetEnvironmentVariables<GetContactDetailsResponse>, GetContactEnvironmentVariables>();
+            services.AddScoped<IHousingData<TenureInformation>, HousingData<TenureInformation>>();
+            services.AddScoped<IHousingData<Asset>, HousingData<Asset>>();
+            services.AddScoped<IHousingData<Person>, HousingData<Person>>();
+            services.AddScoped<IHousingData<GetContactDetailsResponse>, HousingData<GetContactDetailsResponse>>();
+            services.AddScoped<IGenerateUrl<TenureInformation>, TenureUrlGenerator>();
+            services.AddScoped<IGenerateUrl<Asset>, AssetUrlGenerator>();
+            services.AddScoped<IGenerateUrl<Person>, PersonUrlGenerator>();
+            services.AddScoped<IGenerateUrl<GetContactDetailsResponse>, ContactDetailUrlGenerator>();
         }
 
         private static void ConfigureLogging(IServiceCollection services, IConfiguration configuration)
@@ -204,6 +223,7 @@ namespace FinanceServicesApi
                 }
             });
             app.UseSwagger();
+            app.UseGoogleGroupAuthorization();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
