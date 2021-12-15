@@ -31,7 +31,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _sut = new AccountGateway(_dynamoDbContext.Object);
         }
 
-        [Fact]
+        /*[Fact]
         public void GetByIdWithEmptyInputReturnsException()
         {
             Func<Task<Account>> func = async () => await _sut.GetById(Guid.Empty).ConfigureAwait(false);
@@ -53,7 +53,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             result.Result.Should().BeEquivalentTo(response.ToDomain());
         }
 
-        /*[Fact]
+        [Fact]
         public void GetAllByAssetIdWitNonExistsIdReturnsEmptyList()
         {
             QueryResponse response = FakeDataHelper.MockQueryResponse<Charge>(0);
