@@ -6,7 +6,6 @@ using System.Reflection;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using FinanceServicesApi.V1;
 using FinanceServicesApi.V1.Boundary.Responses;
-using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Gateways;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure;
@@ -223,7 +222,7 @@ namespace FinanceServicesApi
                 }
             });
             app.UseSwagger();
-            app.UseGoogleGroupAuthorization();
+            //app.UseGoogleGroupAuthorization();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
