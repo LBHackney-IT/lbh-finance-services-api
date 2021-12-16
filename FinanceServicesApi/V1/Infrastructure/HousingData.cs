@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Amazon.Runtime.Internal.Util;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Newtonsoft.Json;
 
@@ -12,12 +13,14 @@ namespace FinanceServicesApi.V1.Infrastructure
         private readonly ICustomeHttpClient _client;
         private readonly IGetEnvironmentVariables<T> _getEnvironmentVariables;
         private readonly IGenerateUrl<T> _generateUrl;
+        private readonly ILogger _logger;
 
-        public HousingData(ICustomeHttpClient client, IGetEnvironmentVariables<T> getEnvironmentVariables, IGenerateUrl<T> generateUrl)
+        public HousingData(ICustomeHttpClient client, IGetEnvironmentVariables<T> getEnvironmentVariables, IGenerateUrl<T> generateUrl, ILogger logger)
         {
             _client = client;
             _getEnvironmentVariables = getEnvironmentVariables;
             _generateUrl = generateUrl;
+            _logger = logger;
         }
 
         public async Task<T> DownloadAsync(Guid id)
@@ -39,8 +42,12 @@ namespace FinanceServicesApi.V1.Infrastructure
             {
                 throw new Exception(response.StatusCode.ToString());
             }
+
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) return null;
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(responseContent);
+
             var tResponse = JsonConvert.DeserializeObject<T>(responseContent);
             return tResponse;
 

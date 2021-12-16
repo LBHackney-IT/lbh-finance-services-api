@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using Hackney.Shared.Person.Domain;
 using Hackney.Shared.Tenure.Domain;
 
 namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
@@ -62,5 +65,6 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// </example>
         public short TimeInPropertyM { get; set; }
         public DateTime? StartDate { get; set; }
+        public List<PersonType> PersonType { get; set; }
     }
 }

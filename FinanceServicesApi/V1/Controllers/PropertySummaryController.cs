@@ -106,7 +106,7 @@ namespace FinanceServicesApi.V1.Controllers
         {
             if (id == Guid.Empty)
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
-                    $"{nameof(id).ToString()} cannot be empty."));
+                    $"{nameof(id)} cannot be empty."));
 
             var personData = await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
             if (personData == null)
@@ -124,7 +124,7 @@ namespace FinanceServicesApi.V1.Controllers
                         accountContactDetails.AddRange(tmpData.Results);
                 }
 
-                response.Add(ResponseFactory.ToResponse(tenureData, accountContactDetails));
+                response.Add(ResponseFactory.ToResponse(personData, tenureData, accountContactDetails));
             }
             return Ok(response);
         }
