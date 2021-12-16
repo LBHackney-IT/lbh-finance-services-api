@@ -17,11 +17,15 @@
       <None Remove="terraform\**" />
     </ItemGroup>
     <ItemGroup>
+      <Compile Remove="V1\Controllers\TestController.cs" />
+    </ItemGroup>
+    <ItemGroup>
       <None Remove="V1\Controllers\PropertySummaryController.cs~RF21916fe.TMP" />
     </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="5.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="AWSSDK.Core" Version="3.7.4.4" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.0.100" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.1" />

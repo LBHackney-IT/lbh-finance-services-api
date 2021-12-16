@@ -143,6 +143,7 @@ namespace FinanceServicesApi
             services.AddScoped<IGenerateUrl<Asset>, AssetUrlGenerator>();
             services.AddScoped<IGenerateUrl<Person>, PersonUrlGenerator>();
             services.AddScoped<IGenerateUrl<GetContactDetailsResponse>, ContactDetailUrlGenerator>();
+            services.AddAutoMapper(typeof(Startup));
         }
 
         private static void ConfigureLogging(IServiceCollection services, IConfiguration configuration)
@@ -180,6 +181,7 @@ namespace FinanceServicesApi
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetAccountByIdUseCase, GetAccountByIdUseCase>();
+            services.AddScoped<IGetTransactionByIdUseCase, GetTransactionByIdUseCase>();
             services.AddScoped<IGetLastPaymentTransactionsByTargetIdUseCase, GetLastPaymentTransactionsByTargetIdUseCase>();
             services.AddScoped<IGetPersonByIdUseCase, GetPersonByIdUseCase>();
             services.AddScoped<IGetFinancialSummaryByTargetIdUseCase, GetFinancialSummaryByTargetIdUseCase>();
