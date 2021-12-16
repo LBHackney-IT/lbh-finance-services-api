@@ -19,7 +19,7 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetTenureInformationByIdUseCase _tenureUseCase;
         private readonly IGetContactDetailsByTargetIdUseCase _contactUsecase;
 
-        public TestController(IGetPersonByIdUseCase personUseCase,IGetAssetByIdUseCase assetUseCase,IGetTenureInformationByIdUseCase tenureUseCase,IGetContactDetailsByTargetIdUseCase contactUsecase)
+        public TestController(IGetPersonByIdUseCase personUseCase, IGetAssetByIdUseCase assetUseCase, IGetTenureInformationByIdUseCase tenureUseCase, IGetContactDetailsByTargetIdUseCase contactUsecase)
         {
             _personUseCase = personUseCase;
             _assetUseCase = assetUseCase;
