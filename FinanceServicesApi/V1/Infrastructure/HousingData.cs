@@ -13,14 +13,12 @@ namespace FinanceServicesApi.V1.Infrastructure
         private readonly ICustomeHttpClient _client;
         private readonly IGetEnvironmentVariables<T> _getEnvironmentVariables;
         private readonly IGenerateUrl<T> _generateUrl;
-        private readonly ILogger _logger;
 
-        public HousingData(ICustomeHttpClient client, IGetEnvironmentVariables<T> getEnvironmentVariables, IGenerateUrl<T> generateUrl, ILogger logger)
+        public HousingData(ICustomeHttpClient client, IGetEnvironmentVariables<T> getEnvironmentVariables, IGenerateUrl<T> generateUrl)
         {
             _client = client;
             _getEnvironmentVariables = getEnvironmentVariables;
             _generateUrl = generateUrl;
-            _logger = logger;
         }
 
         public async Task<T> DownloadAsync(Guid id)

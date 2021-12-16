@@ -9,15 +9,13 @@
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "base_api": {
+    "finance_service_api": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger/index.html",
       "environmentVariables": {
         "TENURE_API_URL": "https://2524go3mdg.execute-api.eu-west-2.amazonaws.com/development",
         "DynamoDb_LocalServiceUrl": "http://localhost:8000",
-        "TENURE_API_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJncm91cHMiOlsiZXZlbnRzLXRlc3RpbmctZGV2ZWxvcG1lbnQiLCJldmVudHMtdGVzdGluZy1kZXYiXSwiZW1haWwiOiJldmVudHMtdGVzdGluZy1kZXZlbG9wbWVudEBoYWNrbmV5Lmdvdi51ayIsIm5hbWUiOiJldmVudHMtdGVzdGluZy1kZXZlbG9wbWVudCIsIm5iZiI6MTYyODY5MDEyMCwiZXhwIjoxOTQ0MjIyOTE4LCJpYXQiOjE2Mjg2OTAxMjB9.zpuR6_ADszh8CT7HCAKrfnMpkpPTKrMdMbaUH9xM7Os",
-        "SEARCH_API_AUTH_KEY": "12345",
         "DynamoDb_LocalMode": "true",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "SEARCH_API_URL": "http://localhost:5003/api/v1"
