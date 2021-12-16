@@ -11,6 +11,7 @@ using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Person;
+using Hackney.Shared.Person.Domain;
 using Hackney.Shared.Tenure.Domain;
 
 namespace FinanceServicesApi.V1.Factories
@@ -134,7 +135,7 @@ namespace FinanceServicesApi.V1.Factories
             };
         }
 
-        public static PropertySummaryTenantsResponse ToResponse(TenureInformation tenants, List<ContactDetail> contacts)
+        public static PropertySummaryTenantsResponse ToResponse(Person person,TenureInformation tenants, List<ContactDetail> contacts)
         {
             return new PropertySummaryTenantsResponse()
             {
@@ -142,18 +143,19 @@ namespace FinanceServicesApi.V1.Factories
                 Email = contacts?.Where(c =>
                         c.TargetType == TargetType.Person &&
                         c.ContactInformation.ContactType == ContactType.Email)
-                    .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "-",
-                FullName = tenants.HouseholdMembers.First(f => f.IsResponsible)?.FullName ?? "-",
+                    .Select(s => s.ContactInformation.Value).FirstOrDefault(),
+                FullName = tenants.HouseholdMembers.First(f => f.IsResponsible)?.FullName,
                 StartDate = tenants.StartOfTenureDate,
                 TenancyType = tenants.TenureType,
                 PhoneNumber = contacts?.Where(c =>
                         c.TargetType == TargetType.Person &&
                         c.ContactInformation.ContactType == ContactType.Phone)
-                    .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "-",
+                    .Select(s => s.ContactInformation.Value).FirstOrDefault(),
                 TenancyId = tenants.TenureType?.Code ?? "",
                 TimeInPropertyY = (short) ((tenants.EndOfTenureDate ?? DateTime.UtcNow).Year - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Year),
                 TimeInPropertyM = (short) (((tenants.EndOfTenureDate ?? DateTime.UtcNow).Year - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Year) * 12 +
-                                  (tenants.EndOfTenureDate ?? DateTime.UtcNow).Month - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Month)
+                                  (tenants.EndOfTenureDate ?? DateTime.UtcNow).Month - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Month),
+                PersonType = person?.PersonTypes?.ToList()
             };
         }
 

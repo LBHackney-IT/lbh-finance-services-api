@@ -205,7 +205,7 @@ namespace FinanceServicesApi
 
             // TODO
             // If you DON'T use the renaming script, PLEASE replace with your own API name manually
-            app.UseXRay("base-api");
+            app.UseXRay("finance-services-api");
 
 
             //Get All ApiVersions,
