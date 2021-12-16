@@ -222,7 +222,7 @@ namespace FinanceServicesApi
                 }
             });
             app.UseSwagger();
-            //app.UseGoogleGroupAuthorization();
+            app.UseGoogleGroupAuthorization();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
