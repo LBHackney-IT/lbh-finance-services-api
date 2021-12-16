@@ -16,6 +16,9 @@
       <EmbeddedResource Remove="terraform\**" />
       <None Remove="terraform\**" />
     </ItemGroup>
+    <ItemGroup>
+      <None Remove="V1\Controllers\PropertySummaryController.cs~RF21916fe.TMP" />
+    </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="5.1.1" />
