@@ -190,6 +190,8 @@ namespace FinanceServicesApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("corsPolicy");
+
             app.UseCorrelation();
 
             if (env.IsDevelopment())
@@ -221,14 +223,14 @@ namespace FinanceServicesApi
                 }
             });
             app.UseSwagger();
-            app.UseGoogleGroupAuthorization();
             app.UseRouting();
+            app.UseGoogleGroupAuthorization();
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 // SwaggerGen won't find controllers that are routed via this technique.
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseMiddleware<ExceptionMiddleware>();
         }
     }
 }
