@@ -124,7 +124,7 @@ namespace FinanceServicesApi.V1.Controllers
                         accountContactDetails.AddRange(tmpData.Results);
                 }
 
-                response.Add(ResponseFactory.ToResponse(personData,tenureData, accountContactDetails));
+                response.Add(ResponseFactory.ToResponse(personData, tenureData, accountContactDetails));
             }
             return Ok(response);
         }

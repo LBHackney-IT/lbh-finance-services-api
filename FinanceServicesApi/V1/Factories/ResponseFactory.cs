@@ -135,7 +135,7 @@ namespace FinanceServicesApi.V1.Factories
             };
         }
 
-        public static PropertySummaryTenantsResponse ToResponse(Person person,TenureInformation tenants, List<ContactDetail> contacts)
+        public static PropertySummaryTenantsResponse ToResponse(Person person, TenureInformation tenants, List<ContactDetail> contacts)
         {
             return new PropertySummaryTenantsResponse()
             {
