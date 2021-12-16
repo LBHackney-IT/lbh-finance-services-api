@@ -109,7 +109,8 @@ namespace FinanceServicesApi.V1.Controllers
                     $"{nameof(id)} cannot be empty."));
 
             var personData = await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
-            if (personData == null)
+            return Ok(personData);
+            /*if (personData == null)
                 return NotFound(id);
             List<PropertySummaryTenantsResponse> response = new List<PropertySummaryTenantsResponse>();
             foreach (var t in personData.Tenures)
@@ -126,7 +127,7 @@ namespace FinanceServicesApi.V1.Controllers
 
                 response.Add(ResponseFactory.ToResponse(personData, tenureData, accountContactDetails));
             }
-            return Ok(response);
+            return Ok(response);*/
         }
 
         /// <summary>
