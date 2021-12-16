@@ -16,6 +16,7 @@ using FinanceServicesApi.Versioning;
 using Hackney.Core.Authorization;
 using Hackney.Core.DynamoDb;
 using Hackney.Core.JWT;
+using Hackney.Core.Logging;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Person;
 using Hackney.Shared.Tenure.Domain;
@@ -124,6 +125,7 @@ namespace FinanceServicesApi
             RegisterGateways(services);
             RegisterUseCases(services);
             RegisterInfraService(services);
+            services.ConfigureLambdaLogging(Configuration);
         }
 
         private static void RegisterInfraService(IServiceCollection services)
