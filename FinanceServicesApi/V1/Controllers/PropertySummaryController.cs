@@ -93,7 +93,7 @@ namespace FinanceServicesApi.V1.Controllers
         }
 
         /// <summary>
-        /// 
+        ///     Get all tenants relevant to the provided asset id
         /// </summary>
         /// <param name="id">Person Id</param>
         /// <returns></returns>
