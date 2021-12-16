@@ -38,7 +38,6 @@ namespace FinanceServicesApi
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
             AWSSDKHandler.RegisterXRayForAllServices();
         }
 
@@ -229,6 +228,7 @@ namespace FinanceServicesApi
                 // SwaggerGen won't find controllers that are routed via this technique.
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
+            app.UseMiddleware<ExceptionMiddleware>();
         }
     }
 }

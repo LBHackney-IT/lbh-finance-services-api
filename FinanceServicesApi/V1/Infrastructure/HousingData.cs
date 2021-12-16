@@ -1,7 +1,6 @@
 using System;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Amazon.Runtime.Internal.Util;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Newtonsoft.Json;
 
@@ -25,7 +24,6 @@ namespace FinanceServicesApi.V1.Infrastructure
         {
             if (id == Guid.Empty) throw new ArgumentNullException(nameof(id));
 
-            var apiUrl = _getEnvironmentVariables.GetUrl();
             var apiToken = _getEnvironmentVariables.GetToken();
 
             _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", apiToken));
@@ -48,7 +46,6 @@ namespace FinanceServicesApi.V1.Infrastructure
 
             var tResponse = JsonConvert.DeserializeObject<T>(responseContent);
             return tResponse;
-
         }
     }
 }
