@@ -41,13 +41,11 @@ namespace FinanceServicesApi.V1.Infrastructure
 
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            throw new Exception(responseContent);
-
-            /*if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
                 throw new Exception(responseContent);
 
             var tResponse = JsonConvert.DeserializeObject<T>(responseContent);
-            return tResponse;*/
+            return tResponse;
         }
     }
 }
