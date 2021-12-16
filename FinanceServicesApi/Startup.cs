@@ -120,11 +120,11 @@ namespace FinanceServicesApi
                     c.IncludeXmlComments(xmlPath);
             });
 
+            services.AddTokenFactory();
             ConfigureLogging(services, Configuration);
             services.ConfigureDynamoDB();
             RegisterGateways(services);
             RegisterUseCases(services);
-            services.AddTokenFactory();
             RegisterInfraService(services);
         }
 
