@@ -9,7 +9,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses
         public string Account { get; } = "Suspense";
         public string Address { get; set; }
         [Required]
-        public decimal CurrentArrears { get; set; }
+        public decimal? CurrentArrears { get; set; }
         [Required]
         public decimal ArrearsAfterPayment { get; set; }
         [Required]

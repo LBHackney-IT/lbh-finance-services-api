@@ -22,11 +22,11 @@ namespace FinanceServicesApi.V1.Factories
             return new ConfirmTransferResponse
             {
                 Address = transaction.Address,
-                ArrearsAfterPayment = account.AccountBalance - transaction.TransactionAmount,
-                CurrentArrears = account.AccountBalance,
-                Payee = transaction.Person.FullName,
-                RentAccountNumber = account.PaymentReference,
-                Resident = account.Tenure.PrimaryTenants.First().FullName
+                ArrearsAfterPayment = account?.AccountBalance ?? 0 - transaction?.TransactionAmount ?? 0,
+                CurrentArrears = account?.AccountBalance,
+                Payee = transaction?.Person?.FullName,
+                RentAccountNumber = account?.PaymentReference,
+                Resident = account?.Tenure?.PrimaryTenants?.FirstOrDefault()?.FullName
             };
         }
 
@@ -39,22 +39,22 @@ namespace FinanceServicesApi.V1.Factories
             return new ResidentSummaryResponse
             {
                 CurrentBalance = tenure?.Charges?.CurrentBalance,
-                HousingBenefit = transactions.Sum(s => s.HousingBenefitAmount),
-                ServiceCharge = charges.Count == 0 ? 0 : charges.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
+                HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount),
+                ServiceCharge = charges?.Count == 0 ? 0 : charges?.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
                 DateOfBirth = person?.DateOfBirth,
                 PersonId = "-",
                 TenureId = "-",
-                LastPaymentAmount = transactions.Count == 0 ? 0 : transactions.Last().PaidAmount,
-                LastPaymentDate = transactions.Count == 0 ? (DateTime?) null : transactions.Last(p => p.PaidAmount > 0).TransactionDate,
+                LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.Last().PaidAmount,
+                LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.Last(p => p.PaidAmount > 0).TransactionDate,
                 PrimaryTenantAddress = tenure?.TenuredAsset?.FullAddress,
                 TenancyType = tenure?.TenureType.Code,
                 PrimaryTenantEmail = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
                     .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
-                PrimaryTenantName = $"{person?.FirstName??""} {person?.Surname??""}",
+                PrimaryTenantName = $"{person?.FirstName ?? ""} {person?.Surname ?? ""}",
                 PrimaryTenantPhoneNumber = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
                     .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
                 TenureStartDate = tenure?.StartOfTenureDate,
-                WeeklyTotalCharges = charges.Sum(p =>
+                WeeklyTotalCharges = charges?.Sum(p =>
                     p.DetailedCharges.Where(c =>
                         c.Frequency.ToLower() == "weekly" &&
                         c.Type.ToLower() == "service").Sum(c => c.Amount))
