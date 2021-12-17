@@ -8,7 +8,7 @@ using FinanceServicesApi.V1.Infrastructure.Entities;
 
 namespace FinanceServicesApi.V1.Infrastructure
 {
-    public class AccountAutoMapperProfile:Profile
+    public class AccountAutoMapperProfile : Profile
     {
         public AccountAutoMapperProfile()
         {

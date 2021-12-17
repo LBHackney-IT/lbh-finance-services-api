@@ -18,7 +18,7 @@ namespace FinanceServicesApi.Tests.V1.Factories
         {
             Account account = _fixture.Create<Account>();
             Transaction transaction = _fixture.Create<Transaction>();
-            ConfirmTransferResponse confirmTransferResponse =  ResponseFactory.ToResponse(account, transaction);
+            ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
             confirmTransferResponse.Address.Should().Be(transaction.Address);
             confirmTransferResponse.ArrearsAfterPayment.Should()
                 .Be(account.AccountBalance - transaction.TransactionAmount);
