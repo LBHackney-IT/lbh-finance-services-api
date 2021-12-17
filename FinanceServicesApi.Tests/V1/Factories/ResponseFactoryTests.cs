@@ -11,22 +11,22 @@ namespace FinanceServicesApi.Tests.V1.Factories
 {
     public class ResponseFactoryTests
     {
-        private readonly Fixture _fixture = new Fixture();
+        //private readonly Fixture _fixture = new Fixture();
 
-        [Fact]
-        public void ToResponseWithValidAccountAndTransactionReturnsValidConfirmTransferResponse()
-        {
-            Account account = _fixture.Create<Account>();
-            Transaction transaction = _fixture.Create<Transaction>();
-            ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
-            confirmTransferResponse.Address.Should().Be(transaction.Address);
-            confirmTransferResponse.ArrearsAfterPayment.Should()
-                .Be(account.AccountBalance - transaction.TransactionAmount);
-            confirmTransferResponse.CurrentArrears.Should().Be(account.AccountBalance);
-            confirmTransferResponse.Payee.Should().Be(transaction.Person.FullName);
-            confirmTransferResponse.RentAccountNumber.Should().Be(account.PaymentReference);
-            confirmTransferResponse.Resident.Should().Be(account.Tenure.PrimaryTenants.First().FullName);
-        }
+        //[Fact]
+        //public void ToResponseWithValidAccountAndTransactionReturnsValidConfirmTransferResponse()
+        //{
+        //    Account account = _fixture.Create<Account>();
+        //    Transaction transaction = _fixture.Create<Transaction>();
+        //    ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
+        //    confirmTransferResponse.Address.Should().Be(transaction.Address);
+        //    confirmTransferResponse.ArrearsAfterPayment.Should()
+        //        .Be(account.AccountBalance - transaction.TransactionAmount);
+        //    confirmTransferResponse.CurrentArrears.Should().Be(account.AccountBalance);
+        //    confirmTransferResponse.Payee.Should().Be(transaction.Person.FullName);
+        //    confirmTransferResponse.RentAccountNumber.Should().Be(account.PaymentReference);
+        //    confirmTransferResponse.Resident.Should().Be(account.Tenure.PrimaryTenants.First().FullName);
+        //}
 
 
     }

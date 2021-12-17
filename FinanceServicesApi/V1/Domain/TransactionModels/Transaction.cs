@@ -24,7 +24,7 @@ namespace FinanceServicesApi.V1.Domain.TransactionModels
         [RequiredDateTime]
         public DateTime TransactionDate { get; set; }
 
-        [Range(0.0, 999999999999)]
+        [GreatAndEqualThan("0.0")]
         public decimal TransactionAmount { get; set; }
 
         public string PaymentReference { get; set; }
@@ -41,19 +41,19 @@ namespace FinanceServicesApi.V1.Domain.TransactionModels
         [Required]
         public short FinancialMonth { get; set; }
 
-        [Range(1, int.MaxValue)]
+        [Range(1, short.MaxValue)]
         [Required]
         public short FinancialYear { get; set; }
 
-        [Range(0.0, 999999999999)]
+        [GreatAndEqualThan("0.0")]
         public decimal PaidAmount { get; set; }
 
-        [Range(0.0, 999999999999)]
+        [GreatAndEqualThan("0.0")]
         public decimal ChargedAmount { get; set; }
 
         public decimal BalanceAmount { get; set; }
 
-        [Range(0.0, 999999999999)]
+        [GreatAndEqualThan("0.0")]
         public decimal HousingBenefitAmount { get; set; }
 
         public string Address { get; set; }
