@@ -10,6 +10,6 @@ namespace FinanceServicesApi.V1.Domain.Charges
         [NotNull]
         public string Name { get; set; }
         [GreatAndEqualThan("0")]
-        public decimal Value { get; set; }
+        public decimal? Value { get; set; }
     }
 }

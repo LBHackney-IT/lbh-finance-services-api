@@ -11,7 +11,6 @@ using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Person;
-using Hackney.Shared.Person.Domain;
 using Hackney.Shared.Tenure.Domain;
 
 namespace FinanceServicesApi.V1.Factories
@@ -176,9 +175,9 @@ namespace FinanceServicesApi.V1.Factories
             {
                 Bedrooms = asset.AssetCharacteristics.NumberOfBedrooms,
                 FullAddress = $"{asset.AssetAddress.AddressLine1} {asset.AssetAddress.AddressLine2} {asset.AssetAddress.AddressLine3} asset.AssetAddress.AddressLine4",
-                PropertyValue = -1,
-                RentModel = "-",
-                The999Value = -1,
+                PropertyValue = null,
+                RentModel = null,
+                The999Value = null,
                 ExtraCharges = chargesList.Select(p => new ExtraCharge
                 {
                     Name = p.Type,

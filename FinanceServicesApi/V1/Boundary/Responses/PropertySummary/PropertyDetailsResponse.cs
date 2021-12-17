@@ -18,21 +18,21 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// <example>
         ///     500000
         /// </example>
-        public decimal PropertyValue { get; set; }
+        public decimal? PropertyValue { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <example>
         ///     100000
         /// </example>
-        public decimal The999Value { get; set; }
+        public decimal? The999Value { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <example>
         ///     3
         /// </example>
-        public int Bedrooms { get; set; }
+        public int? Bedrooms { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -46,14 +46,14 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// <example>
         ///     130
         /// </example>
-        public decimal WeeklyCharge { get; set; }
+        public decimal? WeeklyCharge { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <example>
         ///     6760
         /// </example>
-        public decimal YearlyCharge { get; set; }
+        public decimal? YearlyCharge { get; set; }
 
         public List<ExtraCharge> ExtraCharges { get; set; }
     }

@@ -143,10 +143,10 @@ namespace FinanceServicesApi
             services.AddScoped<IGenerateUrl<Asset>, AssetUrlGenerator>();
             services.AddScoped<IGenerateUrl<Person>, PersonUrlGenerator>();
             services.AddScoped<IGenerateUrl<GetContactDetailsResponse>, ContactDetailUrlGenerator>();
-            //services.AddAutoMapper(cnf =>
-            //{
-            //    cnf.AddProfile<AccountAutoMapperProfile>();
-            //});
+            services.AddAutoMapper(cnf =>
+            {
+                cnf.AddProfile<AccountAutoMapperProfile>();
+            });
         }
 
         private static void ConfigureLogging(IServiceCollection services, IConfiguration configuration)

@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Factories;
+using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Entities;
+using FluentAssertions;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Factories
@@ -20,20 +22,13 @@ namespace FinanceServicesApi.Tests.V1.Factories
             _fixture = new Fixture();
         }
 
-        /*[Fact]
+        [Fact]
         public void ToDimainWithCorrespondingDataTypeReturnsValidData()
         {
-            Guid TargetId = Guid.NewGuid();
-            AccountDbEntity request = new AccountDbEntity
-            {
-                ConsolidatedBalance = 125,
-                TargetId = TargetId,
-                Tenure = 
-            };
-            Account response = new Account();
-
-            AccountFactory.ToDomain();
-        }*/
+            AccountDbEntity dbEntity = _fixture.Create<AccountDbEntity>();
+            Account domain = dbEntity.ToDomain();
+            dbEntity.Should().BeEquivalentTo(domain);
+        }
 
     }
 }
