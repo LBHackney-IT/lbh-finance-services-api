@@ -14,7 +14,7 @@ namespace FinanceServicesApi.V1.Gateways
         {
             _housingData = housingData;
         }
-        public async Task<TenureInformation> GetById(Guid id)
+        public async Task<TenureInformation>  GetById(Guid id)
         {
             if (id == Guid.Empty)
                 throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");

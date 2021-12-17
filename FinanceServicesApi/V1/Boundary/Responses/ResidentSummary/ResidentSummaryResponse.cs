@@ -10,7 +10,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.ResidentSummary
         /// <example>
         ///     3215.32
         /// </example>
-        public decimal? CurrentBalance { get; set; }
+        public float? CurrentBalance { get; set; }
 
         /// <summary>
         /// 

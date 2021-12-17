@@ -59,7 +59,7 @@ namespace FinanceServicesApi.V1.Controllers
         public async Task<IActionResult> GetById([FromQuery] ResidentSummaryRequest request)
         {
             var accountResponse =
-                await _accountUseCase.ExecuteAsync(request.MasterAccountId).ConfigureAwait(false);
+                await _accountUseCase.ExecuteAsync(request.TenureId).ConfigureAwait(false);
 
             var transactionResponse = (accountResponse == null || accountResponse.TargetId == Guid.Empty) ? null :
                 await _transactionUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
@@ -85,7 +85,6 @@ namespace FinanceServicesApi.V1.Controllers
 
             var result = ResponseFactory.ToResponse(personResponse,
                 tenureInformationResponse,
-                accountResponse,
                 chargeResponse,
                 contactDetailsResponse?.Results,
                 transactionResponse);

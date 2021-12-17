@@ -63,16 +63,19 @@ namespace FinanceServicesApi.V1.Controllers
         [HttpGet]
         public async Task<IActionResult> GetById([FromQuery] PropertySummaryRequest request)
         {
-            var accountResponse =
-                await _accountUseCase.ExecuteAsync(request.MasterAccountId).ConfigureAwait(false);
+            /*var accountResponse =
+                await _accountUseCase.ExecuteAsync(request.MasterAccountId).ConfigureAwait(false);*/
 
-            var assetResponse = await _assetUseCase.ExecuteAsync(request.AssetId).ConfigureAwait(false);
+            var transactionResponse =
+                await _transactionUseCase.ExecuteAsync(request.TenureId).ConfigureAwait(false);
 
-            var transactionResponse = (accountResponse == null || accountResponse.TargetId == Guid.Empty) ? null :
-                await _transactionUseCase.ExecuteAsync(accountResponse.TargetId).ConfigureAwait(false);
+            var tenureInformationResponse =
+                await _tenureUseCase.ExecuteAsync(request.TenureId).ConfigureAwait(false);
 
-            var tenureInformationResponse = (accountResponse == null || accountResponse.TargetId == Guid.Empty) ? null :
-                await _tenureUseCase.ExecuteAsync(accountResponse.TargetId/*Guid.Parse("7495acd4-29af-49ad-8984-f30766f507af")*/).ConfigureAwait(false);
+            var assetResponse = (tenureInformationResponse == null ||
+                                tenureInformationResponse?.TenuredAsset == null ||
+                                tenureInformationResponse?.TenuredAsset?.Id == null) ? null :
+                await _assetUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
 
             var chargeResponse = (tenureInformationResponse == null ||
                                  tenureInformationResponse.TenuredAsset == null ||
@@ -84,7 +87,7 @@ namespace FinanceServicesApi.V1.Controllers
             var contactDetailsResponse = await _contactUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
 
             var result = ResponseFactory.ToResponse(tenureInformationResponse,
-                accountResponse,
+                personResponse,
                 chargeResponse,
                 contactDetailsResponse?.Results,
                 transactionResponse,

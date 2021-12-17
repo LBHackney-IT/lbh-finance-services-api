@@ -42,7 +42,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
-                throw new Exception(responseContent);
+                return null;
 
             var tResponse = JsonConvert.DeserializeObject<T>(responseContent);
             return tResponse;

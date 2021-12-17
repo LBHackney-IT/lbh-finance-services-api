@@ -7,7 +7,7 @@ namespace FinanceServicesApi.V1.Boundary.Request
         /// <summary>
         /// The master account id which includes all relevant child accounts
         /// </summary>
-        public Guid MasterAccountId { get; set; }
+        public Guid TenureId { get; set; }
         /// <summary>
         /// The owner of the account
         /// </summary>

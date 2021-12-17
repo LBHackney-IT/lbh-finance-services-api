@@ -14,11 +14,9 @@
       "launchBrowser": true,
       "launchUrl": "swagger/index.html",
       "environmentVariables": {
-        "TENURE_API_URL": "https://2524go3mdg.execute-api.eu-west-2.amazonaws.com/development",
         "DynamoDb_LocalServiceUrl": "http://localhost:8000",
         "DynamoDb_LocalMode": "true",
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "SEARCH_API_URL": "http://localhost:5003/api/v1"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5007"
     }
