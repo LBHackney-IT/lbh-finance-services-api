@@ -16,6 +16,6 @@ namespace FinanceServicesApi.V1.Domain.AccountModels
         /// </example>
         public string FullAddress { get; set; }
 
-        public IEnumerable<PrimaryTenants> PrimaryTenants { get; set; }
+        public List<PrimaryTenants> PrimaryTenants { get; set; }
     }
 }

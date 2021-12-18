@@ -4,10 +4,11 @@ using System.Net;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Request;
 using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
-using FinanceServicesApi.V1.Domain.Charges;
+using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using Microsoft.AspNetCore.Http;
 
@@ -51,52 +52,47 @@ namespace FinanceServicesApi.V1.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">Person id in guid format</param>
+        /// <param name="id">Person Id</param>
         /// <returns></returns>
         [ProducesResponseType(typeof(ResidentSummaryResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
-        [HttpGet("{id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            if (id == Guid.Empty)
-                throw new ArgumentNullException(nameof(id));
-
             var personResponse =
                 await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
-            if (personResponse == null)
-                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound,
-                    $"Person information not found for the provided id:{id}"));
+
+            Guid tenureId=Guid.Empty;
             foreach (var tenure in personResponse.Tenures)
             {
-
-                /*var accountResponse =
-                    await _accountUseCase.ExecuteAsync(tenure.Id).ConfigureAwait(false);*/
-
-                var transactionResponse =
-                    await _transactionUseCase.ExecuteAsync(tenure.Id).ConfigureAwait(false);
-
-                var tenureInformationResponse =
-                    await _tenureUseCase.ExecuteAsync(tenure.Id).ConfigureAwait(false);
-                var assetId = tenureInformationResponse?.TenuredAsset?.Id??Guid.Empty;
-
-                List<Charge> chargeResponse= new List<Charge>();
-
-                if (assetId != Guid.Empty)
+                var innerAccount=
+                    await _accountUseCase.ExecuteAsync(tenure.Id).ConfigureAwait(false);
+                if (innerAccount!=null && innerAccount.ParentAccountId == Guid.Empty && innerAccount.AccountType == AccountType.Master)
                 {
-                    chargeResponse.AddRange(await _chargeUseCase.ExecuteAsync(assetId).ConfigureAwait(false));
+                    tenureId = tenure.Id;
+                    break;
                 }
-
             }
+
+            var transactionResponse =tenureId==Guid.Empty?null:
+                await _transactionUseCase.ExecuteAsync(tenureId).ConfigureAwait(false);
+
+            var tenureInformationResponse = tenureId == Guid.Empty ? null :
+                await _tenureUseCase.ExecuteAsync(tenureId).ConfigureAwait(false);
+
+            var chargeResponse = tenureInformationResponse?.TenuredAsset?.Id==null ? null :
+                await _chargeUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
 
             var contactDetailsResponse =
                 await _contactUseCase.ExecuteAsync(id).ConfigureAwait(false);
 
             var result = ResponseFactory.ToResponse(personResponse,
+                tenureInformationResponse,
+                chargeResponse,
                 contactDetailsResponse?.Results,
-                );
-
+                transactionResponse);
             return Ok(result);
         }
 
