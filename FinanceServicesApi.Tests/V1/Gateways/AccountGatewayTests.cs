@@ -31,7 +31,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _fixture = new Fixture();
             _dynamoDbContext = new Mock<IDynamoDBContext>();
             _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
-            _sut = new AccountGateway(_dynamoDbContext.Object,_amazonDynamoDb.Object);
+            _sut = new AccountGateway(_dynamoDbContext.Object, _amazonDynamoDb.Object);
         }
 
         /*[Fact]
