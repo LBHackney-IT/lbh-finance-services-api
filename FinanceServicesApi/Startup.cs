@@ -188,6 +188,7 @@ namespace FinanceServicesApi
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetAccountByTargetIdUseCase, GetAccountByTargetIdUseCase>();
+            services.AddScoped<IGetAccountByIdUseCase, GetAccountByIdUseCase>();
             services.AddScoped<IGetTransactionByIdUseCase, GetTransactionByIdUseCase>();
             services.AddScoped<IGetLastPaymentTransactionsByTargetIdUseCase, GetLastPaymentTransactionsByTargetIdUseCase>();
             services.AddScoped<IGetPersonByIdUseCase, GetPersonByIdUseCase>();
