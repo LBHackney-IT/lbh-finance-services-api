@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.Model;
 using AutoFixture;
@@ -20,15 +21,17 @@ namespace FinanceServicesApi.Tests.V1.Gateways
 {
     public class AccountGatewayTests
     {
-        private readonly Mock<DynamoDBContext> _dynamoDbContext;
+        private readonly Mock<IDynamoDBContext> _dynamoDbContext;
+        private readonly Mock<IAmazonDynamoDB> _amazonDynamoDb;
         private readonly Fixture _fixture;
         private AccountGateway _sut;
 
         public AccountGatewayTests()
         {
             _fixture = new Fixture();
-            _dynamoDbContext = new Mock<DynamoDBContext>();
-            _sut = new AccountGateway(_dynamoDbContext.Object);
+            _dynamoDbContext = new Mock<IDynamoDBContext>();
+            _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
+            _sut = new AccountGateway(_dynamoDbContext.Object,_amazonDynamoDb.Object);
         }
 
         /*[Fact]
