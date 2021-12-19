@@ -125,6 +125,10 @@ namespace FinanceServicesApi
             RegisterGateways(services);
             RegisterUseCases(services);
             RegisterInfraService(services);
+            services.AddCors(opt => opt.AddPolicy("corsPolicy", builder =>
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()));
             services.ConfigureLambdaLogging(Configuration);
         }
 
