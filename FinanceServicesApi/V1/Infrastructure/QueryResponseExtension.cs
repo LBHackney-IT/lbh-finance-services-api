@@ -168,13 +168,15 @@ namespace FinanceServicesApi.V1.Infrastructure
                 {
                     var _tenure = item["tenure"].M;
                     tenure = new AccountTenureSubSet
+                    {
+                        FullAddress = _tenure["fullAddress"].S,
+                        TenureId = _tenure["tenureId"].S,
+                        TenureType = new TenureType
                         {
-                            FullAddress = _tenure["fullAddress"].S, TenureId = _tenure["tenureId"].S, TenureType = new TenureType
-                            {
-                                Code = _tenure["tenureType"].M["code"].S,
-                                Description = _tenure["tenureType"].M["description"].S
-                            }
-                        };
+                            Code = _tenure["tenureType"].M["code"].S,
+                            Description = _tenure["tenureType"].M["description"].S
+                        }
+                    };
                     if (_tenure.ContainsKey("primaryTenants"))
                     {
                         tenure.PrimaryTenants = new List<PrimaryTenants>();

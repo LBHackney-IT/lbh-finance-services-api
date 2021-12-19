@@ -64,7 +64,7 @@ namespace FinanceServicesApi.V1.Controllers
             var personResponse =
                 await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
             if (personResponse == null)
-                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound,$"There is no data for provided Person"));
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided Person"));
 
             Guid tenureId = Guid.Empty;
             Account account = new Account();

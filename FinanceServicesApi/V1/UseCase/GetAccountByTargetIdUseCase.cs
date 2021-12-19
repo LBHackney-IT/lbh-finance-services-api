@@ -7,7 +7,7 @@ using FinanceServicesApi.V1.UseCase.Interfaces;
 
 namespace FinanceServicesApi.V1.UseCase
 {
-    public class GetAccountByTargetIdUseCase: IGetAccountByTargetIdUseCase
+    public class GetAccountByTargetIdUseCase : IGetAccountByTargetIdUseCase
     {
         private readonly IAccountGateway _gateway;
 
