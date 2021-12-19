@@ -25,7 +25,7 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetChargeByAssetIdUseCase _chargeUseCase;
         private readonly IGetTenureInformationByIdUseCase _tenureUseCase;
         private readonly IGetContactDetailsByTargetIdUseCase _contactUseCase;
-        private readonly IGetAccountByIdUseCase _accountUseCase;
+        private readonly IGetAccountByTargetIdUseCase _accountUseCase;
         private readonly IGetLastPaymentTransactionsByTargetIdUseCase _transactionUseCase;
         private readonly IGetAssetByIdUseCase _assetUseCase;
 
@@ -34,7 +34,7 @@ namespace FinanceServicesApi.V1.Controllers
             , IGetChargeByAssetIdUseCase chargeUseCase
             , IGetTenureInformationByIdUseCase tenureUseCase
             , IGetContactDetailsByTargetIdUseCase contactUseCase
-            , IGetAccountByIdUseCase accountByIdUseCase
+            , IGetAccountByTargetIdUseCase accountByIdUseCase
             , IGetLastPaymentTransactionsByTargetIdUseCase lastPaymentTransactionsByTargetIdUseCase
             , IGetAssetByIdUseCase assetByIdUseCase)
         {
@@ -63,26 +63,31 @@ namespace FinanceServicesApi.V1.Controllers
         {
             var personResponse =
                 await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            if (personResponse == null)
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound,$"There is no data for provided Person"));
 
-            Guid tenureId=Guid.Empty;
+            Guid tenureId = Guid.Empty;
+            Account account = new Account();
             foreach (var tenure in personResponse.Tenures)
             {
-                var innerAccount=
+                account = null;
+                var innerAccount =
                     await _accountUseCase.ExecuteAsync(tenure.Id).ConfigureAwait(false);
-                if (innerAccount!=null && innerAccount.ParentAccountId == Guid.Empty && innerAccount.AccountType == AccountType.Master)
+                if (innerAccount != null && innerAccount.ParentAccountId == Guid.Empty && innerAccount.AccountType == AccountType.Master)
                 {
                     tenureId = tenure.Id;
+                    account = innerAccount;
                     break;
                 }
             }
 
-            var transactionResponse =tenureId==Guid.Empty?null:
+            var transactionResponse = tenureId == Guid.Empty ? null :
                 await _transactionUseCase.ExecuteAsync(tenureId).ConfigureAwait(false);
 
             var tenureInformationResponse = tenureId == Guid.Empty ? null :
                 await _tenureUseCase.ExecuteAsync(tenureId).ConfigureAwait(false);
 
-            var chargeResponse = tenureInformationResponse?.TenuredAsset?.Id==null ? null :
+            var chargeResponse = tenureInformationResponse?.TenuredAsset?.Id == null ? null :
                 await _chargeUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
 
             var contactDetailsResponse =
@@ -90,6 +95,7 @@ namespace FinanceServicesApi.V1.Controllers
 
             var result = ResponseFactory.ToResponse(personResponse,
                 tenureInformationResponse,
+                account,
                 chargeResponse,
                 contactDetailsResponse?.Results,
                 transactionResponse);

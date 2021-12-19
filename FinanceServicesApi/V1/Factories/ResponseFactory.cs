@@ -32,18 +32,19 @@ namespace FinanceServicesApi.V1.Factories
 
         public static ResidentSummaryResponse ToResponse(Person person,
             TenureInformation tenure,
+            Account account,
             List<Domain.Charges.Charge> charges,
             List<ContactDetail> contacts,
             List<Transaction> transactions)
         {
             return new ResidentSummaryResponse
             {
-                CurrentBalance = tenure?.Charges?.CurrentBalance,
+                CurrentBalance = account?.ConsolidatedBalance,
                 HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount),
                 ServiceCharge = charges?.Count == 0 ? 0 : charges?.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
                 DateOfBirth = person?.DateOfBirth,
                 PersonId = "-",
-                TenureId = "-",
+                TenureId = account?.Tenure?.TenureId,
                 LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.Last().PaidAmount,
                 LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.Last(p => p.PaidAmount > 0).TransactionDate,
                 PrimaryTenantAddress = tenure?.TenuredAsset?.FullAddress,

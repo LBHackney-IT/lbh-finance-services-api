@@ -24,7 +24,6 @@ namespace FinanceServicesApi.V1.Controllers
     public class PropertySummaryController : BaseController
     {
         private readonly IGetPersonByIdUseCase _personUseCase;
-        /*private readonly IGetFinancialSummaryByTargetIdUseCase _financialSummaryUseCase;*/
         private readonly IGetChargeByAssetIdUseCase _chargeUseCase;
         private readonly IGetTenureInformationByIdUseCase _tenureUseCase;
         private readonly IGetContactDetailsByTargetIdUseCase _contactUseCase;
@@ -33,7 +32,6 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetAssetByIdUseCase _assetUseCase;
 
         public PropertySummaryController(IGetPersonByIdUseCase personUseCase
-            /*, IGetFinancialSummaryByTargetIdUseCase financialSummaryUseCase*/
             , IGetChargeByAssetIdUseCase chargeUseCase
             , IGetTenureInformationByIdUseCase tenureUseCase
             , IGetContactDetailsByTargetIdUseCase contactUseCase
@@ -42,7 +40,6 @@ namespace FinanceServicesApi.V1.Controllers
             , IGetAssetByIdUseCase assetByIdUseCase)
         {
             _personUseCase = personUseCase;
-            /*_financialSummaryUseCase = financialSummaryUseCase;*/
             _chargeUseCase = chargeUseCase;
             _tenureUseCase = tenureUseCase;
             _contactUseCase = contactUseCase;
@@ -135,7 +132,7 @@ namespace FinanceServicesApi.V1.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">Asset id</param>
+        /// <param name="id">Tenure id</param>
         /// <returns>PropertyDetails</returns>
         [ProducesResponseType(typeof(PropertyDetailsResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
@@ -146,11 +143,18 @@ namespace FinanceServicesApi.V1.Controllers
         {
             if (id == Guid.Empty)
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
-                    $"{nameof(id).ToString()} cannot be empty."));
+                    $"The {nameof(id).ToString()} cannot be empty."));
 
-            var assetData = await _assetUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            var tenureInformation = await _tenureUseCase.ExecuteAsync(id).ConfigureAwait(false);
+
+            if (tenureInformation == null || tenureInformation.TenuredAsset?.Id == null || tenureInformation.TenuredAsset.Id == Guid.Empty)
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
+
+            var assetData =
+                await _assetUseCase.ExecuteAsync(tenureInformation.TenuredAsset.Id).ConfigureAwait(false);
+
             if (assetData == null)
-                return NotFound(id);
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
 
             var chargeData = await _chargeUseCase.ExecuteAsync(id).ConfigureAwait(false);
 

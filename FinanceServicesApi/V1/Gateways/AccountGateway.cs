@@ -16,9 +16,9 @@ namespace FinanceServicesApi.V1.Gateways
     public class AccountGateway : IAccountGateway
     {
         private readonly IDynamoDBContext _dynamoDbContext;
-        private readonly AmazonDynamoDBClient _amazonDynamoDb;
+        private readonly IAmazonDynamoDB _amazonDynamoDb;
 
-        public AccountGateway(IDynamoDBContext dynamoDbContext,AmazonDynamoDBClient amazonDynamoDb)
+        public AccountGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb)
         {
             _dynamoDbContext = dynamoDbContext;
             _amazonDynamoDb = amazonDynamoDb;
@@ -34,7 +34,7 @@ namespace FinanceServicesApi.V1.Gateways
             return result?.ToDomain();
         }
 
-        public async Task<List<Account>> GetByTargetId(Guid targetId)
+        public async Task<Account> GetByTargetId(Guid targetId)
         {
             QueryRequest request = new QueryRequest
             {
@@ -50,7 +50,7 @@ namespace FinanceServicesApi.V1.Gateways
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
 
-            return response.ToAccounts();
+            return response.ToAccount();
         }
     }
 }

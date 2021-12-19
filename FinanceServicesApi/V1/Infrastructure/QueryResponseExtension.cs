@@ -140,9 +140,8 @@ namespace FinanceServicesApi.V1.Infrastructure
             return chargesList;
         }
 
-        public static List<Account> ToAccounts(this QueryResponse response)
+        public static Account ToAccount(this QueryResponse response)
         {
-            List<Account> accounts = new List<Account>();
             foreach (Dictionary<string, AttributeValue> item in response.Items)
             {
                 List<ConsolidatedCharge> consolidatedChargesList = null;
@@ -190,7 +189,7 @@ namespace FinanceServicesApi.V1.Infrastructure
                     }
                 }
 
-                accounts.Add(new Account
+                return new Account
                 {
                     Id = Guid.Parse(item["id"].S),
                     AccountBalance = decimal.Parse(item["account_balance"].N),
@@ -210,10 +209,10 @@ namespace FinanceServicesApi.V1.Infrastructure
                     AccountStatus = Enum.Parse<AccountStatus>(item["account_status"].S),
                     PaymentReference = item["payment_reference"].S,
                     ParentAccountId = Guid.Parse(item["parent_account_id"].S)
-                });
+                };
             }
 
-            return accounts;
+            return null;
         }
     }
 }
