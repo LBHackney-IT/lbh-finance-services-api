@@ -126,6 +126,7 @@ namespace FinanceServicesApi
             RegisterUseCases(services);
             RegisterInfraService(services);
             services.ConfigureLambdaLogging(Configuration);
+            services.AddCors();
         }
 
         private static void RegisterInfraService(IServiceCollection services)
@@ -197,6 +198,11 @@ namespace FinanceServicesApi
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod());
+
             app.UseCorrelation();
 
             if (env.IsDevelopment())
