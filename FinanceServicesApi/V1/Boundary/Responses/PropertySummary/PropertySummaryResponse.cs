@@ -10,7 +10,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// 
         /// </summary>
         /// <example>
-        ///     15 Marcon Court, Amhurst Rd, Hackney, London E8 1ND
+        ///     15 Macron Court, Amhurst Rd, Hackney, London E8 1ND
         /// </example>
         public AssetAddress Address { get; set; }
         /// <summary>
@@ -77,7 +77,19 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         ///     HRA SEC
         /// </example>
         public string TenancyType { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     12/12/12
+        /// </example>
         public DateTime? TenancyStartDate { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     25846053
+        /// </example>
         public string PropertyReference { get; set; }
         /// <summary>
         /// 
@@ -100,7 +112,47 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         ///     Kian.h@temp.com
         /// </example>
         public string PrimaryTenantEmail { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     3
+        /// </example>
         public int PropertySize { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     Tenant
+        /// </example>
         public PersonTenureType? PersonTenureType { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     315000
+        /// </example>
+        public decimal? EstimateTotal { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     315000
+        /// </example>
+        public decimal? ActualTotal { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     315000
+        /// </example>
+        public decimal? PaidThisYear { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     315000
+        /// </example>
+        public decimal? ArrearsBalance { get; set; }
     }
 }

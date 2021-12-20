@@ -64,6 +64,7 @@ namespace FinanceServicesApi.V1.Factories
 
         public static PropertySummaryResponse ToResponse(TenureInformation tenure,
             Person person,
+            Account account,
             List<Charge> charges,
             List<ContactDetail> contacts,
             List<Transaction> transactions,
@@ -90,6 +91,7 @@ namespace FinanceServicesApi.V1.Factories
                     c.EndDate >= DateTime.UtcNow &&
                     c.Type.ToLower() == "rent" &&
                     c.Frequency.ToLower() == "weekly").Sum(c => c.Amount)) * 52;
+            var pty = transactions?.Where(p => p.TransactionDate.Year >= DateTime.UtcNow.Year).Sum(p => p.PaidAmount);
             return new PropertySummaryResponse
             {
                 CurrentBalance = tenure?.Charges?.CurrentBalance,
@@ -120,7 +122,9 @@ namespace FinanceServicesApi.V1.Factories
                 TenancyStartDate = tenure?.StartOfTenureDate,
                 YearToDate = ytd,
                 WeeklyTotalCharges = wtc,
-                YearlyRentDebits = yrd
+                YearlyRentDebits = yrd,
+                PaidThisYear = pty,
+                ArrearsBalance = (account?.AccountBalance ?? 0) > 0 ? account?.AccountBalance : 0
             };
         }
 
