@@ -1,5 +1,6 @@
 using System;
 using Hackney.Shared.Asset.Domain;
+using Hackney.Shared.Tenure.Domain;
 
 namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 {
@@ -100,5 +101,6 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// </example>
         public string PrimaryTenantEmail { get; set; }
         public int PropertySize { get; set; }
+        public PersonTenureType? PersonTenureType { get; set; }
     }
 }
