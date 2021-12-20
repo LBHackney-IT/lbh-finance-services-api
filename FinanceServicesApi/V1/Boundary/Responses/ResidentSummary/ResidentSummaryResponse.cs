@@ -66,7 +66,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.ResidentSummary
         /// <example>
         ///     HRA SEC
         /// </example>
-        public string TenancyType { get; set; }
+        public string TenureType { get; set; }
 
         /// <summary>
         /// 

@@ -48,7 +48,7 @@ namespace FinanceServicesApi.V1.Factories
                 LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.Last().PaidAmount,
                 LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.Last(p => p.PaidAmount > 0).TransactionDate,
                 PrimaryTenantAddress = tenure?.TenuredAsset?.FullAddress,
-                TenancyType = tenure?.TenureType.Code,
+                TenureType = tenure?.TenureType.Code,
                 PrimaryTenantEmail = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
                     .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
                 PrimaryTenantName = $"{person?.FirstName ?? ""} {person?.Surname ?? ""}",
