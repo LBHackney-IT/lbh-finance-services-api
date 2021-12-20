@@ -50,6 +50,11 @@ namespace FinanceServicesApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(opt => opt.AddPolicy("corsPolicy", builder =>
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()));
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
@@ -125,10 +130,6 @@ namespace FinanceServicesApi
             RegisterGateways(services);
             RegisterUseCases(services);
             RegisterInfraService(services);
-            services.AddCors(opt => opt.AddPolicy("corsPolicy", builder =>
-                builder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()));
             services.ConfigureLambdaLogging(Configuration);
         }
 
