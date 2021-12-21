@@ -16,7 +16,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// <example>
         ///     908ad3fb-652e-fd6f-841a-07d2b742545c
         /// </example>
-        public Guid PersonId { get; set; }
+        public Guid TenureId { get; set; }
         /// <summary>
         /// 
         /// </summary>

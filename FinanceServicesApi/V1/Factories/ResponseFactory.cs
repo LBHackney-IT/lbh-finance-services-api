@@ -170,7 +170,7 @@ namespace FinanceServicesApi.V1.Factories
                 TimeInPropertyM = (short) (((tenants.EndOfTenureDate ?? DateTime.UtcNow).Year - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Year) * 12 +
                                   (tenants.EndOfTenureDate ?? DateTime.UtcNow).Month - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Month),
                 PersonType = person?.PersonTypes?.ToList(),
-                PersonId = person.Id
+                TenureId = tenants.Id
             };
         }
 
@@ -191,14 +191,15 @@ namespace FinanceServicesApi.V1.Factories
             {
                 Bedrooms = asset.AssetCharacteristics.NumberOfBedrooms,
                 FullAddress = $"{asset.AssetAddress.AddressLine1} {asset.AssetAddress.AddressLine2} {asset.AssetAddress.AddressLine3} asset.AssetAddress.AddressLine4",
-                PropertyValue = null,
+                PropertyValue = chargesList?.First(c => c.Type.ToLower() == "valuation")?.Amount,
                 RentModel = null,
-                The999Value = null,
-                ExtraCharges = chargesList.Select(p => new ExtraCharge
-                {
-                    Name = p.Type,
-                    Value = p.Amount
-                }).ToList(),
+                The1999Value = chargesList?.First(c => c.Type.ToLower().Contains("1999"))?.Amount,
+                ExtraCharges = chargesList.ToList().Where(w => w.Type.ToLower() == "valuation" &&
+                                                              w.Type.ToLower().Contains("1999")).Select(p => new ExtraCharge
+                                                              {
+                                                                  Name = p.Type,
+                                                                  Value = p.Amount
+                                                              }).ToList(),
                 WeeklyCharge = weeklyCharges,
                 YearlyCharge = weeklyCharges * 52
             };

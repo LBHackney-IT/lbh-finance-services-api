@@ -25,7 +25,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// <example>
         ///     100000
         /// </example>
-        public decimal? The999Value { get; set; }
+        public decimal? The1999Value { get; set; }
         /// <summary>
         /// 
         /// </summary>
