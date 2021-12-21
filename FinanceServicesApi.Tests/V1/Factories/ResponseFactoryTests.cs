@@ -19,15 +19,15 @@ namespace FinanceServicesApi.Tests.V1.Factories
         public void ToResponseWithValidAccountAndTransactionReturnsValidConfirmTransferResponse()
         {
             Account account = _fixture.Build<Account>()
-                .With(p=>p.AccountBalance,100)
+                .With(p => p.AccountBalance, 100)
                 .Create();
             Transaction transaction = _fixture.Build<Transaction>()
-                .With(p=>p.TransactionAmount,105)
+                .With(p => p.TransactionAmount, 105)
                 .Create();
             ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
             confirmTransferResponse.Should().NotBeNull();
             confirmTransferResponse.Address.Should().Be(transaction.Address);
-            confirmTransferResponse.ArrearsAfterPayment.Should().Be(0); 
+            confirmTransferResponse.ArrearsAfterPayment.Should().Be(0);
             confirmTransferResponse.CurrentArrears.Should().Be(account.AccountBalance);
             confirmTransferResponse.Payee.Should().Be(transaction.Person.FullName);
             confirmTransferResponse.RentAccountNumber.Should().Be(account.PaymentReference);
