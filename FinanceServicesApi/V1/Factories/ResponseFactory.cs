@@ -148,6 +148,9 @@ namespace FinanceServicesApi.V1.Factories
 
         public static PropertySummaryTenantsResponse ToResponse(Person person, TenureInformation tenants, List<ContactDetail> contacts)
         {
+            if (person == null) throw new ArgumentNullException(nameof(person));
+            if (tenants == null) throw new ArgumentNullException(nameof(tenants));
+
             return new PropertySummaryTenantsResponse()
             {
                 FullAddress = tenants.TenuredAsset.FullAddress,
@@ -166,7 +169,8 @@ namespace FinanceServicesApi.V1.Factories
                 TimeInPropertyY = (short) ((tenants.EndOfTenureDate ?? DateTime.UtcNow).Year - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Year),
                 TimeInPropertyM = (short) (((tenants.EndOfTenureDate ?? DateTime.UtcNow).Year - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Year) * 12 +
                                   (tenants.EndOfTenureDate ?? DateTime.UtcNow).Month - (tenants.StartOfTenureDate ?? DateTime.UtcNow).Month),
-                PersonType = person?.PersonTypes?.ToList()
+                PersonType = person?.PersonTypes?.ToList(),
+                PersonId = person.Id
             };
         }
 

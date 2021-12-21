@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Hackney.Shared.Person.Domain;
 using Hackney.Shared.Tenure.Domain;
 
@@ -8,6 +10,13 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 {
     public class PropertySummaryTenantsResponse
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     908ad3fb-652e-fd6f-841a-07d2b742545c
+        /// </example>
+        public Guid PersonId { get; set; }
         /// <summary>
         /// 
         /// </summary>

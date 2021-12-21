@@ -60,6 +60,7 @@ namespace FinanceServicesApi.V1.Domain.TransactionModels
 
         public TransactionPerson Person { get; set; }
 
+        [AllowNull]
         public string Fund { get; set; }
 
         [AllowNull]

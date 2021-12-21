@@ -75,7 +75,7 @@ namespace FinanceServicesApi.Tests.V1.Factories
             confirmTransferResponse.Resident.Should().NotBeNull();
         }
 
-        [Fact]
+        /*[Fact]
         public void ToResponseWithValidAccountWithNullTenureAndValidTransactionReturnsValidConfirmTransferResponse()
         {
             Account account = _fixture.Build<Account>()
@@ -108,6 +108,6 @@ namespace FinanceServicesApi.Tests.V1.Factories
             confirmTransferResponse.Payee.Should().Be(transaction.Person.FullName);
             confirmTransferResponse.RentAccountNumber.Should().Be(account.PaymentReference);
             confirmTransferResponse.Resident.Should().BeNull();
-        }
+        }*/
     }
 }
