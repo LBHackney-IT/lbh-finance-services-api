@@ -27,10 +27,11 @@ locals {
 
 terraform {
   backend "s3" {
-        bucket  = "terraform-state-housing-staging"
+    bucket  = "terraform-state-housing-staging"
     encrypt = true
     region  = "eu-west-2"
     key     = "services/finance-services-api/state"
+  }
 }
 
 
