@@ -39,25 +39,6 @@ commands:
           root: *workspace_root
           paths:
             - .aws
-  terraform-init-then-apply:
-    description: "Initializes and applies terraform configuration"
-    parameters:
-      environment:
-        type: string
-    steps:
-      - *attach_workspace
-      - checkout
-      - run:
-          command: |
-            cd ./terraform/<<parameters.environment>>/
-            terraform get -update=true
-            terraform init
-          name: get and init
-      - run:
-          name: apply
-          command: |
-            cd ./terraform/<<parameters.environment>>/
-            terraform apply -auto-approve
   deploy-lambda:
     description: "Deploys API via Serverless"
     parameters:
@@ -89,7 +70,7 @@ commands:
             cd ./FinanceServicesApi/
             sls deploy --stage <<parameters.stage>> --account <<parameters.aws-account>> --conceal
       # - run:
-      #     name: Getting environment variable 
+      #     name: Getting environment variable
       #     command:
       #       ACCOUNT_API_URL=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/account-api-url --query Parameter.Value)
       #       ACCOUNT_API_TOKEN=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/account-api-token --query Parameter.Value)
@@ -133,21 +114,6 @@ jobs:
     steps:
       - assume-role-and-persist-workspace:
           aws-account: $AWS_ACCOUNT_PRODUCTION
-  terraform-init-and-apply-to-development:
-    executor: docker-terraform
-    steps:
-      - terraform-init-then-apply:
-          environment: "development"
-  terraform-init-and-apply-to-staging:
-    executor: docker-terraform
-    steps:
-      - terraform-init-then-apply:
-          environment: "staging"
-  terraform-init-and-apply-to-production:
-    executor: docker-terraform
-    steps:
-      - terraform-init-then-apply:
-          environment: "production"
   deploy-to-development:
     executor: docker-dotnet
     steps:
@@ -175,8 +141,14 @@ workflows:
     jobs:
       - check-code-formatting:
           context: api-nuget-token-context
+          filters:
+            branches:
+              ignore: master
       - build-and-test:
           context: api-nuget-token-context
+          filters:
+            branches:
+              ignore: master
       - assume-role-development:
           context: api-assume-role-housing-development-context
           requires:
@@ -185,16 +157,10 @@ workflows:
           filters:
             branches:
               only: development
-      - terraform-init-and-apply-to-development:
-          requires:
-            - assume-role-development
-          filters:
-            branches:
-              only: development
       - deploy-to-development:
           context: api-nuget-token-context
           requires:
-            - terraform-init-and-apply-to-development
+            - assume-role-development
           filters:
             branches:
               only: development
@@ -212,15 +178,10 @@ workflows:
           filters:
              branches:
                only: master
-      - terraform-init-and-apply-to-staging:
+      - deploy-to-staging:
+          context: api-nuget-token-context
           requires:
             - assume-role-staging
-          filters:
-            branches:
-              only: master
-      - deploy-to-staging:
-          requires:
-            - terraform-init-and-apply-to-staging
           filters:
             branches:
               only: master
@@ -235,15 +196,10 @@ workflows:
           filters:
              branches:
                only: master
-      - terraform-init-and-apply-to-production:
+      - deploy-to-production:
+          context: api-nuget-token-context
           requires:
             - assume-role-production
-          filters:
-            branches:
-              only: master
-      - deploy-to-production:
-          requires:
-            - terraform-init-and-apply-to-production
           filters:
             branches:
               only: master
