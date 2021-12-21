@@ -213,4 +213,28 @@ namespace FinanceServicesApi.Tests.V1.Helper
             return response;
         }
     }
+
+    public static class MockToConfirmTransferResponseInputs
+    {
+        private static readonly Fixture _fixture = new Fixture();
+        public static List<object[]> GetTestData { get; private set; } = new List<object[]>
+        {
+            new object[]
+            {
+                null,null
+            },
+            new object[]
+            {
+                _fixture.Create<Account>(),null
+            },
+            new object[]
+            {
+                null,_fixture.Create<Transaction>()
+            },
+            new object[]
+            {
+                _fixture.Create<Account>(),_fixture.Create<Transaction>()
+            }
+        };
+    }
 }

@@ -23,8 +23,8 @@ namespace FinanceServicesApi.V1.Factories
             return new ConfirmTransferResponse
             {
                 Address = transaction?.Address,
-                ArrearsAfterPayment = arrearsAfterPayment<0?0: arrearsAfterPayment,
-                CurrentArrears = account?.AccountBalance??0,
+                ArrearsAfterPayment = arrearsAfterPayment < 0 ? 0 : arrearsAfterPayment,
+                CurrentArrears = account?.AccountBalance ?? 0,
                 Payee = transaction?.Person?.FullName,
                 RentAccountNumber = account?.PaymentReference,
                 Resident = account?.Tenure?.PrimaryTenants?.FirstOrDefault()?.FullName
