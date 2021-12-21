@@ -2,8 +2,9 @@ version: 2.1
 
 orbs:
   aws-ecr: circleci/aws-ecr@3.0.0
-  aws-cli: circleci/aws-cli@0.1.9
+  aws-cli: circleci/aws-cli@2.0.3
   aws_assume_role: lbh-hackit/aws_assume_role@0.1.0
+  aws-parameter-store: circleci/aws-parameter-store@1.0.0
 
 executors:
   docker-python:
@@ -79,15 +80,21 @@ commands:
       - run:
           name: Build lambda
           command: |
-            cd ./BaseApi/
+            cd ./FinanceServicesApi/
             chmod +x ./build.sh
             ./build.sh
       - run:
           name: Deploy lambda
           command: |
-            cd ./BaseApi/
+            cd ./FinanceServicesApi/
             sls deploy --stage <<parameters.stage>> --account <<parameters.aws-account>> --conceal
-
+      # - run:
+      #     name: Getting environment variable 
+      #     command:
+      #       ACCOUNT_API_URL=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/account-api-url --query Parameter.Value)
+      #       ACCOUNT_API_TOKEN=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/account-api-token --query Parameter.Value)
+      #       TRANSACTION_API_URL=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/financial-transactions-api-url --query Parameter.Value)
+      #       TRANSACTION_API_KEY=$(aws ssm get-parameter --name /housing-finance/<<parameters.stage>>/financial-transactions-api-key --query Parameter.Value)
 jobs:
   check-code-formatting:
     executor: docker-dotnet
@@ -104,12 +111,13 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      # - aws-cli/install
       - run:
           name: build
-          command: docker-compose build base-api-test
+          command: docker-compose build finance-services-api-test
       - run:
           name: Run tests
-          command: docker-compose run base-api-test
+          command: docker-compose run finance-services-api-test
   assume-role-development:
     executor: docker-python
     steps:
@@ -143,18 +151,21 @@ jobs:
   deploy-to-development:
     executor: docker-dotnet
     steps:
+      # - aws-cli/install
       - deploy-lambda:
           stage: "development"
           aws-account: $AWS_ACCOUNT_DEVELOPMENT
   deploy-to-staging:
     executor: docker-dotnet
     steps:
+      # - aws-cli/install
       - deploy-lambda:
           stage: "staging"
           aws-account: $AWS_ACCOUNT_STAGING
   deploy-to-production:
     executor: docker-dotnet
     steps:
+      # - aws-cli/install
       - deploy-lambda:
           stage: "production"
           aws-account: $AWS_ACCOUNT_PRODUCTION
@@ -162,11 +173,14 @@ jobs:
 workflows:
   check-and-deploy-development:
     jobs:
-      - check-code-formatting
-      - build-and-test
+      - check-code-formatting:
+          context: api-nuget-token-context
+      - build-and-test:
+          context: api-nuget-token-context
       - assume-role-development:
           context: api-assume-role-housing-development-context
           requires:
+            - check-code-formatting
             - build-and-test
           filters:
             branches:
@@ -178,65 +192,58 @@ workflows:
             branches:
               only: development
       - deploy-to-development:
+          context: api-nuget-token-context
           requires:
             - terraform-init-and-apply-to-development
           filters:
             branches:
               only: development
-#   check-and-deploy-staging-and-production:
-#       jobs:
-#       - build-and-test:
-#           filters:
-#             branches:
-#               only: master
-#       - assume-role-staging:
-#           context: api-assume-role-staging-context
-#           requires:
-#               - build-and-test
-#           filters:
-#              branches:
-#                only: master
-#       - terraform-init-and-apply-to-staging:
-#           requires:
-#             - assume-role-staging
-#           filters:
-#             branches:
-#               only: master
-#       - deploy-to-staging:
-#           requires:
-#             - terraform-init-and-apply-to-staging
-#           filters:
-#             branches:
-#               only: master
-#       - permit-production-terraform-release:
-#           type: approval
-#           requires:
-#             - deploy-to-staging
-#       - assume-role-production:
-#           context: api-assume-role-production-context
-#           requires:
-#               - permit-production-terraform-release
-#           filters:
-#              branches:
-#                only: master
-#       - terraform-init-and-apply-to-production:
-#           requires:
-#             - assume-role-production
-#           filters:
-#             branches:
-#               only: master
-#       - permit-production-release:
-#           type: approval
-#           requires:
-#             - deploy-to-staging
-#           filters:
-#             branches:
-#               only: master
-#       - deploy-to-production:
-#           context: api-assume-role-housing-production-context
-#           requires:
-#             - permit-production-release
-#             - terraform-init-and-apply-to-production
-#           filters:
-#             branches:
-#               only: master
+  check-and-deploy-staging-and-production:
+    jobs:
+      - build-and-test:
+          context: api-nuget-token-context
+          filters:
+            branches:
+              only: master
+      - assume-role-staging:
+          context: api-assume-role-housing-staging-context
+          requires:
+              - build-and-test
+          filters:
+             branches:
+               only: master
+      - terraform-init-and-apply-to-staging:
+          requires:
+            - assume-role-staging
+          filters:
+            branches:
+              only: master
+      - deploy-to-staging:
+          requires:
+            - terraform-init-and-apply-to-staging
+          filters:
+            branches:
+              only: master
+      - permit-production-release:
+          type: approval
+          requires:
+            - deploy-to-staging
+      - assume-role-production:
+          context: api-assume-role-housing-production-context
+          requires:
+              - permit-production-release
+          filters:
+             branches:
+               only: master
+      - terraform-init-and-apply-to-production:
+          requires:
+            - assume-role-production
+          filters:
+            branches:
+              only: master
+      - deploy-to-production:
+          requires:
+            - terraform-init-and-apply-to-production
+          filters:
+            branches:
+              only: master
