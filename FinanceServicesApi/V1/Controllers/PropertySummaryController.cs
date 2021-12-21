@@ -107,13 +107,13 @@ namespace FinanceServicesApi.V1.Controllers
 
             var personData = await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
             if (personData == null)
-                return NotFound(new BaseErrorResponse((int)HttpStatusCode.NotFound,$"There is no data for provided person"));
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided person"));
 
             List<PropertySummaryTenantsResponse> response = new List<PropertySummaryTenantsResponse>();
             foreach (var t in personData.Tenures)
             {
                 var tenureData = await _tenureUseCase.ExecuteAsync(t.Id).ConfigureAwait(false);
-                if(tenureData==null)
+                if (tenureData == null)
                     return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure {t.Id.ToString()}"));
 
                 List<ContactDetail> accountContactDetails = new List<ContactDetail>();
@@ -128,7 +128,7 @@ namespace FinanceServicesApi.V1.Controllers
                 response.Add(ResponseFactory.ToResponse(personData, tenureData, accountContactDetails));
             }
 
-            if(response.Count==0)
+            if (response.Count == 0)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided person"));
 
             return Ok(response);
