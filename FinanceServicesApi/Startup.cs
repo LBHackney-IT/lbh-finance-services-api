@@ -127,6 +127,7 @@ namespace FinanceServicesApi
             RegisterInfraService(services);
             services.ConfigureLambdaLogging(Configuration);
             services.AddCors();
+            services.AddHttpContextAccessor();
         }
 
         private static void RegisterInfraService(IServiceCollection services)
