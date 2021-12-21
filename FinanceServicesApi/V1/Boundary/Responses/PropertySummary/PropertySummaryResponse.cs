@@ -154,5 +154,19 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         ///     315000
         /// </example>
         public decimal? ArrearsBalance { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     Joanne Bigglesworth
+        /// </example>
+        public string LeaseHolderName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <example>
+        ///     12/12/12
+        /// </example>
+        public DateTime? AccountStartDate { get; set; }
     }
 }

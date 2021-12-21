@@ -19,11 +19,12 @@ namespace FinanceServicesApi.V1.Factories
     {
         public static ConfirmTransferResponse ToResponse(Account account, Transaction transaction)
         {
+            var arrearsAfterPayment = (account?.AccountBalance ?? 0) - (transaction?.TransactionAmount ?? 0);
             return new ConfirmTransferResponse
             {
-                Address = transaction.Address,
-                ArrearsAfterPayment = account?.AccountBalance ?? 0 - transaction?.TransactionAmount ?? 0,
-                CurrentArrears = account?.AccountBalance,
+                Address = transaction?.Address,
+                ArrearsAfterPayment = arrearsAfterPayment<0?0: arrearsAfterPayment,
+                CurrentArrears = account?.AccountBalance??0,
                 Payee = transaction?.Person?.FullName,
                 RentAccountNumber = account?.PaymentReference,
                 Resident = account?.Tenure?.PrimaryTenants?.FirstOrDefault()?.FullName
@@ -109,6 +110,7 @@ namespace FinanceServicesApi.V1.Factories
                     .Select(s =>
                         s.ContactInformation.Value).FirstOrDefault() ?? "",
                 PrimaryTenantName = $"{person?.FirstName ?? ""} {person?.Surname ?? ""}",
+                LeaseHolderName = $"{person?.FirstName ?? ""} {person?.Surname ?? ""}",
                 PrimaryTenantPhoneNumber = contacts?.Where(c =>
                         c.TargetType == TargetType.Person &&
                         c.ContactInformation.ContactType == ContactType.Phone)
@@ -124,7 +126,8 @@ namespace FinanceServicesApi.V1.Factories
                 WeeklyTotalCharges = wtc,
                 YearlyRentDebits = yrd,
                 PaidThisYear = pty,
-                ArrearsBalance = (account?.AccountBalance ?? 0) > 0 ? account?.AccountBalance : 0
+                ArrearsBalance = (account?.AccountBalance ?? 0) > 0 ? account?.AccountBalance : 0,
+                AccountStartDate = account?.StartDate
             };
         }
 

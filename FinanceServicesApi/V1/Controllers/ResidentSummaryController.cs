@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Request;
@@ -10,7 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.UseCase.Interfaces;
+using Hackney.Shared.Person.Domain;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace FinanceServicesApi.V1.Controllers
 {
@@ -56,12 +59,30 @@ namespace FinanceServicesApi.V1.Controllers
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id/*, PersonType personType*/)
         {
             var personResponse =
                 await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
             if (personResponse == null)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided Person"));
+
+            /*switch (personType)
+            {
+                case PersonType.Tenant:
+                    {
+                        if (!personResponse.Tenures.ToList().Any(p => p.Type.ToLower().Contains("tenant")))
+                            return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
+                                $"The person is not a tenants."));
+                        break;
+                    }
+                case PersonType.Leaseholder:
+                {
+                    if (!personResponse.Tenures.ToList().Any(p => p.Type.ToLower().Contains("leasehold")))
+                        return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
+                            $"The person is not a leaseholder."));
+                    break;
+                }
+            }*/
 
             Guid tenureId = Guid.Empty;
             Account account = new Account();

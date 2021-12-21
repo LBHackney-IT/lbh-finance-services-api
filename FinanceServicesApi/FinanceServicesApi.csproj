@@ -21,6 +21,7 @@
     </ItemGroup>
     <ItemGroup>
       <None Remove="V1\Controllers\PropertySummaryController.cs~RF21916fe.TMP" />
+      <None Remove="V1\Factories\ResponseFactory.cs~RF4b82e11.TMP" />
     </ItemGroup>
 
   <ItemGroup>
