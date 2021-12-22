@@ -1,6 +1,5 @@
 using System.Threading;
 using FinanceServicesApi.V1.UseCase;
-using Bogus;
 using FluentAssertions;
 using Microsoft.Extensions.HealthChecks;
 using Moq;
@@ -16,7 +15,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
         private Mock<IHealthCheckService> _mockHealthCheckService;
         private DbHealthCheckUseCase _classUnderTest;
 
-        private readonly Faker _faker = new Faker();
+        private readonly Bogus.Faker _faker = new Bogus.Faker();
         private string _description;
 
         public DbHealthCheckUseCaseTests()

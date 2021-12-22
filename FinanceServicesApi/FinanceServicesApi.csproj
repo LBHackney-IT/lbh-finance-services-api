@@ -17,6 +17,7 @@
       <None Remove="terraform\**" />
     </ItemGroup>
     <ItemGroup>
+      <Compile Remove="V1\Controllers\DummyController.cs" />
       <Compile Remove="V1\Controllers\TestController.cs" />
     </ItemGroup>
     <ItemGroup>
@@ -34,6 +35,7 @@
     <PackageReference Include="AWSXRayRecorder.Handlers.AspNetCore" Version="2.7.2" />
     <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk" Version="2.8.2" />
     <PackageReference Include="AWSXRayRecorder.Handlers.EntityFramework" Version="1.1.0" />
+    <PackageReference Include="Faker.NETCore" Version="1.0.2" />
     <PackageReference Include="Hackney.Core.Authorization" Version="1.64.0" />
     <PackageReference Include="Hackney.Core.DynamoDb" Version="1.51.0" />
     <PackageReference Include="Hackney.Core.JWT" Version="1.64.0" />

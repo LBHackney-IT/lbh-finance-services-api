@@ -191,9 +191,9 @@ namespace FinanceServicesApi.V1.Factories
             {
                 Bedrooms = asset.AssetCharacteristics.NumberOfBedrooms,
                 FullAddress = $"{asset.AssetAddress.AddressLine1} {asset.AssetAddress.AddressLine2} {asset.AssetAddress.AddressLine3} asset.AssetAddress.AddressLine4",
-                PropertyValue = chargesList?.First(c => c.Type.ToLower() == "valuation")?.Amount,
+                PropertyValue = chargesList?.FirstOrDefault(c => c.Type.ToLower() == "valuation")?.Amount,
                 RentModel = null,
-                The1999Value = chargesList?.First(c => c.Type.ToLower().Contains("1999"))?.Amount,
+                The1999Value = chargesList?.FirstOrDefault(c => c.Type.ToLower().Contains("1999"))?.Amount,
                 ExtraCharges = chargesList.ToList().Where(w => w.Type.ToLower() == "valuation" &&
                                                               w.Type.ToLower().Contains("1999")).Select(p => new ExtraCharge
                                                               {
