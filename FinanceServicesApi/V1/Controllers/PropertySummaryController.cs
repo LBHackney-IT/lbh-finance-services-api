@@ -117,7 +117,7 @@ namespace FinanceServicesApi.V1.Controllers
                     return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure {t.Id.ToString()}"));
 
                 List<ContactDetail> accountContactDetails = new List<ContactDetail>();
-                var targetId = tenureData?.HouseholdMembers?.First(p => p.IsResponsible)?.Id ?? Guid.Empty;
+                var targetId = tenureData?.HouseholdMembers?.FirstOrDefault(p => p.IsResponsible)?.Id ?? Guid.Empty;
                 if (targetId != Guid.Empty)
                 {
                     var tmpData = await _contactUseCase.ExecuteAsync(targetId).ConfigureAwait(false);

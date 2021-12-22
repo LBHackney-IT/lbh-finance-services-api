@@ -103,7 +103,7 @@ namespace FinanceServicesApi.V1.Factories
                             c.Type.ToLower() == "service").
                             Sum(c => c.Amount)),
                 TenancyType = tenure?.TenureType.Code,
-                PersonTenureType = person == null ? null : tenure?.HouseholdMembers.First(p => p.Id == person.Id)?.PersonTenureType,
+                PersonTenureType = person == null ? null : tenure?.HouseholdMembers.FirstOrDefault(p => p.Id == person.Id)?.PersonTenureType,
                 PrimaryTenantEmail = contacts?.Where(c =>
                         c.TargetType == TargetType.Person &&
                         c.ContactInformation.ContactType == ContactType.Email)
@@ -158,7 +158,7 @@ namespace FinanceServicesApi.V1.Factories
                         c.TargetType == TargetType.Person &&
                         c.ContactInformation.ContactType == ContactType.Email)
                     .Select(s => s.ContactInformation.Value).FirstOrDefault(),
-                FullName = tenants.HouseholdMembers.First(f => f.IsResponsible)?.FullName,
+                FullName = tenants.HouseholdMembers.FirstOrDefault(f => f.IsResponsible)?.FullName,
                 StartDate = tenants.StartOfTenureDate,
                 TenancyType = tenants.TenureType,
                 PhoneNumber = contacts?.Where(c =>
