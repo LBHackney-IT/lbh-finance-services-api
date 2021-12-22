@@ -17,7 +17,6 @@
       <None Remove="terraform\**" />
     </ItemGroup>
     <ItemGroup>
-      <Compile Remove="V1\Controllers\DummyController.cs" />
       <Compile Remove="V1\Controllers\TestController.cs" />
     </ItemGroup>
     <ItemGroup>
