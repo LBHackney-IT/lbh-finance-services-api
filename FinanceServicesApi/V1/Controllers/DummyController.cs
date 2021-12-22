@@ -69,7 +69,7 @@ namespace FinanceServicesApi.V1.Controllers
         }
 
         [HttpGet("accounts")]
-        public async Task<IActionResult> GetAccounts([FromQuery]List<Guid> ids)
+        public async Task<IActionResult> GetAccounts([FromQuery] List<Guid> ids)
         {
             List<Account> response = new List<Account>();
             foreach (var id in ids)
@@ -133,17 +133,17 @@ namespace FinanceServicesApi.V1.Controllers
                     Tenure = new AccountTenureSubSet
                     {
                         FullAddress = tenure.TenuredAsset.FullAddress,
-                        TenureId = Faker.RandomNumber.Next(1000,99999).ToString(),
+                        TenureId = Faker.RandomNumber.Next(1000, 99999).ToString(),
                         TenureType = new Domain.AccountModels.TenureType
                         {
                             Code = Faker.Lorem.GetFirstWord(),
                             Description = Faker.Lorem.GetFirstWord()
                         },
-                        PrimaryTenants = tenure.HouseholdMembers.Select(p=> new PrimaryTenants
+                        PrimaryTenants = tenure.HouseholdMembers.Select(p => new PrimaryTenants
                         {
                             FullName = p.FullName,
                             Id = p.Id
-                        } ).ToList()
+                        }).ToList()
                     }
                 };
                 response.Add(account);
