@@ -18,7 +18,7 @@
         "DynamoDb_LocalMode": "true",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5007"
+      "applicationUrl": "http://localhost:5010"
     }
   }
 }
