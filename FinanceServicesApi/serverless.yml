@@ -12,7 +12,6 @@ provider:
   region: eu-west-2
 
 package:
-# TODO: Rename zipfile in build.sh and build.cmd to match this
   artifact: ./bin/release/netcoreapp3.1/finance-services-api.zip
 
 functions:
@@ -25,15 +24,11 @@ functions:
       TRANSACTION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/financial-transactions-api-url}
       TENURE_API_URL: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-url}
       FINANCIAL_SUMMARY_API_URL: ${ssm:/housing-finance/${self:provider.stage}/financial-summary-api-url}
-      # FINANCIAL_SUMMARY_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-token}
       CHARGE_API_URL: ${ssm:/housing-finance/${self:provider.stage}/charge-api-url}
-      #CHARGE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/charge-api-token}
-      CONTACT_DETAILS_API_URL: ${ssm:/housing-tl/${self:provider.stage}/contact-details-api-url-v2}
-      #CHARGE_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/charge-api-token}
+      CONTACT_DETAILS_API_URL: ${ssm:/housing-finance/${self:provider.stage}/contact-details-api-url}
       ASSET_INFORMATION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/asset-information-api-url}
-      # ${ssm:/repairs-api/${self:provider.stage}/asset-information-api-token}
-      PERSON_API_URL: ${ssm:/housing-tl/${self:provider.stage}/person-api-url}
-      SEARCH_API_URL: ${ssm:/housing-tl/${self:provider.stage}/search-api-url}
+      PERSON_API_URL: ${ssm:/housing-finance/${self:provider.stage}/person-api-url}
+      SEARCH_API_URL: ${ssm:/housing-finance/${self:provider.stage}/housing-search-api-url}
       REQUIRED_GOOGL_GROUPS: ${ssm:/housing-finance/${self:provider.stage}/authorization/required-google-groups}
     events:
       - http:
@@ -228,6 +223,3 @@ custom:
       subnetIds:
         - subnet-0beb266003a56ca82
         - subnet-06a697d86a9b6ed01
-
-#plugins:
-#  - serverless-step-functions
