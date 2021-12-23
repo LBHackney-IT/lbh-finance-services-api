@@ -131,7 +131,7 @@ namespace FinanceServicesApi.V1.Controllers
                     CreatedAt = RandomDay(),
                     LastUpdatedAt = RandomDay(),
                     AccountStatus = AccountStatus.Active,
-                    AccountType = (AccountType) ((short) _generator.Next(1, (int) Enum.GetValues(typeof(AccountType)).Cast<AccountType>().Max())),
+                    AccountType = AccountType.Master, //(AccountType) ((short) _generator.Next(1, (int) Enum.GetValues(typeof(AccountType)).Cast<AccountType>().Max())),
                     AgreementType = Faker.Lorem.GetFirstWord(),
                     ConsolidatedBalance = charge.Sum(c => c.DetailedCharges.Sum(d => d.Amount)) -
                                           transaction.Sum(p => p.PaidAmount),
