@@ -44,16 +44,16 @@ namespace FinanceServicesApi.V1.Controllers
                 var housHold = tenure.HouseholdMembers.FirstOrDefault(m =>
                     m.PersonTenureType == PersonTenureType.Leaseholder
                     || m.PersonTenureType == PersonTenureType.Tenant);
-                if(housHold == null)
+                if (housHold == null)
                     continue;
                 var person = await _personByIdUseCase.ExecuteAsync(housHold.Id).ConfigureAwait(false);
-                if(person==null)
+                if (person == null)
                     continue;
 
                 tenures.Add(tenure);
             }
 
-            return Ok(tenures.Select(p=>p.Id));
+            return Ok(tenures.Select(p => p.Id));
         }
 
         [HttpPost("transactions")]
@@ -193,7 +193,7 @@ namespace FinanceServicesApi.V1.Controllers
             foreach (Guid id in ids)
             {
                 var tenure = await _tenureById.ExecuteAsync(id).ConfigureAwait(false);
-                if(tenure==null)
+                if (tenure == null)
                     continue;
 
                 if (tenure.HouseholdMembers.Any(p => p.PersonTenureType == PersonTenureType.Leaseholder))
@@ -351,7 +351,7 @@ namespace FinanceServicesApi.V1.Controllers
                             },
                         }
                     };
-                   charges.Add(charge);
+                    charges.Add(charge);
                 }
                 else
                 {
