@@ -85,12 +85,12 @@ namespace FinanceServicesApi.V1.Controllers
                     PaidAmount = (decimal) _generator.Next(0, 1000000),
                     PaymentReference = tenure.PaymentReference,
                     PeriodNo = (short) _generator.Next(1, 10),
-                    Person = houseHolder==null?null: new TransactionPerson
+                    Person = houseHolder == null ? null : new TransactionPerson
                     {
                         FullName = houseHolder.FullName,
                         Id = houseHolder.Id
                     },
-                    SortCode = $"{_generator.Next(10,99)}-{_generator.Next(10, 99)}-{_generator.Next(10, 99)}",
+                    SortCode = $"{_generator.Next(10, 99)}-{_generator.Next(10, 99)}-{_generator.Next(10, 99)}",
                     SuspenseResolutionInfo = null,
                     TargetId = tenure.Id,
                     TargetType = TargetType.Tenure,
