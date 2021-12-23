@@ -204,23 +204,24 @@ namespace FinanceServicesApi.V1.Controllers
             foreach (Guid id in ids)
             {
                 var account = await _accountByTargetIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
-                patchList.AddRange(new List<AccountPatchModel>
-                {
-                    new AccountPatchModel
+                if (account != null)
+                    patchList.AddRange(new List<AccountPatchModel>
                     {
-                        Id = account.Id,
-                        Patch = new List<AccountBalanceUpdateModel>(){
-                            new AccountBalanceUpdateModel
-                            {
-                                Op = "replace",Path = "accountBalance",Value = ((decimal) _generator.Next(-1000, 1000)).ToString(),
-                            },
-                            new AccountBalanceUpdateModel
-                            {
-                                Op = "replace",Path = "consolidatedBalance",Value = ((decimal) _generator.Next(-1000, 1000)).ToString(),
+                        new AccountPatchModel
+                        {
+                            Id = account.Id,
+                            Patch = new List<AccountBalanceUpdateModel>(){
+                                new AccountBalanceUpdateModel
+                                {
+                                    Op = "replace",Path = "accountBalance",Value = ((decimal) _generator.Next(-1000, 1000)).ToString(),
+                                },
+                                new AccountBalanceUpdateModel
+                                {
+                                    Op = "replace",Path = "consolidatedBalance",Value = ((decimal) _generator.Next(-1000, 1000)).ToString(),
+                                }
                             }
                         }
-                    }
-                });
+                    });
             }
             return Ok(patchList);
         }
