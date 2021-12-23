@@ -15,7 +15,7 @@ namespace FinanceServicesApi.V1.Infrastructure
         public Uri Execute(Guid id)
         {
             var url = _getEnvironmentVariables.GetUrl();
-            return new Uri($"{url}/api/v1/assets/{id}");
+            return new Uri($"{url}/assets/{id}");
         }
     }
 }
