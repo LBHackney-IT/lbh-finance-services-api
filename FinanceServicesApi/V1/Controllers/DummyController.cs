@@ -519,6 +519,28 @@ namespace FinanceServicesApi.V1.Controllers
             return Ok(charges);
         }
 
+        [HttpPost("dummydata")]
+        public async Task<IActionResult> GetDataForTest(List<Guid> ids)
+        {
+            List<TenureInformation> informations = new List<TenureInformation>();
+            foreach (Guid id in ids)
+            {
+                var tenure = await _tenureById.ExecuteAsync(id).ConfigureAwait(false);
+                informations.Add(tenure);
+            }
+
+            return Ok(informations.Select(p => new
+            {
+                tenureId = p.Id,
+                assetId = p.TenuredAsset.Id,
+                persons = p.HouseholdMembers.ToList().Select(h =>
+                    new
+                    {
+                        id = h.Id
+                    })
+            }));
+        }
+
         DateTime RandomDay()
         {
             DateTime start = new DateTime(2015, 1, 1);
