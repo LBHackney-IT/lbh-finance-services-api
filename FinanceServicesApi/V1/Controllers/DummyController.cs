@@ -64,7 +64,8 @@ namespace FinanceServicesApi.V1.Controllers
             {
 
                 var tenure = await _tenureById.ExecuteAsync(id).ConfigureAwait(false);
-                var houseHolder = tenure.HouseholdMembers.First(p => p.PersonTenureType == PersonTenureType.Leaseholder);
+                var houseHolder = tenure.HouseholdMembers.FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Leaseholder ||
+                                                                              p.PersonTenureType == PersonTenureType.Tenant);
                 Transaction transaction = new Transaction
                 {
                     TransactionAmount = (decimal) _generator.Next(0, 1000000),
@@ -84,12 +85,12 @@ namespace FinanceServicesApi.V1.Controllers
                     PaidAmount = (decimal) _generator.Next(0, 1000000),
                     PaymentReference = tenure.PaymentReference,
                     PeriodNo = (short) _generator.Next(1, 10),
-                    Person = new TransactionPerson
+                    Person = houseHolder == null ? null : new TransactionPerson
                     {
                         FullName = houseHolder.FullName,
                         Id = houseHolder.Id
                     },
-                    SortCode = "20-45-78",
+                    SortCode = $"{_generator.Next(10, 99)}-{_generator.Next(10, 99)}-{_generator.Next(10, 99)}",
                     SuspenseResolutionInfo = null,
                     TargetId = tenure.Id,
                     TargetType = TargetType.Tenure,
