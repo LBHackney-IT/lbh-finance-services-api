@@ -50,6 +50,10 @@ namespace FinanceServicesApi.V1.Controllers
                 if (person == null)
                     continue;
 
+                var asset = await _chargeByAssetId.ExecuteAsync(tenure.TenuredAsset.Id).ConfigureAwait(false);
+                if (asset == null)
+                    continue;
+
                 tenures.Add(tenure);
             }
 
