@@ -51,7 +51,7 @@ namespace FinanceServicesApi.V1.Controllers
                     continue;
 
                 var asset = await _chargeByAssetId.ExecuteAsync(tenure.TenuredAsset.Id).ConfigureAwait(false);
-                if(asset==null)
+                if (asset == null)
                     continue;
 
                 tenures.Add(tenure);
