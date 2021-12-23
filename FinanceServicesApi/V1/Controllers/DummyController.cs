@@ -22,16 +22,19 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetChargeByAssetIdUseCase _chargeByAssetId;
         private readonly IGetLastPaymentTransactionsByTargetIdUseCase _transactionByTargetId;
         private readonly IGetPersonByIdUseCase _personByIdUseCase;
+        private readonly IGetAccountByTargetIdUseCase _accountByTargetIdUseCase;
         private readonly Random _generator = new Random();
         public DummyController(IGetTenureInformationByIdUseCase tenureById,
             IGetChargeByAssetIdUseCase chargeByAssetId,
             IGetLastPaymentTransactionsByTargetIdUseCase transactionByTargetId,
-            IGetPersonByIdUseCase personByIdUseCase)
+            IGetPersonByIdUseCase personByIdUseCase,
+            IGetAccountByTargetIdUseCase accountByTargetIdUseCase)
         {
             _tenureById = tenureById;
             _chargeByAssetId = chargeByAssetId;
             _transactionByTargetId = transactionByTargetId;
             _personByIdUseCase = personByIdUseCase;
+            _accountByTargetIdUseCase = accountByTargetIdUseCase;
         }
 
         [HttpPost("tenures")]
@@ -197,23 +200,28 @@ namespace FinanceServicesApi.V1.Controllers
         [HttpPost("account-patch")]
         public async Task<IActionResult> GetAccountsPatch(List<Guid> ids)
         {
-            List<AccountBalanceUpdateModel> patchList = new List<AccountBalanceUpdateModel>();
+            List<AccountPatchModel> patchList = new List<AccountPatchModel>();
             foreach (Guid id in ids)
             {
-                var account = await _chargeByAssetId.ExecuteAsync(id).ConfigureAwait(false);
-                patchList.AddRange(new List<AccountBalanceUpdateModel>
+                var account = await _accountByTargetIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
+                patchList.AddRange(new List<AccountPatchModel>
                 {
-                    new AccountBalanceUpdateModel
+                    new AccountPatchModel
                     {
-                        Op = "replace",Path = "accountBalance",Value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
-                    },
-                    new AccountBalanceUpdateModel
-                    {
-                        Op = "replace",Path = "consolidatedBalance",Value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
+                        Id = account.Id,
+                        Patch = new List<AccountBalanceUpdateModel>(){
+                            new AccountBalanceUpdateModel
+                            {
+                                Op = "replace",Path = "accountBalance",Value = ((decimal) _generator.Next(-1000, 1000)).ToString(),
+                            },
+                            new AccountBalanceUpdateModel
+                            {
+                                Op = "replace",Path = "consolidatedBalance",Value = ((decimal) _generator.Next(-1000, 1000)).ToString(),
+                            }
+                        }
                     }
                 });
             }
-
             return Ok(patchList);
         }
 
