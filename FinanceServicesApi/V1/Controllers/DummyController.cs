@@ -194,6 +194,7 @@ namespace FinanceServicesApi.V1.Controllers
             return Ok(response);
         }
 
+        [HttpPost("account-patch")]
         public async Task<IActionResult> GetAccountsPatch(List<Guid> ids)
         {
             List<AccountBalanceUpdateModel> patchList = new List<AccountBalanceUpdateModel>();
