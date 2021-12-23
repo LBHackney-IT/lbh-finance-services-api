@@ -212,7 +212,8 @@ namespace FinanceServicesApi.V1.Controllers
                     }
                 });
             }
-            return Ok(patchList)
+
+            return Ok(patchList);
         }
 
         [HttpPost("charges")]
