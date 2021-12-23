@@ -205,11 +205,11 @@ namespace FinanceServicesApi.V1.Controllers
                 {
                     new AccountBalanceUpdateModel
                     {
-                        op = "replace",path = "accountBalance",value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
+                        Op = "replace",Path = "accountBalance",Value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
                     },
                     new AccountBalanceUpdateModel
                     {
-                        op = "replace",path = "consolidatedBalance",value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
+                        Op = "replace",Path = "consolidatedBalance",Value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
                     }
                 });
             }

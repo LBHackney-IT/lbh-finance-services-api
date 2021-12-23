@@ -12,9 +12,13 @@
     </PropertyGroup>
     <ItemGroup>
       <Compile Remove="terraform\**" />
+      <Compile Remove="V1\Domain\PropertySummary\**" />
       <Content Remove="terraform\**" />
+      <Content Remove="V1\Domain\PropertySummary\**" />
       <EmbeddedResource Remove="terraform\**" />
+      <EmbeddedResource Remove="V1\Domain\PropertySummary\**" />
       <None Remove="terraform\**" />
+      <None Remove="V1\Domain\PropertySummary\**" />
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="V1\Controllers\TestController.cs" />
@@ -52,10 +56,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.4.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.4.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="V1\Domain\PropertySummary\" />
   </ItemGroup>
 
 </Project>
