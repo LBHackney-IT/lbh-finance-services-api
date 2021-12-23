@@ -70,39 +70,42 @@ namespace FinanceServicesApi.V1.Controllers
                 var tenure = await _tenureById.ExecuteAsync(id).ConfigureAwait(false);
                 var houseHolder = tenure.HouseholdMembers.FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Leaseholder ||
                                                                               p.PersonTenureType == PersonTenureType.Tenant);
-                Transaction transaction = new Transaction
+                for (int i = 0; i < _generator.Next(5, 10); i++)
                 {
-                    TransactionAmount = (decimal) _generator.Next(0, 1000000),
-                    Address = tenure.TenuredAsset.FullAddress,
-                    BalanceAmount = (decimal) _generator.Next(0, 1000000),
-                    BankAccountNumber = $"******{_generator.Next(11, 99)}",
-                    ChargedAmount = (decimal) _generator.Next(0, 1000000),
-                    CreatedAt = RandomDay(),
-                    CreatedBy = Faker.Lorem.GetFirstWord(),
-                    FinancialMonth = (short) _generator.Next(1, 12),
-                    FinancialYear = (short) _generator.Next(2015, 2022),
-                    Fund = Faker.Lorem.GetFirstWord(),
-                    HousingBenefitAmount = (decimal) _generator.Next(0, 1000000),
-                    Id = Guid.NewGuid(),
-                    LastUpdatedAt = RandomDay(),
-                    LastUpdatedBy = Faker.Lorem.GetFirstWord(),
-                    PaidAmount = (decimal) _generator.Next(0, 1000000),
-                    PaymentReference = tenure.PaymentReference,
-                    PeriodNo = (short) _generator.Next(1, 10),
-                    Person = houseHolder == null ? null : new TransactionPerson
+                    Transaction transaction = new Transaction
                     {
-                        FullName = houseHolder.FullName,
-                        Id = houseHolder.Id
-                    },
-                    SortCode = $"{_generator.Next(10, 99)}-{_generator.Next(10, 99)}-{_generator.Next(10, 99)}",
-                    SuspenseResolutionInfo = null,
-                    TargetId = tenure.Id,
-                    TargetType = TargetType.Tenure,
-                    TransactionDate = RandomDay(),
-                    TransactionSource = Faker.Lorem.Words(5).First(),
-                    TransactionType = (TransactionType) ((short) _generator.Next(1, (int) Enum.GetValues(typeof(TransactionType)).Cast<TransactionType>().Max()))
-                };
-                response.Add(transaction);
+                        TransactionAmount = (decimal) _generator.Next(0, 1000000),
+                        Address = tenure.TenuredAsset.FullAddress,
+                        BalanceAmount = (decimal) _generator.Next(0, 1000000),
+                        BankAccountNumber = $"******{_generator.Next(11, 99)}",
+                        ChargedAmount = (decimal) _generator.Next(0, 1000000),
+                        CreatedAt = RandomDay(),
+                        CreatedBy = Faker.Lorem.GetFirstWord(),
+                        FinancialMonth = (short) _generator.Next(1, 12),
+                        FinancialYear = (short) _generator.Next(2015, 2022),
+                        Fund = Faker.Lorem.GetFirstWord(),
+                        HousingBenefitAmount = (decimal) _generator.Next(0, 1000000),
+                        Id = Guid.NewGuid(),
+                        LastUpdatedAt = RandomDay(),
+                        LastUpdatedBy = Faker.Lorem.GetFirstWord(),
+                        PaidAmount = (decimal) _generator.Next(0, 1000000),
+                        PaymentReference = tenure.PaymentReference,
+                        PeriodNo = (short) _generator.Next(1, 10),
+                        Person = houseHolder == null ? null : new TransactionPerson
+                        {
+                            FullName = houseHolder.FullName,
+                            Id = houseHolder.Id
+                        },
+                        SortCode = $"{_generator.Next(10, 99)}-{_generator.Next(10, 99)}-{_generator.Next(10, 99)}",
+                        SuspenseResolutionInfo = null,
+                        TargetId = tenure.Id,
+                        TargetType = TargetType.Tenure,
+                        TransactionDate = RandomDay(),
+                        TransactionSource = Faker.Lorem.Words(5).First(),
+                        TransactionType = (TransactionType) ((short) _generator.Next(1, (int) Enum.GetValues(typeof(TransactionType)).Cast<TransactionType>().Max()))
+                    };
+                    response.Add(transaction);
+                }
             }
             return Ok(response);
         }
@@ -220,7 +223,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -231,7 +234,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -242,7 +245,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -253,7 +256,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -264,7 +267,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -275,7 +278,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -286,7 +289,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -297,7 +300,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -308,7 +311,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -319,7 +322,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -330,7 +333,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -341,7 +344,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "NA",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -352,7 +355,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "NA",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                         }
                     };
@@ -377,7 +380,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -388,7 +391,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -399,7 +402,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -410,7 +413,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -421,7 +424,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -432,7 +435,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -443,7 +446,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -454,7 +457,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -465,7 +468,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -476,7 +479,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -487,7 +490,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "weekly",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -498,7 +501,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "NA",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                             new DetailedCharges
                             {
@@ -509,7 +512,7 @@ namespace FinanceServicesApi.V1.Controllers
                                 Frequency = "NA",
                                 Amount = (decimal) _generator.Next(0, 100),
                                 StartDate = RandomDay(),
-                                EndDate = RandomDay()
+                                EndDate = DateTime.Now.AddMonths(12)
                             },
                         }
                     };
