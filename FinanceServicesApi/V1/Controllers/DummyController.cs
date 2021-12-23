@@ -194,6 +194,28 @@ namespace FinanceServicesApi.V1.Controllers
             return Ok(response);
         }
 
+        public async Task<IActionResult> GetAccountsPatch(List<Guid> ids)
+        {
+            List<AccountBalanceUpdateModel> patchList = new List<AccountBalanceUpdateModel>();
+            foreach (Guid id in ids)
+            {
+                var account = await _chargeByAssetId.ExecuteAsync(id).ConfigureAwait(false);
+                patchList.AddRange(new List<AccountBalanceUpdateModel>
+                {
+                    new AccountBalanceUpdateModel
+                    {
+                        op = "replace",path = "accountBalance",value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
+                    },
+                    new AccountBalanceUpdateModel
+                    {
+                        op = "replace",path = "consolidatedBalance",value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
+                    }
+                });
+            }
+
+            return Ok(patchList);
+        }
+
         [HttpPost("charges")]
         public async Task<IActionResult> GetCharges(List<Guid> ids)
         {
