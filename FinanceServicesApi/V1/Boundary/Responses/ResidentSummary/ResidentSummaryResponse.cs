@@ -1,4 +1,5 @@
 using System;
+using FinanceServicesApi.V1.Domain.TenureModels;
 
 namespace FinanceServicesApi.V1.Boundary.Responses.ResidentSummary
 {
@@ -123,5 +124,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.ResidentSummary
         ///     12/12/12
         /// </example>
         public DateTime? DateOfBirth { get; set; }
+
+        public TenurePartialModel Tenure { get; set; }
     }
 }

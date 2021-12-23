@@ -7,8 +7,8 @@ namespace FinanceServicesApi.V1.Domain.AccountModels
 {
     public class AccountBalanceUpdateModel
     {
-        public string value { get; set; }
-        public string path { get; set; }
-        public string op { get; set; }
+        public string Value { get; set; }
+        public string Path { get; set; }
+        public string Op { get; set; }
     }
 }

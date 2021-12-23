@@ -7,6 +7,7 @@ using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Domain.ContactDetails;
+using FinanceServicesApi.V1.Domain.TenureModels;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using Hackney.Shared.Asset.Domain;
@@ -59,7 +60,8 @@ namespace FinanceServicesApi.V1.Factories
                 WeeklyTotalCharges = charges?.Sum(p =>
                     p.DetailedCharges.Where(c =>
                         c.Frequency.ToLower() == "weekly" &&
-                        c.Type.ToLower() == "service").Sum(c => c.Amount))
+                        c.Type.ToLower() == "service").Sum(c => c.Amount)),
+                Tenure = new TenurePartialModel { Id = tenure?.Id ?? Guid.Empty }
             };
         }
 

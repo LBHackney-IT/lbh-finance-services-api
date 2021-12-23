@@ -194,6 +194,7 @@ namespace FinanceServicesApi.V1.Controllers
             return Ok(response);
         }
 
+        [HttpPost("account-patch")]
         public async Task<IActionResult> GetAccountsPatch(List<Guid> ids)
         {
             List<AccountBalanceUpdateModel> patchList = new List<AccountBalanceUpdateModel>();
@@ -204,11 +205,11 @@ namespace FinanceServicesApi.V1.Controllers
                 {
                     new AccountBalanceUpdateModel
                     {
-                        op = "replace",path = "accountBalance",value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
+                        Op = "replace",Path = "accountBalance",Value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
                     },
                     new AccountBalanceUpdateModel
                     {
-                        op = "replace",path = "consolidatedBalance",value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
+                        Op = "replace",Path = "consolidatedBalance",Value = ((decimal) _generator.Next(-1000000, 1000000)).ToString(),
                     }
                 });
             }
