@@ -9,6 +9,10 @@ namespace FinanceServicesApi.V1.Infrastructure
 {
     public class CustomeHttpClient : HttpClient, ICustomeHttpClient
     {
+        public CustomeHttpClient()
+        {
+            base.Timeout = TimeSpan.FromMinutes(3);
+        }
         public void AddAuthorization(AuthenticationHeaderValue headerValue)
         {
             if (headerValue != null) base.DefaultRequestHeaders.Authorization = headerValue;
