@@ -20,15 +20,18 @@ namespace FinanceServicesApi.V1.Factories
     {
         public static ConfirmTransferResponse ToResponse(Account account, Transaction transaction)
         {
-            var arrearsAfterPayment = (account?.AccountBalance ?? 0) - (transaction?.TransactionAmount ?? 0);
+            if (account == null) throw new ArgumentNullException(nameof(account));
+            if (transaction == null) throw new ArgumentNullException(nameof(transaction));
+
+            var arrearsAfterPayment = account.AccountBalance -transaction.TransactionAmount;
             return new ConfirmTransferResponse
             {
-                Address = transaction?.Address,
+                Address = transaction.Address,
                 ArrearsAfterPayment = arrearsAfterPayment < 0 ? 0 : arrearsAfterPayment,
-                CurrentArrears = account?.AccountBalance ?? 0,
-                Payee = transaction?.Person?.FullName,
-                RentAccountNumber = account?.PaymentReference,
-                Resident = account?.Tenure?.PrimaryTenants?.FirstOrDefault()?.FullName
+                CurrentArrears = account.AccountBalance,
+                Payee = transaction.Person?.FullName,
+                RentAccountNumber = account.PaymentReference,
+                Resident = account.Tenure?.PrimaryTenants?.FirstOrDefault()?.FullName
             };
         }
 

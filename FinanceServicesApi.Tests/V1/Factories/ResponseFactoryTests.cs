@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using AutoFixture;
@@ -15,64 +16,78 @@ namespace FinanceServicesApi.Tests.V1.Factories
     {
         private readonly Fixture _fixture = new Fixture();
 
+        [Theory]
+        [InlineData(100,150,0)]
+        [InlineData(150,100,50)]
+        [InlineData(150,150,0)]
+        [InlineData(0,0,0)]
+        public void ToResponseReturnsValidArrears(decimal accountBalance,decimal transactionAmount,decimal arrearsAmount)
+        {
+            Account account = _fixture.Build<Account>()
+                .With(p => p.AccountBalance, accountBalance)
+                .Create();
+            Transaction transaction = _fixture.Build<Transaction>()
+                .With(p => p.TransactionAmount, transactionAmount)
+                .Create();
+
+            ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
+            confirmTransferResponse.CurrentArrears.Should().Be(account.AccountBalance);
+            confirmTransferResponse.ArrearsAfterPayment.Should().Be(arrearsAmount);
+        }
+
+        [Fact]
+        public void ToResponseWithNullPersonSubsetOfTransactionReturnsNullPayee()
+        {
+            var transaction = _fixture.Create<Transaction>();
+            transaction.Person = null;
+            var account = _fixture.Create<Account>();
+
+            ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
+            confirmTransferResponse.Payee.Should().BeNull();
+        }
+
+        [Fact]
+        public void ToResponseWithNullTenureSubsetOfAccountReturnsNullResident()
+        {
+            var transaction = _fixture.Create<Transaction>();
+            var account = _fixture.Create<Account>();
+            account.Tenure = null;
+
+            ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
+            confirmTransferResponse.Resident.Should().BeNull();
+        }
+
         [Fact]
         public void ToResponseWithValidAccountAndTransactionReturnsValidConfirmTransferResponse()
         {
-            Account account = _fixture.Build<Account>()
-                .With(p => p.AccountBalance, 100)
-                .Create();
-            Transaction transaction = _fixture.Build<Transaction>()
-                .With(p => p.TransactionAmount, 105)
-                .Create();
+            Account account = _fixture.Create<Account>();
+            Transaction transaction = _fixture.Create<Transaction>();
+
             ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
             confirmTransferResponse.Should().NotBeNull();
             confirmTransferResponse.Address.Should().Be(transaction.Address);
-            confirmTransferResponse.ArrearsAfterPayment.Should().Be(0);
-            confirmTransferResponse.CurrentArrears.Should().Be(account.AccountBalance);
             confirmTransferResponse.Payee.Should().Be(transaction.Person.FullName);
             confirmTransferResponse.RentAccountNumber.Should().Be(account.PaymentReference);
             confirmTransferResponse.Resident.Should().Be(account.Tenure.PrimaryTenants.First().FullName);
         }
 
         [Fact]
-        public void ToResponseWithNullAccountAndValidTransactionReturnsValidConfirmTransferResponse()
+        public void ToResponseWithNullAccountAndValidTransactionRaiseArgumentNullException()
         {
-            Account account = null;
             Transaction transaction = _fixture.Create<Transaction>();
-            ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
-            confirmTransferResponse.Should().NotBeNull();
-            confirmTransferResponse.Address.Should().Be(transaction.Address);
-            confirmTransferResponse.ArrearsAfterPayment.Should().Be(0);
-            confirmTransferResponse.CurrentArrears.Should().Be(0);
-            confirmTransferResponse.Payee.Should().Be(transaction.Person.FullName);
-            confirmTransferResponse.RentAccountNumber.Should().BeNull();
-            confirmTransferResponse.Resident.Should().BeNull();
+            Func<ConfirmTransferResponse> func =()=> ResponseFactory.ToResponse(null, transaction);
+            func.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void ToResponseWithValidAccountAndNullTransactionReturnsValidConfirmTransferResponse()
+        public void ToResponseWithValidAccountAndNullTransactionRaiseArgumentNullException()
         {
             Account account = _fixture.Create<Account>();
-            Transaction transaction = null;
-            ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
-            confirmTransferResponse.Should().NotBeNull();
-            confirmTransferResponse.Address.Should().BeNull();
-            if (account.AccountBalance > 0)
-            {
-                confirmTransferResponse.ArrearsAfterPayment.Should().Be(account.AccountBalance);
-                confirmTransferResponse.CurrentArrears.Should().Be(account.AccountBalance);
-            }
-            else
-            {
-                confirmTransferResponse.ArrearsAfterPayment.Should().Be(0);
-                confirmTransferResponse.CurrentArrears.Should().Be(0);
-            }
-            confirmTransferResponse.Payee.Should().BeNull();
-            confirmTransferResponse.RentAccountNumber.Should().Be(account.PaymentReference);
-            confirmTransferResponse.Resident.Should().NotBeNull();
+            Func<ConfirmTransferResponse> func =()=> ResponseFactory.ToResponse(account, null);
+            func.Should().Throw<ArgumentNullException>();
         }
-
-        /*[Fact]
+        
+        [Fact]
         public void ToResponseWithValidAccountWithNullTenureAndValidTransactionReturnsValidConfirmTransferResponse()
         {
             Account account = _fixture.Build<Account>()
@@ -82,8 +97,6 @@ namespace FinanceServicesApi.Tests.V1.Factories
             Transaction transaction = _fixture.Create<Transaction>();
             ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
             confirmTransferResponse.Address.Should().Be(transaction.Address);
-            confirmTransferResponse.ArrearsAfterPayment.Should()
-                .Be(account.AccountBalance - transaction.TransactionAmount);
             confirmTransferResponse.CurrentArrears.Should().Be(account.AccountBalance);
             confirmTransferResponse.Payee.Should().Be(transaction.Person.FullName);
             confirmTransferResponse.RentAccountNumber.Should().Be(account.PaymentReference);
@@ -99,12 +112,9 @@ namespace FinanceServicesApi.Tests.V1.Factories
 
             ConfirmTransferResponse confirmTransferResponse = ResponseFactory.ToResponse(account, transaction);
             confirmTransferResponse.Address.Should().Be(transaction.Address);
-            confirmTransferResponse.ArrearsAfterPayment.Should()
-                .Be(account.AccountBalance - transaction.TransactionAmount);
-            confirmTransferResponse.CurrentArrears.Should().Be(account.AccountBalance);
             confirmTransferResponse.Payee.Should().Be(transaction.Person.FullName);
             confirmTransferResponse.RentAccountNumber.Should().Be(account.PaymentReference);
             confirmTransferResponse.Resident.Should().BeNull();
-        }*/
+        }
     }
 }
