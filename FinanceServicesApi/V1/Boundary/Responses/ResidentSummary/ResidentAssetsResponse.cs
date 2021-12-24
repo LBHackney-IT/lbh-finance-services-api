@@ -1,3 +1,4 @@
+using FinanceServicesApi.V1.Domain.TenureModels;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Tenure.Domain;
 
@@ -59,7 +60,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.ResidentSummary
         /// <example>
         ///     25
         /// </example>
-        public int? Staircasing { get; set; }
+        public int? Staircasting { get; set; }
 
         /// <summary>
         /// 
@@ -68,5 +69,6 @@ namespace FinanceServicesApi.V1.Boundary.Responses.ResidentSummary
         ///     123456789
         /// </example>
         public string RentAccountNumber { get; set; }
+        public TenurePartialModel Tenure { get; set; }
     }
 }

@@ -143,8 +143,12 @@ namespace FinanceServicesApi.V1.Factories
                 CurrentBalance = tenure?.Charges?.CurrentBalance,
                 RentCharge = tenure?.Charges?.Rent,
                 ServiceCharge = tenure?.Charges?.ServiceCharge,
-                Staircasing = -1,
-                TenancyType = tenure?.TenureType
+                Staircasting = -1,
+                TenancyType = tenure?.TenureType,
+                Tenure = new TenurePartialModel
+                {
+                    Id = tenure?.Id ?? Guid.Empty
+                }
             };
         }
 

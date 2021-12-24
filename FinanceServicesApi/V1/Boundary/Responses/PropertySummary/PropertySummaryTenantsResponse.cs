@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Hackney.Shared.Person.Domain;
 using Hackney.Shared.Tenure.Domain;
 

@@ -1,5 +1,4 @@
 using System;
-using FinanceServicesApi.V1.Infrastructure.Enums;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Tenure.Domain;
 

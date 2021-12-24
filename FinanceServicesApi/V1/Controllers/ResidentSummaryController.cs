@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Request;
 using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Factories;
@@ -11,10 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.UseCase.Interfaces;
-using Hackney.Shared.Person.Domain;
 using Hackney.Shared.Tenure.Domain;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace FinanceServicesApi.V1.Controllers
 {
@@ -112,31 +109,20 @@ namespace FinanceServicesApi.V1.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">Tenure Id</param>
+        /// <param name="id">Person Id</param>
         /// <returns></returns>
         [ProducesResponseType(typeof(ResidentAssetsResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet("assets/{id}")]
-        public async Task<IActionResult> GetAssetsByTenureId(Guid id)
+        public async Task<IActionResult> GetAssetsByPersonId(Guid id)
         {
             if (id == Guid.Empty)
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
                     $"{nameof(id)} cannot be empty."));
 
-            var tenure = await _tenureUseCase.ExecuteAsync(id).ConfigureAwait(false);
-
-            if (tenure == null)
-                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
-
-            var personId = tenure.HouseholdMembers?
-                .FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Leaseholder ||
-                                     p.PersonTenureType == PersonTenureType.Tenant)?.Id ?? Guid.Empty;
-            if (personId == Guid.Empty)
-                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
-
-            var personData = await _personUseCase.ExecuteAsync(personId).ConfigureAwait(false);
+            var personData = await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
 
             if (personData == null)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
