@@ -11,7 +11,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
 {
     public class TransactionGatewayTests
     {
-        private readonly Mock<IDynamoDBContext> _dynamoDBContext;
+        /*private readonly Mock<IDynamoDBContext> _dynamoDBContext;
         private readonly Mock<IAmazonDynamoDB> _amazonDynamoDB;
         private readonly Mock<IGetEnvironmentVariables<Transaction>> _getEnvironmentVariables;
         private TransactionGateway _gateway;
@@ -32,7 +32,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
 
             _gateway = new TransactionGateway(_amazonDynamoDB.Object, _dynamoDBContext.Object);
         }
-        /*[Fact]
+        [Fact]
         public void ConstructorGetsApiUrlAndApiTokenFromEnvironment()
         {
             _gateway = new TransactionGateway(new CustomeHttpClient(), new GetEnvironmentVariables());

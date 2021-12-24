@@ -2,6 +2,7 @@ using System;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace FinanceServicesApi.V1.Infrastructure
@@ -12,19 +13,21 @@ namespace FinanceServicesApi.V1.Infrastructure
         private readonly ICustomeHttpClient _client;
         private readonly IGetEnvironmentVariables<T> _getEnvironmentVariables;
         private readonly IGenerateUrl<T> _generateUrl;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public HousingData(ICustomeHttpClient client, IGetEnvironmentVariables<T> getEnvironmentVariables, IGenerateUrl<T> generateUrl)
+        public HousingData(ICustomeHttpClient client, IGetEnvironmentVariables<T> getEnvironmentVariables, IGenerateUrl<T> generateUrl, IHttpContextAccessor contextAccessor)
         {
             _client = client;
             _getEnvironmentVariables = getEnvironmentVariables;
             _generateUrl = generateUrl;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task<T> DownloadAsync(Guid id)
         {
             if (id == Guid.Empty) throw new ArgumentNullException(nameof(id));
 
-            var apiToken = _getEnvironmentVariables.GetToken();
+            var apiToken = _contextAccessor.HttpContext.Request.Headers["Authorization"];
 
             _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", apiToken));
             Uri uri = _generateUrl.Execute(id);
