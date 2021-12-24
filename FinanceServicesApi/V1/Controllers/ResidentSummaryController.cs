@@ -59,30 +59,16 @@ namespace FinanceServicesApi.V1.Controllers
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id/*, PersonType personType*/)
+        public async Task<IActionResult> GetById(Guid id)
         {
+            if (id == Guid.Empty)
+                return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
+                    $"{nameof(id)} cannot be empty."));
+
             var personResponse =
                 await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
             if (personResponse == null)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided Person"));
-
-            /*switch (personType)
-            {
-                case PersonType.Tenant:
-                    {
-                        if (!personResponse.Tenures.ToList().Any(p => p.Type.ToLower().Contains("tenant")))
-                            return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
-                                $"The person is not a tenants."));
-                        break;
-                    }
-                case PersonType.Leaseholder:
-                {
-                    if (!personResponse.Tenures.ToList().Any(p => p.Type.ToLower().Contains("leasehold")))
-                        return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
-                            $"The person is not a leaseholder."));
-                    break;
-                }
-            }*/
 
             Guid tenureId = Guid.Empty;
             Account account = new Account();
@@ -135,7 +121,7 @@ namespace FinanceServicesApi.V1.Controllers
         {
             if (id == Guid.Empty)
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
-                    $"{nameof(id).ToString()} cannot be empty."));
+                    $"{nameof(id)} cannot be empty."));
 
             var personData = await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
             if (personData == null)
