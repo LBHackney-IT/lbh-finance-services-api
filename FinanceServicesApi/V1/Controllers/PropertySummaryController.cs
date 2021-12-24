@@ -11,6 +11,7 @@ using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.UseCase.Interfaces;
+using Hackney.Shared.Tenure.Domain;
 using Microsoft.AspNetCore.Http;
 
 namespace FinanceServicesApi.V1.Controllers
@@ -49,23 +50,30 @@ namespace FinanceServicesApi.V1.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="request">Master Account Id and person id who is the owner of the account</param>
-        /// <returns></returns>
-        [ProducesResponseType(typeof(ResidentSummaryResponse), StatusCodes.Status200OK)]
+        /// <param name="id">Tenure id</param>
+        /// <returns>Property Summary</returns>
+        [ProducesResponseType(typeof(PropertySummaryResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
-        [HttpGet]
-        public async Task<IActionResult> GetById([FromQuery] PropertySummaryRequest request)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
         {
             var accountResponse =
-                await _accountByTargetIdUseCase.ExecuteAsync(request.TenureId).ConfigureAwait(false);
+                await _accountByTargetIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
 
             var transactionResponse =
-                await _transactionUseCase.ExecuteAsync(request.TenureId).ConfigureAwait(false);
+                await _transactionUseCase.ExecuteAsync(id).ConfigureAwait(false);
 
             var tenureInformationResponse =
-                await _tenureUseCase.ExecuteAsync(request.TenureId).ConfigureAwait(false);
+                await _tenureUseCase.ExecuteAsync(id).ConfigureAwait(false);
+
+            var personId = tenureInformationResponse?.HouseholdMembers
+                .FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Leaseholder ||
+                                     p.PersonTenureType == PersonTenureType.Tenant)?.Id ?? Guid.Empty;
+
+            if (personId == Guid.Empty)
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
 
             var assetResponse = (tenureInformationResponse?.TenuredAsset?.Id == null ||
                                  tenureInformationResponse?.TenuredAsset?.Id == Guid.Empty) ? null :
@@ -75,9 +83,9 @@ namespace FinanceServicesApi.V1.Controllers
                                   tenureInformationResponse?.TenuredAsset?.Id == Guid.Empty) ? null :
                 await _chargeUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
 
-            var personResponse = await _personUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
+            var personResponse = await _personUseCase.ExecuteAsync(personId).ConfigureAwait(false);
 
-            var contactDetailsResponse = await _contactUseCase.ExecuteAsync(request.PersonId).ConfigureAwait(false);
+            var contactDetailsResponse = await _contactUseCase.ExecuteAsync(personId).ConfigureAwait(false);
 
             var result = ResponseFactory.ToResponse(tenureInformationResponse,
                 personResponse,
