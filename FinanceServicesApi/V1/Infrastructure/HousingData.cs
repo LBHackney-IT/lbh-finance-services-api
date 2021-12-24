@@ -37,15 +37,12 @@ namespace FinanceServicesApi.V1.Infrastructure
             {
                 throw new Exception($"The {nameof(T)} api is not reachable!");
             }
-            else if (response.Content == null)
+            if (!response.IsSuccessStatusCode)
             {
                 throw new Exception(response.StatusCode.ToString());
             }
 
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-                return null;
 
             var tResponse = JsonConvert.DeserializeObject<T>(responseContent);
             return tResponse;
