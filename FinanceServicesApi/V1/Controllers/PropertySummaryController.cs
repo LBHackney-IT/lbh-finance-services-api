@@ -161,7 +161,7 @@ namespace FinanceServicesApi.V1.Controllers
             if (assetData == null)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
 
-            var chargeData = await _chargeUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            var chargeData = await _chargeUseCase.ExecuteAsync(assetData.Id).ConfigureAwait(false);
 
             return Ok(ResponseFactory.ToResponse(assetData, chargeData));
         }

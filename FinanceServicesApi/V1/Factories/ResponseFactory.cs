@@ -196,10 +196,10 @@ namespace FinanceServicesApi.V1.Factories
                 PropertyValue = chargesList?.FirstOrDefault(c => c.Type.ToLower() == "valuation")?.Amount,
                 RentModel = null,
                 The1999Value = chargesList?.FirstOrDefault(c => c.Type.ToLower().Contains("1999"))?.Amount,
-                ExtraCharges = chargesList.ToList().Where(w => w.Type.ToLower() == "valuation" &&
-                                                              w.Type.ToLower().Contains("1999")).Select(p => new ExtraCharge
+                ExtraCharges = chargesList.ToList().Where(w => w.Type.ToLower() != "valuation" && w.Type.ToLower() != "rent" &&
+                                                              !w.Type.ToLower().Contains("1999")).Select(p => new ExtraCharge
                                                               {
-                                                                  Name = p.Type,
+                                                                  Name = p.SubType,
                                                                   Value = p.Amount
                                                               }).ToList(),
                 WeeklyCharge = weeklyCharges,
