@@ -59,6 +59,10 @@ namespace FinanceServicesApi.V1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
+            if (id == Guid.Empty)
+                return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
+                    $"{nameof(id)} cannot be empty."));
+
             var accountResponse =
                 await _accountByTargetIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
 
@@ -100,20 +104,30 @@ namespace FinanceServicesApi.V1.Controllers
         /// <summary>
         ///     Get all tenants relevant to the provided asset id
         /// </summary>
-        /// <param name="id">Person Id</param>
+        /// <param name="id">Tenure Id</param>
         /// <returns></returns>
         [ProducesResponseType(typeof(List<PropertySummaryTenantsResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet("tenants/{id}")]
-        public async Task<IActionResult> GetTenantsByAssetId(Guid id)
+        public async Task<IActionResult> GetTenantsByTenureId(Guid id)
         {
             if (id == Guid.Empty)
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
                     $"{nameof(id)} cannot be empty."));
 
-            var personData = await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            var tenureInformation = await _tenureUseCase.ExecuteAsync(id).ConfigureAwait(false);
+
+            var personId = tenureInformation?.HouseholdMembers?
+                .FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Leaseholder ||
+                                     p.PersonTenureType == PersonTenureType.Tenant)?.Id ?? Guid.Empty;
+
+            if (personId == Guid.Empty)
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided person"));
+
+            var personData = await _personUseCase.ExecuteAsync(personId).ConfigureAwait(false);
+
             if (personData == null)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided person"));
 
@@ -156,7 +170,7 @@ namespace FinanceServicesApi.V1.Controllers
         {
             if (id == Guid.Empty)
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
-                    $"The {nameof(id).ToString()} cannot be empty."));
+                    $"{nameof(id)} cannot be empty."));
 
             var tenureInformation = await _tenureUseCase.ExecuteAsync(id).ConfigureAwait(false);
 
