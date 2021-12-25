@@ -1,13 +1,17 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Amazon.DynamoDBv2.Model;
+using Amazon.Runtime.Internal.Util;
 using AutoFixture;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.Charges;
+using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Enums;
+using Hackney.Shared.Person;
+using Hackney.Shared.Tenure.Domain;
 
 namespace FinanceServicesApi.Tests.V1.Helper
 {
@@ -236,5 +240,83 @@ namespace FinanceServicesApi.Tests.V1.Helper
                 _fixture.Create<Account>(),_fixture.Create<Transaction>()
             }
         };
+    }
+
+    public static class MockToResidentSummaryResponseInput
+    {
+        private static readonly Fixture _fixture = new Fixture();
+        public static List<object[]> GetTestData { get; private set; } = new List<object[]>
+        {
+            new object[]
+            {
+                null,null,null,null,null,null
+            },
+            new object[]
+            {
+                _fixture.Create<Person>(),null,null,null,null,null
+            },
+            new object[]
+            {
+                null,_fixture.Create<TenureInformation>(),null,null,null,null
+            },
+            new object[]
+            {
+                null,null,_fixture.Create<Account>(),null,null,null
+            },
+            new object[]
+            {
+                null,null,null,_fixture.Create<List<Charge>>(),null,null
+            },
+            new object[]
+            {
+                null,null,null,null,_fixture.Create<List<ContactDetail>>(),null
+            },
+            new object[]
+            {
+                null,null,null,null,null,_fixture.Create<List<Transaction>>()
+            },
+        };
+    }
+
+    /*public static class MockAccount
+    {
+        private static readonly Fixture _fixture = new Fixture();
+
+        private static Account _account = _fixture.Build<Account>()
+            .With(a => a.ConsolidatedBalance, null)
+            .With(a => a.Tenure, () => null)
+            .Create();
+
+        public static List<object[]> GetTestData { get; private set; } = new List<object[]>
+        {
+            new object[]
+            {
+                _account,null, null
+            }
+        };
+    }*/
+
+    public class MockAccount : IEnumerable<object[]>
+    {
+        private readonly Fixture _fixture = new Fixture();
+        private readonly Account _account;
+        public MockAccount()
+        {
+            _account = _fixture.Create<Account>();
+            /*_fixture.Build<Account>()
+            .With(a => a.ConsolidatedBalance, null)
+            .With(a => a.Tenure, () => null)
+            .Create();*/
+        }
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[] { null, null, null };
+            yield return new object[] { _account, null, null };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

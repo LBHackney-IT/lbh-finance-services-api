@@ -45,19 +45,19 @@ namespace FinanceServicesApi.V1.Factories
             return new ResidentSummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance,
+                TenureId = account?.Tenure?.TenureId,
                 HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount),
                 ServiceCharge = charges?.Count == 0 ? 0 : charges?.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
                 DateOfBirth = person?.DateOfBirth,
                 PersonId = "-",
-                TenureId = account?.Tenure?.TenureId,
                 LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.Last().PaidAmount,
                 LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.Last(p => p.PaidAmount > 0).TransactionDate,
                 PrimaryTenantAddress = tenure?.TenuredAsset?.FullAddress,
                 TenureType = tenure?.TenureType.Code,
-                PrimaryTenantEmail = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
+                PrimaryTenantEmail = contacts?.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
                     .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
                 PrimaryTenantName = $"{person?.FirstName ?? ""} {person?.Surname ?? ""}",
-                PrimaryTenantPhoneNumber = contacts.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
+                PrimaryTenantPhoneNumber = contacts?.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
                     .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
                 TenureStartDate = tenure?.StartOfTenureDate,
                 WeeklyTotalCharges = charges?.Sum(p =>
