@@ -123,13 +123,13 @@ namespace FinanceServicesApi.Tests.V1.Factories
             confirmTransferResponse.Payee.Should().Be(transaction.Person.FullName);
             confirmTransferResponse.RentAccountNumber.Should().Be(account.PaymentReference);
             confirmTransferResponse.Resident.Should().BeNull();
-        } 
+        }
         #endregion
 
 
         [Theory]
-        [MemberData(nameof(MockToResidentSummaryResponseInput.GetTestData),MemberType = typeof(MockToResidentSummaryResponseInput))]
-        public void ToResidentSummaryResponseNeverReturnsNullOutput(Person person,TenureInformation tenure,Account account,List<Charge> charges,List<ContactDetail> contactDetails,List<Transaction> transactions)
+        [MemberData(nameof(MockToResidentSummaryResponseInput.GetTestData), MemberType = typeof(MockToResidentSummaryResponseInput))]
+        public void ToResidentSummaryResponseNeverReturnsNullOutput(Person person, TenureInformation tenure, Account account, List<Charge> charges, List<ContactDetail> contactDetails, List<Transaction> transactions)
         {
             ResidentSummaryResponse response =
                 ResponseFactory.ToResponse(person, tenure, account, charges, contactDetails, transactions);
@@ -148,15 +148,14 @@ namespace FinanceServicesApi.Tests.V1.Factories
             List<Transaction> transactions = _fixture.Create<List<Transaction>>();
 
             ResidentSummaryResponse response =
-                ResponseFactory.ToResponse(person,tenureInformation, account, charges, contacts, transactions);
+                ResponseFactory.ToResponse(person, tenureInformation, account, charges, contacts, transactions);
 
             response.Should().NotBeNull();
         }
 
         [Theory]
-        /*[MemberData(nameof(MockAccount.GetTestData),MemberType = typeof(MockAccount))]*/
         [ClassData(typeof(MockAccount))]
-        public void ToResidentSummaryResponseWithAccountReturnsValidOutPut(Account? account,decimal? balanceExpected,string tenureIdExpected)
+        public void ToResidentSummaryResponseWithAccountCircumstancesReturnsValidOutPut(Account account, decimal? balanceExpected, string tenureIdExpected)
         {
             Person person = _fixture.Create<Person>();
             TenureInformation tenureInformation = _fixture.Create<TenureInformation>();
@@ -170,6 +169,52 @@ namespace FinanceServicesApi.Tests.V1.Factories
             response.Should().NotBeNull();
             response.CurrentBalance.Should().Be(balanceExpected);
             response.TenureId.Should().Be(tenureIdExpected);
+        }
+
+        [Theory]
+        [ClassData(typeof(MockTransaction))]
+        public void ToResidentSummaryResponseWithTransactionCircumstancesReturnsValidOutPut(List<Transaction> transactions,
+            decimal? housingBenefitExpected,
+            decimal? lastPaymentAmountExpected,
+            DateTime? lastPaymentDateExpected)
+        {
+            Person person = _fixture.Create<Person>();
+            TenureInformation tenureInformation = _fixture.Create<TenureInformation>();
+            List<Charge> charges = _fixture.Create<List<Charge>>();
+            List<ContactDetail> contacts = _fixture.Create<List<ContactDetail>>();
+            Account account = _fixture.Create<Account>();
+
+            ResidentSummaryResponse response =
+                ResponseFactory.ToResponse(person, tenureInformation, account, charges, contacts, transactions);
+
+            response.Should().NotBeNull();
+            response.HousingBenefit.Should().Be(housingBenefitExpected);
+            response.LastPaymentAmount.Should().Be(lastPaymentAmountExpected);
+            response.LastPaymentDate.Should().Be(lastPaymentDateExpected);
+        }
+
+        [Fact]
+        public void ToResidentSummaryResponseWithPersonCircumstancesReturnsValidOutPut()
+        {
+            Account account = _fixture.Create<Account>();
+            Person person = _fixture
+                .Build<Person>()
+                .Without(p=>p.DateOfBirth)
+                .Without(p=>p.FirstName)
+                .With(p=>p.Surname,"Smith")
+                .Create();
+
+            TenureInformation tenureInformation = _fixture.Create<TenureInformation>();
+            List<Charge> charges = _fixture.Create<List<Charge>>();
+            List<ContactDetail> contacts = _fixture.Create<List<ContactDetail>>();
+            List<Transaction> transactions = _fixture.CreateMany<Transaction>(5).ToList();
+
+            ResidentSummaryResponse response =
+                ResponseFactory.ToResponse(person, tenureInformation, account, charges, contacts, transactions);
+
+            response.Should().NotBeNull();
+            response.DateOfBirth.Should().BeNull();
+            response.PrimaryTenantName.Should().Be("Smith");
         }
 
     }

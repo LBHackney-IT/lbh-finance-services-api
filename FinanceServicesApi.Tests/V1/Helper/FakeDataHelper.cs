@@ -5,6 +5,7 @@ using System.Linq;
 using Amazon.DynamoDBv2.Model;
 using Amazon.Runtime.Internal.Util;
 using AutoFixture;
+using AutoMapper.Internal;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Domain.ContactDetails;
@@ -281,17 +282,11 @@ namespace FinanceServicesApi.Tests.V1.Helper
     /*public static class MockAccount
     {
         private static readonly Fixture _fixture = new Fixture();
-
-        private static Account _account = _fixture.Build<Account>()
-            .With(a => a.ConsolidatedBalance, null)
-            .With(a => a.Tenure, () => null)
-            .Create();
-
         public static List<object[]> GetTestData { get; private set; } = new List<object[]>
         {
             new object[]
             {
-                _account,null, null
+                _fixture.Build<Account>().With(p=>p.ConsolidatedBalance,167),167
             }
         };
     }*/
@@ -299,19 +294,59 @@ namespace FinanceServicesApi.Tests.V1.Helper
     public class MockAccount : IEnumerable<object[]>
     {
         private readonly Fixture _fixture = new Fixture();
-        private readonly Account _account;
-        public MockAccount()
-        {
-            _account = _fixture.Create<Account>();
-            /*_fixture.Build<Account>()
-            .With(a => a.ConsolidatedBalance, null)
-            .With(a => a.Tenure, () => null)
-            .Create();*/
-        }
+
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { null, null, null };
-            yield return new object[] { _account, null, null };
+            yield return new object[] { null, null ,null};
+            yield return new object[] { _fixture.Build<Account>()
+                .With(p => p.ConsolidatedBalance, 167m)
+                .With(p=>p.Tenure,
+                    _fixture.Build<AccountTenureSubSet>()
+                        .With(v=>v.TenureId,"123456789")
+                        .Create())
+                .Create(), 167m ,"123456789"};
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
+    public class MockTransaction : IEnumerable<object[]>
+    {
+        private readonly Fixture _fixture = new Fixture();
+
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[] {
+                new List<Transaction>(5){
+
+                    {
+                        _fixture.Build<Transaction>().With(t1=>t1.HousingBenefitAmount,10m).Create()
+                    },
+                    {
+                        _fixture.Build<Transaction>().With(t1=>t1.HousingBenefitAmount,20m).Create()
+                    },
+                    {
+                        _fixture.Build<Transaction>().With(t1=>t1.HousingBenefitAmount,30m).Create()
+                    },
+                    {
+                        _fixture.Build<Transaction>()
+                            .With(t1=>t1.HousingBenefitAmount,40m)
+                            .With(t1=>t1.PaidAmount,37.5m)
+                            .With(t1=>t1.TransactionDate,new DateTime(2002,12,11))
+                            .Create()
+                    },
+                    {
+                        _fixture.Build<Transaction>()
+                            .With(t1=>t1.HousingBenefitAmount,50m)
+                            .With(t1=>t1.PaidAmount,0)
+                            .With(t1=>t1.TransactionDate,new DateTime(2002,12,12))
+                            .Create()
+                    }
+
+                }, 150m, 37.5m,new DateTime(2002,12,11)};
         }
 
         IEnumerator IEnumerable.GetEnumerator()
