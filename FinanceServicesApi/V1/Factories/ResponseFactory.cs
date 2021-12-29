@@ -23,7 +23,7 @@ namespace FinanceServicesApi.V1.Factories
             if (account == null) throw new ArgumentNullException(nameof(account));
             if (transaction == null) throw new ArgumentNullException(nameof(transaction));
 
-            var arrearsAfterPayment = account.AccountBalance -transaction.TransactionAmount;
+            var arrearsAfterPayment = account.AccountBalance - transaction.TransactionAmount;
             return new ConfirmTransferResponse
             {
                 Address = transaction.Address,
@@ -48,7 +48,7 @@ namespace FinanceServicesApi.V1.Factories
                 TenureId = account?.Tenure?.TenureId,
 
                 HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount),
-                LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.LastOrDefault(p=>p.PaidAmount>0)?.PaidAmount??0,
+                LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.LastOrDefault(p => p.PaidAmount > 0)?.PaidAmount ?? 0,
                 LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.LastOrDefault(p => p.PaidAmount > 0)?.TransactionDate,
 
                 ServiceCharge = charges?.Count == 0 ? 0 : charges?.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
@@ -58,18 +58,23 @@ namespace FinanceServicesApi.V1.Factories
                         c.Type.ToLower() == "service").Sum(c => c.Amount)),
 
                 DateOfBirth = person?.DateOfBirth,
-                PrimaryTenantName = ($"{person?.FirstName ?? ""} {person?.Surname ?? ""}").Trim(),
+                PrimaryTenantName = (person?.FirstName == null && person?.Surname == null) ? null :
+                    ($"{person?.FirstName ?? ""} {person?.Surname ?? ""}").Trim(),
                 PersonId = "-",
 
                 PrimaryTenantAddress = tenure?.TenuredAsset?.FullAddress,
-                TenureType = tenure?.TenureType.Code,
+                TenureType = tenure?.TenureType?.Code,
                 TenureStartDate = tenure?.StartOfTenureDate,
                 Tenure = new TenurePartialModel { Id = tenure?.Id ?? Guid.Empty },
 
-                PrimaryTenantEmail = contacts?.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Email)
-                    .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? "",
-                PrimaryTenantPhoneNumber = contacts?.Where(c => c.TargetType == TargetType.Person && c.ContactInformation.ContactType == ContactType.Phone)
-                    .Select(s => s.ContactInformation.Value).FirstOrDefault() ?? ""
+                PrimaryTenantEmail = contacts?.FirstOrDefault(c =>
+                        c.TargetType == TargetType.Person &&
+                        c.ContactInformation?.ContactType == ContactType.Email)
+                    ?.ContactInformation?.Value,
+                PrimaryTenantPhoneNumber = contacts?.FirstOrDefault(c =>
+                        c.TargetType == TargetType.Person &&
+                        c.ContactInformation?.ContactType == ContactType.Phone)
+                    ?.ContactInformation?.Value
             };
         }
 

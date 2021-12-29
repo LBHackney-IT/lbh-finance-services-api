@@ -1,7 +1,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using AutoFixture;
 using FinanceServicesApi.Tests.V1.Helper;
@@ -193,17 +192,11 @@ namespace FinanceServicesApi.Tests.V1.Factories
             response.LastPaymentDate.Should().Be(lastPaymentDateExpected);
         }
 
-        [Fact]
-        public void ToResidentSummaryResponseWithPersonCircumstancesReturnsValidOutPut()
+        [Theory]
+        [ClassData(typeof(MockPerson))]
+        public void ToResidentSummaryResponseWithPersonCircumstancesReturnsValidOutPut(Person? person, DateTime? dateOfBirthExpected, string primaryTenantNameExpected)
         {
             Account account = _fixture.Create<Account>();
-            Person person = _fixture
-                .Build<Person>()
-                .Without(p=>p.DateOfBirth)
-                .Without(p=>p.FirstName)
-                .With(p=>p.Surname,"Smith")
-                .Create();
-
             TenureInformation tenureInformation = _fixture.Create<TenureInformation>();
             List<Charge> charges = _fixture.Create<List<Charge>>();
             List<ContactDetail> contacts = _fixture.Create<List<ContactDetail>>();
@@ -213,8 +206,56 @@ namespace FinanceServicesApi.Tests.V1.Factories
                 ResponseFactory.ToResponse(person, tenureInformation, account, charges, contacts, transactions);
 
             response.Should().NotBeNull();
-            response.DateOfBirth.Should().BeNull();
-            response.PrimaryTenantName.Should().Be("Smith");
+            response.DateOfBirth.Should().Be(dateOfBirthExpected);
+            response.PrimaryTenantName.Should().Be(primaryTenantNameExpected);
+        }
+
+        [Theory]
+        [ClassData(typeof(MockTenure))]
+        public void ToResidentSummaryResponseWithTenureCircumstancesReturnsValidOutPut(
+            TenureInformation? tenure,
+            string primaryTenantAddressExpected,
+            string tenureTypeExpected,
+            DateTime? tenureStartDateExpected,
+            Guid tenureIdExpected
+        )
+        {
+            Account account = _fixture.Create<Account>();
+            Person person = _fixture.Create<Person>();
+            List<Charge> charges = _fixture.Create<List<Charge>>();
+            List<ContactDetail> contacts = _fixture.Create<List<ContactDetail>>();
+            List<Transaction> transactions = _fixture.CreateMany<Transaction>(5).ToList();
+
+            ResidentSummaryResponse response =
+                ResponseFactory.ToResponse(person, tenure, account, charges, contacts, transactions);
+
+            response.Should().NotBeNull();
+            response.PrimaryTenantAddress.Should().Be(primaryTenantAddressExpected);
+            response.TenureType.Should().Be(tenureTypeExpected);
+            response.TenureStartDate.Should().Be(tenureStartDateExpected);
+            response.Tenure.Id.Should().Be(tenureIdExpected);
+        }
+
+        [Theory]
+        [ClassData(typeof(MockContact))]
+        public void ToResidentSummaryResponseWithContactsCircumstancesReturnsValidOutPut(
+            List<ContactDetail>? contacts,
+            string primaryTenantEmailExpected,
+            string primaryTenantPhoneNumberExpected
+        )
+        {
+            Account account = _fixture.Create<Account>();
+            Person person = _fixture.Create<Person>();
+            List<Charge> charges = _fixture.Create<List<Charge>>();
+            TenureInformation tenure = _fixture.Create<TenureInformation>();
+            List<Transaction> transactions = _fixture.CreateMany<Transaction>(5).ToList();
+
+            ResidentSummaryResponse response =
+                ResponseFactory.ToResponse(person, tenure, account, charges, contacts, transactions);
+
+            response.Should().NotBeNull();
+            response.PrimaryTenantEmail.Should().Be(primaryTenantEmailExpected);
+            response.PrimaryTenantPhoneNumber.Should().Be(primaryTenantPhoneNumberExpected);
         }
 
     }
