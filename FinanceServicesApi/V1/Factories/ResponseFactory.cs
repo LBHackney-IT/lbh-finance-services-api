@@ -51,9 +51,11 @@ namespace FinanceServicesApi.V1.Factories
                 LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.LastOrDefault(p => p.PaidAmount > 0)?.PaidAmount ?? 0,
                 LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.LastOrDefault(p => p.PaidAmount > 0)?.TransactionDate,
 
-                ServiceCharge = charges?.Count == 0 ? 0 : charges?.Sum(p => p.DetailedCharges.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount)),
-                WeeklyTotalCharges = charges?.Sum(p =>
-                    p.DetailedCharges.Where(c =>
+                ServiceCharge = charges?.Count == 0 ? 0m : charges?.Sum(p =>
+                    p.DetailedCharges?.Where(c =>
+                        c.Type.ToLower() == "service").Sum(c => c.Amount)),
+                WeeklyTotalCharges = charges?.Count == 0 ? 0m : charges?.Sum(p =>
+                    p.DetailedCharges?.Where(c =>
                         c.Frequency.ToLower() == "weekly" &&
                         c.Type.ToLower() == "service").Sum(c => c.Amount)),
 

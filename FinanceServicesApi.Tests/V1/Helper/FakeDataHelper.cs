@@ -24,9 +24,8 @@ namespace FinanceServicesApi.Tests.V1.Helper
             {
                 if (typeof(T) == typeof(Charge))
                 {
-                    response.Items.Add(
-                    new Dictionary<string, AttributeValue>()
-                        {
+                    response.Items.Add(new Dictionary<string, AttributeValue>()
+                    {
                         { "id", new AttributeValue { S = _fixture.Create<Guid>().ToString() } },
                         { "target_id", new AttributeValue { S = _fixture.Create<Guid>().ToString() } },
                         { "target_type", new AttributeValue { S = _fixture.Create<TargetType>().ToString() } },
@@ -66,47 +65,36 @@ namespace FinanceServicesApi.Tests.V1.Helper
                                     ).ToList()
                             }
                         }
-                        });
+                    });
                 }
                 if (typeof(T) == typeof(Transaction))
                 {
-                    response.Items.Add(
-                                        new Dictionary<string, AttributeValue>()
-                                        {
+                    response.Items.Add(new Dictionary<string, AttributeValue>()
+                    {
                         {"id", new AttributeValue {S = _fixture.Create<Guid>().ToString()}},
                         {"address", new AttributeValue {S = _fixture.Create<string>().ToString()}},
                         {"balance_amount", new AttributeValue {N = _fixture.Create<decimal>().ToString("F")}},
                         {"bank_account_number", new AttributeValue {S = _fixture.Create<string>().ToString()}},
+                        {"sort_code", new AttributeValue {S = _fixture.Create<string>().ToString()}},
                         {"charged_amount", new AttributeValue {N = _fixture.Create<decimal>().ToString("F")}},
                         {"financial_month", new AttributeValue {N = _fixture.Create<int>().ToString()}},
                         {"financial_year", new AttributeValue {N = _fixture.Create<int>().ToString()}},
                         {"fund", new AttributeValue {S = _fixture.Create<string>()}},
-                        {
-                            "housing_benefit_amount",
-                            new AttributeValue {N = _fixture.Create<decimal>().ToString("F")}
-                        },
-                        {"is_suspense", new AttributeValue {S = _fixture.Create<bool>().ToString()}},// GSI must be string or binary, so the string is implemented instead of boolean
+                        {"housing_benefit_amount",new AttributeValue {N = _fixture.Create<decimal>().ToString("F")}},
+                        {"is_suspense", new AttributeValue {S = _fixture.Create<bool>().ToString()}},
                         {"paid_amount", new AttributeValue {N = _fixture.Create<decimal>().ToString("F")}},
                         {"payment_reference", new AttributeValue {S = _fixture.Create<string>()}},
                         {"period_no", new AttributeValue {N = _fixture.Create<int>().ToString()}},
                         {"target_id", new AttributeValue {S = _fixture.Create<Guid>().ToString()}},
+                        {"target_type", new AttributeValue {S = "Tenure"}},
                         {"last_updated_at", new AttributeValue {S = _fixture.Create<DateTime>().ToString("F")}},
                         {"last_updated_by", new AttributeValue {S = _fixture.Create<string>()}},
                         {"created_at", new AttributeValue {S = _fixture.Create<DateTime>().ToString("F")}},
                         {"created_by", new AttributeValue {S = _fixture.Create<string>()}},
-                        {
-                            "transaction_amount",
-                            new AttributeValue {N = _fixture.Create<decimal>().ToString("F")}
-                        },
-                        {
-                            "transaction_date",
-                            new AttributeValue {S = _fixture.Create<DateTime>().ToString("F")}
-                        },
+                        {"transaction_amount",new AttributeValue {N = _fixture.Create<decimal>().ToString("F")}},
+                        {"transaction_date", new AttributeValue {S = _fixture.Create<DateTime>().ToString("F")}},
                         {"transaction_source", new AttributeValue {S = _fixture.Create<string>()}},
-                        {
-                            "transaction_type",
-                            new AttributeValue {S = _fixture.Create<TransactionType>().ToString()}
-                        },
+                        {"transaction_type",new AttributeValue {S = _fixture.Create<TransactionType>().ToString()}},
                         {
                             "person",
                             new AttributeValue
@@ -216,7 +204,6 @@ namespace FinanceServicesApi.Tests.V1.Helper
             return response;
         }
     }
-
     public static class MockToConfirmTransferResponseInputs
     {
         private static readonly Fixture _fixture = new Fixture();
@@ -240,7 +227,6 @@ namespace FinanceServicesApi.Tests.V1.Helper
             }
         };
     }
-
     public static class MockToResidentSummaryResponseInput
     {
         private static readonly Fixture _fixture = new Fixture();
@@ -276,7 +262,6 @@ namespace FinanceServicesApi.Tests.V1.Helper
             },
         };
     }
-
     public class MockAccount : IEnumerable<object[]>
     {
         private readonly Fixture _fixture = new Fixture();
@@ -674,6 +659,7 @@ namespace FinanceServicesApi.Tests.V1.Helper
                             .With(p=>p.TargetType,TargetType.Person)
                             .With(p=>p.ContactInformation,_fixture.Build<ContactInformation>()
                                 .Without(p=>p.ContactType)
+                                .With(p=>p.Value,"Sample@email.com")
                                 .Create()
                             )
                             .Create()
@@ -790,6 +776,84 @@ namespace FinanceServicesApi.Tests.V1.Helper
                     }
                 }
                 , null,"+10123456879"
+            };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+    public class MockCharges : IEnumerable<object[]>
+    {
+        private readonly Fixture _fixture = new Fixture();
+
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[]
+            {
+                null, null,null
+            };
+            yield return new object[]
+            {
+                new List<Charge>()
+                {
+                    {
+                        _fixture.Build<Charge>()
+                            .Without(p=>p.DetailedCharges)
+                            .Create()
+                    }
+                }
+                , 0m,0m
+            };
+            yield return new object[]
+            {
+                new List<Charge>()
+                {
+                    {
+                        _fixture.Build<Charge>()
+                            .With(p=>p.DetailedCharges,new List<DetailedCharges>(4)
+                            {
+                                {
+                                    _fixture.Build<DetailedCharges>()
+                                        .With(p=>p.Type,"service")
+                                        .With(p=>p.Amount,10.25m)
+                                        .With(p=>p.Frequency,"Monthly")
+                                        .Create()
+                                }
+                            })
+                            .Create()
+                    },
+                    {
+                        _fixture.Build<Charge>()
+                            .With(p=>p.DetailedCharges,new List<DetailedCharges>(4)
+                            {
+                                {
+                                    _fixture.Build<DetailedCharges>()
+                                        .With(p=>p.Type,"service")
+                                        .With(p=>p.Amount,11.35m)
+                                        .With(p=>p.Frequency,"Monthly")
+                                        .Create()
+                                }
+                            })
+                            .Create()
+                    },
+                    {
+                        _fixture.Build<Charge>()
+                            .With(p=>p.DetailedCharges,new List<DetailedCharges>(4)
+                            {
+                                {
+                                    _fixture.Build<DetailedCharges>()
+                                        .With(p=>p.Type,"service")
+                                        .With(p=>p.Amount,11.35m)
+                                        .With(p=>p.Frequency,"Weekly")
+                                        .Create()
+                                }
+                            })
+                            .Create()
+                    }
+                }
+                , 32.95m,11.35m
             };
         }
 

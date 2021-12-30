@@ -128,7 +128,13 @@ namespace FinanceServicesApi.Tests.V1.Factories
 
         [Theory]
         [MemberData(nameof(MockToResidentSummaryResponseInput.GetTestData), MemberType = typeof(MockToResidentSummaryResponseInput))]
-        public void ToResidentSummaryResponseNeverReturnsNullOutput(Person person, TenureInformation tenure, Account account, List<Charge> charges, List<ContactDetail> contactDetails, List<Transaction> transactions)
+        public void ToResidentSummaryResponseNeverReturnsNullOutput(
+            Person person,
+            TenureInformation tenure,
+            Account account,
+            List<Charge> charges,
+            List<ContactDetail> contactDetails,
+            List<Transaction> transactions)
         {
             ResidentSummaryResponse response =
                 ResponseFactory.ToResponse(person, tenure, account, charges, contactDetails, transactions);
@@ -154,7 +160,10 @@ namespace FinanceServicesApi.Tests.V1.Factories
 
         [Theory]
         [ClassData(typeof(MockAccount))]
-        public void ToResidentSummaryResponseWithAccountCircumstancesReturnsValidOutPut(Account account, decimal? balanceExpected, string tenureIdExpected)
+        public void ToResidentSummaryResponseWithAccountCircumstancesReturnsValidOutPut(
+            Account account,
+            decimal? balanceExpected,
+            string tenureIdExpected)
         {
             Person person = _fixture.Create<Person>();
             TenureInformation tenureInformation = _fixture.Create<TenureInformation>();
@@ -194,7 +203,10 @@ namespace FinanceServicesApi.Tests.V1.Factories
 
         [Theory]
         [ClassData(typeof(MockPerson))]
-        public void ToResidentSummaryResponseWithPersonCircumstancesReturnsValidOutPut(Person? person, DateTime? dateOfBirthExpected, string primaryTenantNameExpected)
+        public void ToResidentSummaryResponseWithPersonCircumstancesReturnsValidOutPut(
+            Person? person,
+            DateTime? dateOfBirthExpected,
+            string primaryTenantNameExpected)
         {
             Account account = _fixture.Create<Account>();
             TenureInformation tenureInformation = _fixture.Create<TenureInformation>();
@@ -217,8 +229,7 @@ namespace FinanceServicesApi.Tests.V1.Factories
             string primaryTenantAddressExpected,
             string tenureTypeExpected,
             DateTime? tenureStartDateExpected,
-            Guid tenureIdExpected
-        )
+            Guid tenureIdExpected)
         {
             Account account = _fixture.Create<Account>();
             Person person = _fixture.Create<Person>();
@@ -241,8 +252,7 @@ namespace FinanceServicesApi.Tests.V1.Factories
         public void ToResidentSummaryResponseWithContactsCircumstancesReturnsValidOutPut(
             List<ContactDetail>? contacts,
             string primaryTenantEmailExpected,
-            string primaryTenantPhoneNumberExpected
-        )
+            string primaryTenantPhoneNumberExpected)
         {
             Account account = _fixture.Create<Account>();
             Person person = _fixture.Create<Person>();
@@ -256,6 +266,27 @@ namespace FinanceServicesApi.Tests.V1.Factories
             response.Should().NotBeNull();
             response.PrimaryTenantEmail.Should().Be(primaryTenantEmailExpected);
             response.PrimaryTenantPhoneNumber.Should().Be(primaryTenantPhoneNumberExpected);
+        }
+
+        [Theory]
+        [ClassData(typeof(MockCharges))]
+        public void ToResidentSummaryResponseWithChargesCircumstancesReturnsValidOutPut(
+            List<Charge>? charges,
+            decimal? serviceChargeExpected,
+            decimal? weeklyTotalChargesExpected)
+        {
+            Account account = _fixture.Create<Account>();
+            Person person = _fixture.Create<Person>();
+            List<ContactDetail> contacts = _fixture.Create<List<ContactDetail>>();
+            TenureInformation tenure = _fixture.Create<TenureInformation>();
+            List<Transaction> transactions = _fixture.CreateMany<Transaction>(5).ToList();
+
+            ResidentSummaryResponse response =
+                ResponseFactory.ToResponse(person, tenure, account, charges, contacts, transactions);
+
+            response.Should().NotBeNull();
+            response.ServiceCharge.Should().Be(serviceChargeExpected);
+            response.WeeklyTotalCharges.Should().Be(weeklyTotalChargesExpected);
         }
 
     }

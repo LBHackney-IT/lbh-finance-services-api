@@ -15,6 +15,11 @@ namespace FinanceServicesApi.V1.Infrastructure
         private readonly IGenerateUrl<T> _generateUrl;
         private readonly IHttpContextAccessor _contextAccessor;
 
+        public HousingData()
+        {
+
+        }
+
         public HousingData(ICustomeHttpClient client, IGetEnvironmentVariables<T> getEnvironmentVariables, IGenerateUrl<T> generateUrl, IHttpContextAccessor contextAccessor)
         {
             _client = client;
@@ -25,7 +30,8 @@ namespace FinanceServicesApi.V1.Infrastructure
 
         public async Task<T> DownloadAsync(Guid id)
         {
-            if (id == Guid.Empty) throw new ArgumentNullException(nameof(id));
+            if (id == Guid.Empty)
+                throw new ArgumentException($"{nameof(id)} shouldn't be empty.");
 
             var apiToken = _contextAccessor.HttpContext.Request.Headers["Authorization"];
 
@@ -35,7 +41,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             var response = await _client.GetAsync(uri).ConfigureAwait(false);
             if (response == null)
             {
-                throw new Exception($"The {nameof(T)} api is not reachable!");
+                throw new Exception($"{nameof(T)} api is not reachable!");
             }
             if (!response.IsSuccessStatusCode)
             {

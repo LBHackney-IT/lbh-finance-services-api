@@ -1,130 +1,110 @@
 using System;
-using System.Transactions;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.Model;
 using AutoFixture;
+using FinanceServicesApi.Tests.V1.Helper;
+using FinanceServicesApi.V1.Boundary.Request;
+using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Gateways;
-using FinanceServicesApi.V1.Infrastructure.Interfaces;
+using FinanceServicesApi.V1.Infrastructure;
+using FinanceServicesApi.V1.Infrastructure.Entities;
+using FluentAssertions;
 using Moq;
+using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Gateways
 {
     public class TransactionGatewayTests
     {
-        /*private readonly Mock<IDynamoDBContext> _dynamoDBContext;
-        private readonly Mock<IAmazonDynamoDB> _amazonDynamoDB;
-        private readonly Mock<IGetEnvironmentVariables<Transaction>> _getEnvironmentVariables;
-        private TransactionGateway _gateway;
+        private readonly Mock<IDynamoDBContext> _dynamoDbContext;
+        private readonly Mock<IAmazonDynamoDB> _amazonDynamoDb;
+        private TransactionGateway _sutGateway;
         private readonly Fixture _fixture;
 
         public TransactionGatewayTests()
         {
             _fixture = new Fixture();
-            _dynamoDBContext = new Mock<IDynamoDBContext>();
-            _amazonDynamoDB = new Mock<IAmazonDynamoDB>();
-            _getEnvironmentVariables = new Mock<IGetEnvironmentVariables<Transaction>>();
-
-            _getEnvironmentVariables.Setup(_ => _.GetUrl())
-                .Returns(It.IsAny<Uri>());
-
-            _getEnvironmentVariables.Setup(_ => _.GetToken())
-                .Returns(Environment.GetEnvironmentVariable("TRANSACTION_API_KEY"));
-
-            _gateway = new TransactionGateway(_amazonDynamoDB.Object, _dynamoDBContext.Object);
-        }
-        [Fact]
-        public void ConstructorGetsApiUrlAndApiTokenFromEnvironment()
-        {
-            _gateway = new TransactionGateway(new CustomeHttpClient(), new GetEnvironmentVariables());
-            Assert.True(true);
+            _dynamoDbContext = new Mock<IDynamoDBContext>();
+            _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
+            _sutGateway = new TransactionGateway(_amazonDynamoDb.Object, _dynamoDbContext.Object);
         }
 
         [Fact]
-        public void GetByIdWithEmptyIdThrowsArgumentNullException()
+        public void GetByIdWithEmptyIdThrowsArgumentException()
         {
-            _gateway = new TransactionGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
-            Func<Task<Transaction>> func = async () => await _gateway.GetById(Guid.Empty).ConfigureAwait(false);
-            func.Should().Throw<ArgumentNullException>();
+            _sutGateway = new TransactionGateway(_amazonDynamoDb.Object, _dynamoDbContext.Object);
+            Func<Task<Transaction>> func = async () => await _sutGateway.GetById(Guid.Empty).ConfigureAwait(false);
+            func.Should().Throw<ArgumentException>();
         }
 
         [Fact]
-        public async Task GetByIdReturnsBadRequestThrowsException()
+        public void GetByIdWithValidIdReturnsData()
         {
-            HttpResponseMessage message = new HttpResponseMessage(HttpStatusCode.BadRequest);
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl()).Returns("http://localhost:5000/api/v1/");
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey()).Returns("TRANSACTION_API_KEY");
-            _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
-                .ReturnsAsync(message);
+            TransactionDbEntity transaction = _fixture.Create<TransactionDbEntity>();
 
-            Func<Task<Transaction>> func = async () => await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            _sutGateway = new TransactionGateway(_amazonDynamoDb.Object, _dynamoDbContext.Object);
+            _dynamoDbContext.Setup(p => p.LoadAsync<TransactionDbEntity>(It.IsAny<Guid>(), It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync(transaction);
 
-            var exception = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
-            exception.Should().BeOfType(typeof(ExceptionAssertions<Exception>));
-            exception.Which.Message.Should().Be("BadRequest");
+            var response = _sutGateway.GetById(Guid.NewGuid());
+            response.Should().NotBeNull();
+            response.Result.Should().BeEquivalentTo(transaction);
         }
 
         [Fact]
-        public async Task GetByIdReturnsNullThrowsException()
+        public void GetByIdWithNonExistsIdThrowsException()
         {
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl()).Returns("http://localhost:5000/api/v1/");
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey()).Returns("TRANSACTION_API_KEY");
-            _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
-                .ReturnsAsync((HttpResponseMessage) null);
+            _sutGateway = new TransactionGateway(_amazonDynamoDb.Object, _dynamoDbContext.Object);
+            _dynamoDbContext.Setup(p => p.LoadAsync<TransactionDbEntity>(It.IsAny<Guid>(), It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync((TransactionDbEntity) null);
 
-            Func<Task<Transaction>> func = async () => await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            Func<Task<Transaction>> func = async () => await _sutGateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
 
-            var exception = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
-            exception.Should().BeOfType(typeof(ExceptionAssertions<Exception>));
-            exception.Which.Message.Should().Be("The transaction api is not reachable!");
+            var exception = func.Should().ThrowAsync<Exception>();
+            exception.Result.WithMessage("The transaction api is not reachable!");
         }
 
         [Fact]
-        public async Task GetByIdWithValidOutputReturnsTransaction()
+        public async Task GetByTargetIdWithValidRequestReturnsData()
         {
-            HttpResponseMessage message = new HttpResponseMessage(HttpStatusCode.OK);
-            Transaction transactionResponse = _fixture.Create<Transaction>();
-            message.Content = new StringContent(JsonConvert.SerializeObject(transactionResponse));
+            TransactionsRequest transactionsRequest = _fixture.Create<TransactionsRequest>();
+            QueryResponse queryResponse = FakeDataHelper.MockQueryResponse<Transaction>();
 
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl()).Returns("http://localhost:5000/api/v1/");
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey()).Returns("TRANSACTION_API_KEY");
-            _httpClientMock.Setup(_ => _.GetAsync(It.IsAny<Uri>()))
-                .ReturnsAsync(message);
+            _amazonDynamoDb.Setup(p => p.QueryAsync(It.IsAny<QueryRequest>(), CancellationToken.None))
+                .ReturnsAsync(queryResponse);
 
-            var result = await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
-            result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(transactionResponse);
+            var response = await _sutGateway.GetByTargetId(transactionsRequest).ConfigureAwait(false);
+            response.Should().NotBeNull();
+
+            queryResponse.ToTransactions().Should().BeEquivalentTo(response);
         }
 
         [Fact]
-        public async Task GetByIdWithEmptyApiUrlThrowsException()
+        public async Task GetByTargetIdWithNonExistsTargetIdReturnsEmptyTransactionList()
         {
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl())
-                .Returns(String.Empty);
+            TransactionsRequest transactionsRequest = _fixture.Create<TransactionsRequest>();
+            QueryResponse queryResponse = new QueryResponse();
+            _amazonDynamoDb.Setup(p => p.QueryAsync(It.IsAny<QueryRequest>(), CancellationToken.None))
+                .ReturnsAsync(queryResponse);
 
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey())
-                .Returns(Environment.GetEnvironmentVariable("TRANSACTION_API_KEY"));
-
-            _gateway = new TransactionGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
-
-            Func<Task<Transaction>> func = async () =>
-                await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
-            var exceptionAssertions = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
+            var response = await _sutGateway.GetByTargetId(transactionsRequest).ConfigureAwait(false);
+            response.Should().NotBeNull();
+            response.Count.Should().Be(0);
         }
 
         [Fact]
-        public async Task GetByIdWithEmptyApiKeyThrowsException()
+        public void GetByTargetIdWithEmptyTargetIdThrowsArgumentException()
         {
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiUrl())
-                .Returns(Environment.GetEnvironmentVariable("TRANSACTION_API_URL"));
+            TransactionsRequest transactionsRequest = _fixture.Create<TransactionsRequest>();
+            _amazonDynamoDb.Verify(p => p.QueryAsync(It.IsAny<QueryRequest>(), CancellationToken.None), Times.Never);
 
-            _getEnvironmentVariables.Setup(_ => _.GetTransactionApiKey())
-                .Returns(String.Empty);
-
-            _gateway = new TransactionGateway(_httpClientMock.Object, _getEnvironmentVariables.Object);
-
-            Func<Task<Transaction>> func = async () =>
-                await _gateway.GetById(Guid.NewGuid()).ConfigureAwait(false);
-            var exceptionAssertions = await func.Should().ThrowAsync<Exception>().ConfigureAwait(false);
-        }*/
+            Func<Task<List<Transaction>>> func = async () => await _sutGateway.GetByTargetId(transactionsRequest).ConfigureAwait(false);
+            var exception = func.Should().ThrowAsync<ArgumentException>();
+            exception.WithMessage("transactionsRequest shouldn't be empty.");
+        }
     }
 }
