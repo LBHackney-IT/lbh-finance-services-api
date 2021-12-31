@@ -99,7 +99,10 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         [Fact]
         public void GetByTargetIdWithEmptyTargetIdThrowsArgumentException()
         {
-            TransactionsRequest transactionsRequest = _fixture.Create<TransactionsRequest>();
+            TransactionsRequest transactionsRequest = _fixture.Build<TransactionsRequest>()
+                .With(p => p.TargetId, Guid.Empty)
+                .Create();
+
             _amazonDynamoDb.Verify(p => p.QueryAsync(It.IsAny<QueryRequest>(), CancellationToken.None), Times.Never);
 
             Func<Task<List<Transaction>>> func = async () => await _sutGateway.GetByTargetId(transactionsRequest).ConfigureAwait(false);

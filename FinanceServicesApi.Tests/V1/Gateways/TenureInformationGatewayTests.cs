@@ -40,6 +40,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         {
             async Task<TenureInformation> Func() => await _sut.GetById(Guid.Empty).ConfigureAwait(false);
             ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>((Func<Task<TenureInformation>>) Func).ConfigureAwait(false);
+            exception.Message.Should().Be("id shouldn't be empty.");
         }
 
     }

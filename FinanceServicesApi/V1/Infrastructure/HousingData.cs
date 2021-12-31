@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http.Headers;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -11,19 +12,14 @@ namespace FinanceServicesApi.V1.Infrastructure
         where T : class
     {
         private readonly ICustomeHttpClient _client;
-        private readonly IGetEnvironmentVariables<T> _getEnvironmentVariables;
         private readonly IGenerateUrl<T> _generateUrl;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public HousingData()
-        {
+        public HousingData() { }
 
-        }
-
-        public HousingData(ICustomeHttpClient client, IGetEnvironmentVariables<T> getEnvironmentVariables, IGenerateUrl<T> generateUrl, IHttpContextAccessor contextAccessor)
+        public HousingData(ICustomeHttpClient client, IGenerateUrl<T> generateUrl, IHttpContextAccessor contextAccessor)
         {
             _client = client;
-            _getEnvironmentVariables = getEnvironmentVariables;
             _generateUrl = generateUrl;
             _contextAccessor = contextAccessor;
         }
@@ -34,6 +30,8 @@ namespace FinanceServicesApi.V1.Infrastructure
                 throw new ArgumentException($"{nameof(id)} shouldn't be empty.");
 
             var apiToken = _contextAccessor.HttpContext.Request.Headers["Authorization"];
+            if (string.IsNullOrEmpty(apiToken))
+                throw new InvalidCredentialException("Api token shouldn't be null or empty.");
 
             _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", apiToken));
             Uri uri = _generateUrl.Execute(id);
@@ -41,7 +39,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             var response = await _client.GetAsync(uri).ConfigureAwait(false);
             if (response == null)
             {
-                throw new Exception($"{nameof(T)} api is not reachable!");
+                throw new Exception($"{nameof(T)} api is not reachable.");
             }
             if (!response.IsSuccessStatusCode)
             {
