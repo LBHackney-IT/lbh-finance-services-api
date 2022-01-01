@@ -576,6 +576,74 @@ namespace FinanceServicesApi.V1.Controllers
             }));
         }
 
+        [HttpGet("call-async")]
+        public async Task<IActionResult> AsyncCall(Guid id)
+        {
+            DateTime start = DateTime.Now;
+            var tenureTask = _tenureById.ExecuteAsync(id);
+            var accountTask = _accountByTargetIdUseCase.ExecuteAsync(id);
+            var transactionTask = _transactionByTargetId.ExecuteAsync(id);
+            List<Task> tasks = new List<Task>()
+            {
+                tenureTask,accountTask,transactionTask
+            };
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+
+            //var chargesTask = _chargeByAssetId.ExecuteAsync(tenure.TenuredAsset.Id);
+
+            return Ok(new
+            {
+                Duration = DateTime.Now.Subtract(start)/*,
+                Tenure = tenure,
+                Account = account,
+                Transaction = transaction*/
+                /*Charges = charges*/
+            });
+        }
+
+        [HttpGet("call-sync")]
+        public async Task<IActionResult> SyncCall(Guid id)
+        {
+            DateTime start = DateTime.Now;
+            var tenure = await _tenureById.ExecuteAsync(id).ConfigureAwait(false);
+            var account = await _accountByTargetIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            var transaction = await _transactionByTargetId.ExecuteAsync(id).ConfigureAwait(false);
+
+
+            //var charges = _chargeByAssetId.ExecuteAsync(tenure.TenuredAsset.Id).Result;
+
+            return Ok(new
+            {
+                Duration = DateTime.Now.Subtract(start)/*,
+                Tenure = tenure,
+                Account = account,
+                Transaction = transaction*/
+                /*Charges = charges*/
+            });
+        }
+
+        //[HttpGet("call-sync")]
+        //public IActionResult SyncCall(Guid id)
+        //{
+        //    DateTime start = DateTime.Now;
+        //    var tenure = _tenureById.ExecuteAsync(id).Result;
+        //    var account = _accountByTargetIdUseCase.ExecuteAsync(id).Result;
+        //    var transaction = _transactionByTargetId.ExecuteAsync(id).Result;
+
+
+        //    //var charges = _chargeByAssetId.ExecuteAsync(tenure.TenuredAsset.Id).Result;
+
+        //    return Ok(new
+        //    {
+        //        Duration = DateTime.Now.Subtract(start)/*,
+        //        Tenure = tenure,
+        //        Account = account,
+        //        Transaction = transaction*/
+        //        /*Charges = charges*/
+        //    });
+        //}
+
         DateTime RandomDay()
         {
             DateTime start = new DateTime(2015, 1, 1);
