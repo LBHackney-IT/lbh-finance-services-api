@@ -576,17 +576,21 @@ namespace FinanceServicesApi.V1.Controllers
             }));
         }
 
-        [HttpGet("call-async")]
-        public async Task<IActionResult> AsyncCall(Guid id)
+        [HttpPost("call-async")]
+        public async Task<IActionResult> AsyncCall(Guid[] ids)
         {
             DateTime start = DateTime.Now;
-            var tenureTask = _tenureById.ExecuteAsync(id);
-            var accountTask = _accountByTargetIdUseCase.ExecuteAsync(id);
-            var transactionTask = _transactionByTargetId.ExecuteAsync(id);
-            List<Task> tasks = new List<Task>()
+            List<Task> tasks = new List<Task>();
+            foreach (var id in ids)
             {
-                tenureTask,accountTask,transactionTask
-            };
+                var tenureTask = _tenureById.ExecuteAsync(id);
+                var accountTask = _accountByTargetIdUseCase.ExecuteAsync(id);
+                var transactionTask = _transactionByTargetId.ExecuteAsync(id);
+
+                tasks.Add(tenureTask);
+                tasks.Add(accountTask);
+                tasks.Add(transactionTask);
+            }
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
 
@@ -602,14 +606,17 @@ namespace FinanceServicesApi.V1.Controllers
             });
         }
 
-        [HttpGet("call-sync")]
-        public async Task<IActionResult> SyncCall(Guid id)
+        [HttpPost("call-sync")]
+        public async Task<IActionResult> SyncCall(Guid[] ids)
         {
             DateTime start = DateTime.Now;
-            var tenure = await _tenureById.ExecuteAsync(id).ConfigureAwait(false);
-            var account = await _accountByTargetIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
-            var transaction = await _transactionByTargetId.ExecuteAsync(id).ConfigureAwait(false);
 
+            foreach (var id in ids)
+            {
+                var tenure = await _tenureById.ExecuteAsync(id).ConfigureAwait(false);
+                var account = await _accountByTargetIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
+                var transaction = await _transactionByTargetId.ExecuteAsync(id).ConfigureAwait(false);
+            }
 
             //var charges = _chargeByAssetId.ExecuteAsync(tenure.TenuredAsset.Id).Result;
 
