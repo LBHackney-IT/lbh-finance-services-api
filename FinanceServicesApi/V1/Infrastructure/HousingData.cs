@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Threading.Tasks;
@@ -41,8 +42,10 @@ namespace FinanceServicesApi.V1.Infrastructure
             {
                 throw new Exception($"{nameof(T)} api is not reachable.");
             }
-            if (!response.IsSuccessStatusCode)
+            else if (!response.IsSuccessStatusCode)
             {
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                    return null;
                 throw new Exception(response.StatusCode.ToString());
             }
 
