@@ -1,16 +1,14 @@
-using FinanceServicesApi.V1.Domain.TransactionModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FinanceServicesApi.V1.Domain.ContactDetails;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Infrastructure
 {
-    public class TransactionHousingDataTests : HousingDataTests<Transaction>
+    public class ContactDetailsHousingDataTests : HousingDataTests<List<ContactDetail>>
     {
-        [Fact]
-        public override void DownloadAsyncWithNonExistenceIdThrowsException()
-        {
-            base.DownloadAsyncWithNonExistenceIdThrowsException();
-        }
-
         [Fact]
         public override void DownloadAsyncWithoutAuthorizationThrowsInvalidCredentialException()
         {
@@ -33,6 +31,12 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         public override void DownloadAsyncWithEmptyIdThrowsArgumentException()
         {
             base.DownloadAsyncWithEmptyIdThrowsArgumentException();
+        }
+
+        [Fact]
+        public override void DownloadAsyncWithNonExistenceIdThrowsException()
+        {
+            base.DownloadAsyncWithNonExistenceIdThrowsException();
         }
     }
 }

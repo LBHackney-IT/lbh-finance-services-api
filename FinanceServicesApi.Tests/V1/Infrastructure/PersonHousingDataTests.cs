@@ -1,9 +1,9 @@
-using FinanceServicesApi.V1.Domain.TransactionModels;
+using Hackney.Shared.Person;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Infrastructure
 {
-    public class TransactionHousingDataTests : HousingDataTests<Transaction>
+    public class PersonHousingDataTests : HousingDataTests<Person>
     {
         [Fact]
         public override void DownloadAsyncWithNonExistenceIdThrowsException()
@@ -18,15 +18,15 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         }
 
         [Fact]
-        public override void DownloadAsyncWithNonReachableUrlThrowsException()
-        {
-            base.DownloadAsyncWithNonReachableUrlThrowsException();
-        }
-
-        [Fact]
         public override void DownloadAsyncWithExistenceIdReturnsValidData()
         {
             base.DownloadAsyncWithExistenceIdReturnsValidData();
+        }
+
+        [Fact]
+        public override void DownloadAsyncWithNonReachableUrlThrowsException()
+        {
+            base.DownloadAsyncWithNonReachableUrlThrowsException();
         }
 
         [Fact]

@@ -16,7 +16,7 @@ using Xunit;
 namespace FinanceServicesApi.Tests.V1.Infrastructure
 {
     [ExcludeFromCodeCoverage]
-    public class HousingDataTests<T> where
+    public abstract class HousingDataTests<T> where
         T : class
     {
         private readonly Fixture _fixture;
@@ -28,7 +28,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         private readonly Mock<IGenerateUrl<T>> _generateUrl;
         private readonly HousingData<T> _sutHousingData;
 
-        public HousingDataTests()
+        protected HousingDataTests()
         {
             Guid token = Guid.NewGuid();
 
@@ -43,8 +43,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             _sutHousingData = new HousingData<T>(_client.Object, _generateUrl.Object, _context.Object);
         }
 
-        [Fact]
-        public void DownloadAsyncWithEmptyIdThrowsArgumentException()
+        public virtual void DownloadAsyncWithEmptyIdThrowsArgumentException()
         {
             // Arrange, Act
             Func<Task<T>> func = async () => await _sutHousingData.DownloadAsync(Guid.Empty).ConfigureAwait(false);
@@ -54,8 +53,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             exception.WithMessage("id shouldn't be empty.");
         }
 
-        [Fact]
-        public void DownloadAsyncWithoutAuthorizationThrowsInvalidCredentialException()
+        public virtual void DownloadAsyncWithoutAuthorizationThrowsInvalidCredentialException()
         {
             //Arrange
             _httpContext.Request.Headers["Authorization"] = string.Empty;
@@ -68,8 +66,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             exception.WithMessage("Api token shouldn't be null or empty.");
         }
 
-        [Fact]
-        public void DownloadAsyncWithExistenceIdReturnsValidData()
+        public virtual void DownloadAsyncWithExistenceIdReturnsValidData()
         {
             // Arrange
             Guid id = Guid.NewGuid();
@@ -92,8 +89,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             response.Result.Should().BeEquivalentTo(model);
         }
 
-        [Fact]
-        public void DownloadAsyncWithNonReachableUrlThrowsException()
+        public virtual void DownloadAsyncWithNonReachableUrlThrowsException()
         {
             // Arrange
             Guid id = Guid.NewGuid();
@@ -109,8 +105,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             exception.WithMessage($"{nameof(T)} api is not reachable.");
         }
 
-        [Fact]
-        public void DownloadAsyncWithNonExistenceIdThrowsException()
+        public virtual void DownloadAsyncWithNonExistenceIdThrowsException()
         {
             // Arrange
             Guid id = Guid.NewGuid();
