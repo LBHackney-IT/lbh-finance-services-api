@@ -105,7 +105,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             exception.WithMessage($"{nameof(T)} api is not reachable.");
         }
 
-        public virtual void DownloadAsyncWithNonExistenceIdThrowsException()
+        public virtual void DownloadAsyncWithNonReachableApiThrowsException()
         {
             // Arrange
             Guid id = Guid.NewGuid();
@@ -120,6 +120,22 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             //Assert
             var exception = func.Should().ThrowAsync<Exception>();
             exception.WithMessage(HttpStatusCode.BadGateway.ToString());
+        }
+
+        public virtual async Task DownloadAsyncWithNonExistenceIdReturnsNull()
+        {
+            // Arrange
+            Guid id = Guid.NewGuid();
+            HttpResponseMessage responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound);
+
+            _client.Setup(p => p.GetAsync(It.IsAny<Uri>()))
+                .ReturnsAsync(responseMessage);
+
+            // Act
+            var result = await _sutHousingData.DownloadAsync(id).ConfigureAwait(false);
+
+            //Assert
+            result.Should().BeNull();
         }
     }
 }
