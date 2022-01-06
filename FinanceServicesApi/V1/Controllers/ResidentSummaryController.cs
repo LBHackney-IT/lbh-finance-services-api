@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
 using FinanceServicesApi.V1.Domain.AccountModels;
+using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
@@ -63,8 +64,22 @@ namespace FinanceServicesApi.V1.Controllers
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
                     $"{nameof(id)} cannot be empty."));
 
-            var personResponse =
-                await _personUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            List<Task> tasks = new List<Task>();
+
+            var personResponseTask = _personUseCase.ExecuteAsync(id);
+            var contactDetailsResponseTask = _contactUseCase.ExecuteAsync(id);
+
+            tasks.AddRange(new List<Task>
+            {
+                {personResponseTask},
+                {contactDetailsResponseTask}
+            });
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+            tasks.Clear();
+
+            var personResponse = personResponseTask.Result;
+            var contactDetailsResponse = contactDetailsResponseTask.Result;
 
             if (personResponse == null)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided Person"));
@@ -84,18 +99,25 @@ namespace FinanceServicesApi.V1.Controllers
                 }
             }
 
-            var transactionResponse = tenureId == Guid.Empty ? null :
-                await _transactionUseCase.ExecuteAsync(tenureId).ConfigureAwait(false);
+            Task<List<Transaction>> transactionResponseTask = null;
+            Task<TenureInformation> tenureInformationResponseTask = null;
+            if (tenureId != Guid.Empty)
+            {
+                transactionResponseTask = _transactionUseCase.ExecuteAsync(tenureId);
+                tenureInformationResponseTask = _tenureUseCase.ExecuteAsync(tenureId);
+                tasks.AddRange(new List<Task>{
+                    {transactionResponseTask},{tenureInformationResponseTask}
+                });
+            }
 
-            var tenureInformationResponse = tenureId == Guid.Empty ? null :
-                await _tenureUseCase.ExecuteAsync(tenureId).ConfigureAwait(false);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+
+            var transactionResponse = transactionResponseTask?.Result;
+            var tenureInformationResponse = tenureInformationResponseTask?.Result;
 
             var chargeResponse = (tenureInformationResponse?.TenuredAsset?.Id == null ||
                                   tenureInformationResponse?.TenuredAsset?.Id == Guid.Empty) ? null :
                 await _chargeUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
-
-            var contactDetailsResponse =
-                await _contactUseCase.ExecuteAsync(id).ConfigureAwait(false);
 
             var result = ResponseFactory.ToResponse(personResponse,
                 tenureInformationResponse,

@@ -6,6 +6,6 @@ namespace FinanceServicesApi.V1.Infrastructure.Interfaces
 {
     public interface IHousingData<T> where T : class
     {
-        public Task<T> DownloadAsync(Guid id);
+        public abstract Task<T> DownloadAsync(Guid id);
     }
 }

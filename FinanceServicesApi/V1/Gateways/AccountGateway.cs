@@ -27,7 +27,7 @@ namespace FinanceServicesApi.V1.Gateways
         public async Task<Account> GetById(Guid id)
         {
             if (id == Guid.Empty)
-                throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
+                throw new ArgumentException($"{nameof(id).ToString()} shouldn't be empty.");
 
             var result = await _dynamoDbContext.LoadAsync<AccountDbEntity>(id).ConfigureAwait(false);
 

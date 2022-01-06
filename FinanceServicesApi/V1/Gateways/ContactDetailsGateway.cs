@@ -19,7 +19,7 @@ namespace FinanceServicesApi.V1.Gateways
         public async Task<GetContactDetailsResponse> GetByTargetId(Guid targetId)
         {
             if (targetId == Guid.Empty)
-                throw new ArgumentNullException($"the {nameof(targetId).ToString()} shouldn't be empty or null");
+                throw new ArgumentException($"{nameof(targetId).ToString()} shouldn't be empty.");
 
             return await _housingData.DownloadAsync(targetId).ConfigureAwait(false);
         }

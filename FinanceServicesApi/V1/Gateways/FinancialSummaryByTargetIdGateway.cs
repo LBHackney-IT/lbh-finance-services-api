@@ -35,7 +35,7 @@ namespace FinanceServicesApi.V1.Gateways
         public async Task<List<WeeklySummary>> GetGetAllByTargetId(Guid targetId, DateTime? startDate, DateTime? endDate)
         {
             if (targetId == Guid.Empty)
-                throw new ArgumentNullException($"the {nameof(targetId).ToString()} shouldn't be empty or null");
+                throw new ArgumentException($"{nameof(targetId).ToString()} shouldn't be empty.");
 
             var dbWeeklySummary = new List<WeeklySummaryDbEntity>();
             var table = _dynamoDbContext.GetTargetTable<WeeklySummaryDbEntity>();

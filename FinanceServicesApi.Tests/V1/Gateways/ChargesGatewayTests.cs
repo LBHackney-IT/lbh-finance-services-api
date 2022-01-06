@@ -31,7 +31,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         public void GetAllByAssetIdWithEmptyInputReturnsException()
         {
             Func<Task<List<Charge>>> func = async () => await _sut.GetAllByAssetId(Guid.Empty).ConfigureAwait(false);
-            func.Should().Throw<ArgumentNullException>();
+            func.Should().Throw<ArgumentException>();
         }
 
         [Fact]

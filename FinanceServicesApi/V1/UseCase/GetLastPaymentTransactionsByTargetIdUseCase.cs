@@ -21,7 +21,7 @@ namespace FinanceServicesApi.V1.UseCase
         public async Task<List<Transaction>> ExecuteAsync(Guid targetId)
         {
             if (targetId == Guid.Empty)
-                throw new ArgumentNullException(nameof(targetId));
+                throw new ArgumentException($"{nameof(targetId)} shouldn't be empty.");
 
             TransactionsRequest request = new TransactionsRequest
             {
