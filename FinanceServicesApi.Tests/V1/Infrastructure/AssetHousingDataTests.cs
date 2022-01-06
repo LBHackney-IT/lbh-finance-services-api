@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Hackney.Shared.Asset.Domain;
 using Xunit;
 
@@ -12,9 +13,15 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         }
 
         [Fact]
-        public override void DownloadAsyncWithNonExistenceIdThrowsException()
+        public override void DownloadAsyncWithNonReachableApiThrowsException()
         {
-            base.DownloadAsyncWithNonExistenceIdThrowsException();
+            base.DownloadAsyncWithNonReachableApiThrowsException();
+        }
+
+        [Fact]
+        public override Task DownloadAsyncWithNonExistenceIdReturnsNull()
+        {
+            return base.DownloadAsyncWithNonExistenceIdReturnsNull();
         }
 
         [Fact]
