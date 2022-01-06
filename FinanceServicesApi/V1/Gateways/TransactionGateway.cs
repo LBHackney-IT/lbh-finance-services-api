@@ -30,7 +30,7 @@ namespace FinanceServicesApi.V1.Gateways
         public async Task<Transaction> GetById(Guid id)
         {
             if (id == Guid.Empty)
-                throw new ArgumentNullException($"the {nameof(id).ToString()} shouldn't be empty or null");
+                throw new ArgumentException($"{nameof(id).ToString()} shouldn't be empty.");
 
             var response = await _dynamoDbContext.LoadAsync<TransactionDbEntity>(Guid.Empty, id).ConfigureAwait(false);
 
@@ -45,7 +45,7 @@ namespace FinanceServicesApi.V1.Gateways
         public async Task<List<Transaction>> GetByTargetId(TransactionsRequest transactionsRequest)
         {
             if (transactionsRequest.TargetId == Guid.Empty)
-                throw new ArgumentNullException($"the {nameof(transactionsRequest.TargetId).ToString()} shouldn't be empty or null");
+                throw new ArgumentException($"{nameof(transactionsRequest.TargetId).ToString()} shouldn't be empty.");
 
             QueryRequest request = new QueryRequest
             {
@@ -59,7 +59,7 @@ namespace FinanceServicesApi.V1.Gateways
             };
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
-            List<Transaction> data = response.ToTransactions();
+            List<Transaction> data = response?.ToTransactions();
 
             return data;
         }

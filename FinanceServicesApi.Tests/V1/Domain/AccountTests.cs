@@ -45,6 +45,7 @@ namespace FinanceServicesApi.Tests.V1.Domain
             Assert.IsAssignableFrom<IEnumerable<ConsolidatedCharge>>(account.ConsolidatedCharges);
             Assert.IsType<AccountTenureSubSet>(account.Tenure);
             Assert.IsType<decimal>(account.ConsolidatedBalance);
+            Assert.IsType<string>(account.EndReasonCode);
             #endregion
 
             #region ConsolidatedCharge

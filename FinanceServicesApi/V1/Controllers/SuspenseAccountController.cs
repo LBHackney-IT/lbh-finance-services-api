@@ -32,8 +32,7 @@ namespace FinanceServicesApi.V1.Controllers
         public async Task<IActionResult> GetById([FromQuery] Guid transactionId, [FromQuery] Guid accountId)
         {
             if (transactionId == Guid.Empty || accountId == Guid.Empty)
-                throw new ArgumentNullException(
-                    paramName: $"The {nameof(accountId).ToString()} or {nameof(transactionId).ToString()} shouldn't be empty!");
+                throw new ArgumentException($"The {nameof(accountId).ToString()} or {nameof(transactionId).ToString()} shouldn't be empty!");
 
             var accountResponse = await _getAccountByIdUseCase.ExecuteAsync(accountId).ConfigureAwait(false);
             if (accountResponse == null)

@@ -42,7 +42,7 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         public async Task GetByIdWithEmptyParametersThrowsArgumentNullException(Guid transactionId, Guid accountId)
         {
             Func<Task<IActionResult>> func = async () => await _sut.GetById(transactionId, accountId).ConfigureAwait(false);
-            await func.Should().ThrowAsync<ArgumentNullException>().ConfigureAwait(false);
+            await func.Should().ThrowAsync<ArgumentException>().ConfigureAwait(false);
         }
 
         /*[Fact]

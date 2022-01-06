@@ -18,7 +18,7 @@ namespace FinanceServicesApi.V1.UseCase
         public async Task<Transaction> ExecuteAsync(Guid id)
         {
             if (id == Guid.Empty)
-                throw new ArgumentNullException(nameof(id));
+                throw new ArgumentException($"{nameof(id)} shouldn't be empty.");
 
             var transactions = await _gateway.GetById(id).ConfigureAwait(false);
             return transactions;

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Boundary.Request;
 using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
-using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
+using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.UseCase.Interfaces;
+using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Tenure.Domain;
 using Microsoft.AspNetCore.Http;
 
@@ -63,14 +63,23 @@ namespace FinanceServicesApi.V1.Controllers
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
                     $"{nameof(id)} cannot be empty."));
 
-            var accountResponse =
-                await _accountByTargetIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            var accountResponseTask = _accountByTargetIdUseCase.ExecuteAsync(id);
+            var transactionResponseTask = _transactionUseCase.ExecuteAsync(id);
+            var tenureInformationResponseTask = _tenureUseCase.ExecuteAsync(id);
 
-            var transactionResponse =
-                await _transactionUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            List<Task> tasks = new List<Task>()
+            {
+                { accountResponseTask },
+                { transactionResponseTask },
+                { tenureInformationResponseTask }
+            };
 
-            var tenureInformationResponse =
-                await _tenureUseCase.ExecuteAsync(id).ConfigureAwait(false);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+            tasks.Clear();
+
+            var accountResponse = accountResponseTask.Result;
+            var transactionResponse = transactionResponseTask.Result;
+            var tenureInformationResponse = tenureInformationResponseTask.Result;
 
             var personId = tenureInformationResponse?.HouseholdMembers
                 .FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Leaseholder ||
@@ -79,17 +88,29 @@ namespace FinanceServicesApi.V1.Controllers
             if (personId == Guid.Empty)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
 
-            var assetResponse = (tenureInformationResponse?.TenuredAsset?.Id == null ||
-                                 tenureInformationResponse?.TenuredAsset?.Id == Guid.Empty) ? null :
-                await _assetUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
+            Asset assetResponse = null;
+            List<Charge> chargeResponse = null;
+            Task<Asset> assetResponseTask = null;
+            Task<List<Charge>> chargeResponseTask = null;
 
-            var chargeResponse = (tenureInformationResponse?.TenuredAsset?.Id == null ||
-                                  tenureInformationResponse?.TenuredAsset?.Id == Guid.Empty) ? null :
-                await _chargeUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
+            if (tenureInformationResponse?.TenuredAsset?.Id != null && tenureInformationResponse.TenuredAsset.Id != Guid.Empty)
+            {
+                assetResponseTask = _assetUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id);
+                chargeResponseTask = _chargeUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id);
+                tasks.AddRange(new List<Task> { { assetResponseTask }, { chargeResponseTask } });
+            }
 
-            var personResponse = await _personUseCase.ExecuteAsync(personId).ConfigureAwait(false);
+            var personResponseTask = _personUseCase.ExecuteAsync(personId);
+            var contactDetailsResponseTask = _contactUseCase.ExecuteAsync(personId);
 
-            var contactDetailsResponse = await _contactUseCase.ExecuteAsync(personId).ConfigureAwait(false);
+            tasks.AddRange(new List<Task> { { personResponseTask }, { contactDetailsResponseTask } });
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+            assetResponse = assetResponseTask?.Result;
+            chargeResponse = chargeResponseTask?.Result;
+
+            var personResponse = personResponseTask.Result;
+            var contactDetailsResponse = contactDetailsResponseTask.Result;
 
             var result = ResponseFactory.ToResponse(tenureInformationResponse,
                 personResponse,

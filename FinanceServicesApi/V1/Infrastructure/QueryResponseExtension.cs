@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Amazon.DynamoDBv2.Model;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.Charges;
-using FinanceServicesApi.V1.Domain.FinancialSummary;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 
