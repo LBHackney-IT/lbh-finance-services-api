@@ -34,41 +34,88 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _sut = new AccountGateway(_dynamoDbContext.Object, _amazonDynamoDb.Object);
         }
 
-        /*[Fact]
-        public void GetByIdWithEmptyInputReturnsException()
-        {
-            Func<Task<Account>> func = async () => await _sut.GetById(Guid.Empty).ConfigureAwait(false);
-            func.Should().Throw<ArgumentNullException>();
-        }
-
         [Fact]
-        public void GetByIdWitValidInputReturnsData()
+        public async Task GetByIdWithExistenceIdReturnsDomain()
         {
-            AccountDbEntity response = _fixture.Create<AccountDbEntity>();
+            // Arrange
+            Guid id = Guid.NewGuid();
+            AccountDbEntity account = _fixture.Build<AccountDbEntity>()
+                .With(p => p.Id, id)
+                .Create();
 
-            _dynamoDbContext.Setup(_ => _.LoadAsync<AccountDbEntity>(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(response);
+            _dynamoDbContext.Setup(p => p.LoadAsync<AccountDbEntity>(It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync(account);
 
-            Func<Task<Account>> func = async () => await _sut.GetById(Guid.NewGuid()).ConfigureAwait(false);
+            // Act
+            var result = await _sut.GetById(id).ConfigureAwait(false);
 
-            var result = func.Invoke();
+            //Assert
             result.Should().NotBeNull();
-            result.Result.Should().BeEquivalentTo(response.ToDomain());
+            result.Should().BeEquivalentTo(account);
         }
 
         [Fact]
-        public void GetAllByAssetIdWitNonExistsIdReturnsEmptyList()
+        public async Task GetByIdWithNonExistenceIdReturnsNull()
         {
-            QueryResponse response = FakeDataHelper.MockQueryResponse<Charge>(0);
+            // Arrange
+            AccountDbEntity account = _fixture.Build<AccountDbEntity>().Create();
+
+            _dynamoDbContext.Setup(p => p.LoadAsync<AccountDbEntity>(It.IsAny<Guid>(), CancellationToken.None))
+                .ReturnsAsync((AccountDbEntity) null);
+
+            // Act
+            var result = await _sut.GetById(Guid.NewGuid()).ConfigureAwait(false);
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetByIdWithEmptyIdThrowsArgumentException()
+        {
+            // Arrange & Act
+            Func<Task<Account>> func = async () => await _sut.GetById(Guid.Empty).ConfigureAwait(false);
+
+            //Assert
+            var exception = Assert.ThrowsAsync<ArgumentException>(func);
+            exception.Should().NotBeNull();
+            exception.Result.Should().BeOfType<ArgumentException>();
+            exception.Result.Message.Should().Contain("id shouldn't be empty.");
+        }
+
+        [Fact]
+        public void GetAllByTargetIdWitExistsIdReturnsAccountDomain()
+        {
+            // Arrange
+            QueryResponse response = FakeDataHelper.MockQueryResponse<Account>(0);
 
             _amazonDynamoDb.Setup(_ => _.QueryAsync(It.IsAny<QueryRequest>(), CancellationToken.None))
                 .ReturnsAsync(response);
 
-            Func<Task<List<Charge>>> func = async () => await _sut.GetAllByAssetId(Guid.NewGuid()).ConfigureAwait(false);
+            // Act
+            Func<Task<Account>> func = async () => await _sut.GetByTargetId(Guid.NewGuid()).ConfigureAwait(false);
             var result = func.Invoke();
+
+            // Assert
             result.Should().NotBeNull();
-            result.Result.Count.Should().Be(0);
-        }*/
+            result.Result.Should().BeEquivalentTo(response.ToAccount());
+        }
+
+        [Fact]
+        public void GetAllByTargetIdWitNonExistsIdReturnsNull()
+        {
+            // Arrange
+            _amazonDynamoDb.Setup(_ => _.QueryAsync(It.IsAny<QueryRequest>(), CancellationToken.None))
+                .ReturnsAsync((QueryResponse) null);
+
+            // Act
+            Func<Task<Account>> func = async () => await _sut.GetByTargetId(Guid.NewGuid()).ConfigureAwait(false);
+            var response = func.Invoke();
+
+            // Assert
+            response.Should().NotBeNull();
+            response.Result.Should().BeNull();
+        }
 
     }
 }

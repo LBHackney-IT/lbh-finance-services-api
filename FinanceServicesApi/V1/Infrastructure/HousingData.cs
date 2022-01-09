@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -17,6 +18,7 @@ namespace FinanceServicesApi.V1.Infrastructure
         private readonly IGenerateUrl<T> _generateUrl;
         private readonly IHttpContextAccessor _contextAccessor;
 
+        [ExcludeFromCodeCoverage]
         public HousingData() { }
 
         public HousingData(ICustomeHttpClient client, IGenerateUrl<T> generateUrl, IHttpContextAccessor contextAccessor)
@@ -31,7 +33,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             if (id == Guid.Empty)
                 throw new ArgumentException($"{nameof(id)} shouldn't be empty.");
 
-            var apiToken = _contextAccessor.HttpContext.Request.Headers["Authorization"];
+            var apiToken = _contextAccessor.HttpContext?.Request?.Headers["Authorization"];
             if (string.IsNullOrEmpty(apiToken))
                 throw new InvalidCredentialException("Api token shouldn't be null or empty.");
 

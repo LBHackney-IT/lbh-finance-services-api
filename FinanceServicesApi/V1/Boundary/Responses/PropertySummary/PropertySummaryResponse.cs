@@ -19,7 +19,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// <example>
         ///     1235.12
         /// </example>
-        public float? CurrentBalance { get; set; }
+        public decimal? CurrentBalance { get; set; }
         /// <summary>
         /// 
         /// </summary>
