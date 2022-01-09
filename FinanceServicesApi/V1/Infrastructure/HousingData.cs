@@ -42,7 +42,7 @@ namespace FinanceServicesApi.V1.Infrastructure
 
             if (response == null)
             {
-                throw new Exception($"{nameof(T)} api is not reachable.");
+                throw new Exception($"Housing API to get {typeof(T)} is not reachable.");
             }
             else if (!response.IsSuccessStatusCode)
             {
