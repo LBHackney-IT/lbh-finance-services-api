@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Threading.Tasks;
@@ -38,6 +39,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             Uri uri = _generateUrl.Execute(id);
 
             var response = await _client.GetAsync(uri).ConfigureAwait(false);
+
             if (response == null)
             {
                 throw new Exception($"{nameof(T)} api is not reachable.");
@@ -46,7 +48,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             {
                 if (response.StatusCode == HttpStatusCode.NotFound)
                     return null;
-                throw new Exception(response.StatusCode.ToString());
+                throw new Exception($"Exception in receiving {typeof(T)}: {response.StatusCode.ToString()}");
             }
 
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
