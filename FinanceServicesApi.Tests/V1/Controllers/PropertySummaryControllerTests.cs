@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -8,7 +9,6 @@ using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
 using FinanceServicesApi.V1.Controllers;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.Charges;
-using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FluentAssertions;
@@ -21,6 +21,7 @@ using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Controllers
 {
+    [ExcludeFromCodeCoverage]
     public class PropertySummaryControllerTests
     {
         private readonly Fixture _fixture;
