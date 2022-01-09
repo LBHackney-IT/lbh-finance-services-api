@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Domain.TransactionModels;
+using Hackney.Shared.Tenure.Domain;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Infrastructure
 {
-    public class TransactionHousingDataTests : HousingDataTests<Transaction>
+    public class TenureInformationHousingDataTests : HousingDataTests<TenureInformation>
     {
         [Fact]
         public override Task DownloadAsyncWithNonExistenceIdReturnsNull()
@@ -40,6 +40,12 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         public override void DownloadAsyncWithEmptyIdThrowsArgumentException()
         {
             base.DownloadAsyncWithEmptyIdThrowsArgumentException();
+        }
+
+        [Fact]
+        public override void DownloadAsyncWithApiExceptionReturnsException()
+        {
+            base.DownloadAsyncWithApiExceptionReturnsException();
         }
     }
 }

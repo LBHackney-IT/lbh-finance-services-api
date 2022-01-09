@@ -42,5 +42,11 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         {
             base.DownloadAsyncWithNonReachableApiThrowsException();
         }
+
+        [Fact]
+        public override void DownloadAsyncWithApiExceptionReturnsException()
+        {
+            base.DownloadAsyncWithApiExceptionReturnsException();
+        }
     }
 }

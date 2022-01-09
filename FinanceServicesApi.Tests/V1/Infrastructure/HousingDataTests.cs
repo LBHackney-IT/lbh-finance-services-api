@@ -137,5 +137,22 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             //Assert
             result.Should().BeNull();
         }
+
+        public virtual void DownloadAsyncWithApiExceptionReturnsException()
+        {
+            // Arrange
+            Guid id = Guid.NewGuid();
+            HttpResponseMessage responseMessage = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+
+            _client.Setup(p => p.GetAsync(It.IsAny<Uri>()))
+                .ReturnsAsync(responseMessage);
+
+            // Act
+            Func<Task<T>> func = async () => await _sutHousingData.DownloadAsync(id).ConfigureAwait(false);
+
+            //Assert
+            var exception = func.Should().ThrowAsync<Exception>();
+            exception.WithMessage(HttpStatusCode.Unauthorized.ToString());
+        }
     }
 }
