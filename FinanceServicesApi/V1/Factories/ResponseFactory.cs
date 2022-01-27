@@ -112,7 +112,7 @@ namespace FinanceServicesApi.V1.Factories
             var pty = transactions?.Where(p => p.TransactionDate.Year >= DateTime.UtcNow.Year).Sum(p => p.PaidAmount);
             return new PropertySummaryResponse
             {
-                CurrentBalance = tenure?.Charges?.CurrentBalance,
+                CurrentBalance = account?.ConsolidatedBalance,
                 HousingBenefit = transactions.Sum(s => s.HousingBenefitAmount),
                 ServiceCharge = charges?.Count == 0 ? 0 :
                     charges?.Sum(p =>

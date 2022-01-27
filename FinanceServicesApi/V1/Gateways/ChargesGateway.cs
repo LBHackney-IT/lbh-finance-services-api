@@ -38,9 +38,7 @@ namespace FinanceServicesApi.V1.Gateways
             };
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
-            List<Charge> data = response.ToCharge();
-
-            return data;
+            return response?.ToCharge();
         }
     }
 }

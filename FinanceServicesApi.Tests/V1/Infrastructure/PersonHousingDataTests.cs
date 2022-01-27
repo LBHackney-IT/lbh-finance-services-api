@@ -41,5 +41,17 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         {
             base.DownloadAsyncWithEmptyIdThrowsArgumentException();
         }
+
+        [Fact]
+        public override void DownloadAsyncWithApiExceptionReturnsException()
+        {
+            base.DownloadAsyncWithApiExceptionReturnsException();
+        }
+
+        [Fact]
+        public override void DownloadAsyncWithoutApiTokenThrowsInvalidCredentialException()
+        {
+            base.DownloadAsyncWithoutApiTokenThrowsInvalidCredentialException();
+        }
     }
 }

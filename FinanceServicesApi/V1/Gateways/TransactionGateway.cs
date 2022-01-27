@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
@@ -11,8 +10,6 @@ using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Entities;
-using FinanceServicesApi.V1.Infrastructure.Interfaces;
-using Newtonsoft.Json;
 
 namespace FinanceServicesApi.V1.Gateways
 {
@@ -59,9 +56,7 @@ namespace FinanceServicesApi.V1.Gateways
             };
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
-            List<Transaction> data = response?.ToTransactions();
-
-            return data;
+            return response?.ToTransactions();
         }
     }
 }
