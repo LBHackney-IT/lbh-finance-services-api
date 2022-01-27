@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
@@ -9,7 +10,6 @@ using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Entities;
-using FinanceServicesApi.V1.Infrastructure.Enums;
 
 namespace FinanceServicesApi.V1.Gateways
 {
@@ -17,7 +17,7 @@ namespace FinanceServicesApi.V1.Gateways
     {
         private readonly IDynamoDBContext _dynamoDbContext;
         private readonly IAmazonDynamoDB _amazonDynamoDb;
-
+        [ExcludeFromCodeCoverage]
         public AccountGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb)
         {
             _dynamoDbContext = dynamoDbContext;
@@ -50,7 +50,7 @@ namespace FinanceServicesApi.V1.Gateways
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
 
-            return response.ToAccount();
+            return response?.ToAccount();
         }
     }
 }

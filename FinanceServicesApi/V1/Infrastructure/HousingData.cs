@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Threading.Tasks;
@@ -16,6 +18,7 @@ namespace FinanceServicesApi.V1.Infrastructure
         private readonly IGenerateUrl<T> _generateUrl;
         private readonly IHttpContextAccessor _contextAccessor;
 
+        [ExcludeFromCodeCoverage]
         public HousingData() { }
 
         public HousingData(ICustomeHttpClient client, IGenerateUrl<T> generateUrl, IHttpContextAccessor contextAccessor)
@@ -30,7 +33,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             if (id == Guid.Empty)
                 throw new ArgumentException($"{nameof(id)} shouldn't be empty.");
 
-            var apiToken = _contextAccessor.HttpContext.Request.Headers["Authorization"];
+            var apiToken = _contextAccessor.HttpContext?.Request?.Headers["Authorization"];
             if (string.IsNullOrEmpty(apiToken))
                 throw new InvalidCredentialException("Api token shouldn't be null or empty.");
 
@@ -38,15 +41,16 @@ namespace FinanceServicesApi.V1.Infrastructure
             Uri uri = _generateUrl.Execute(id);
 
             var response = await _client.GetAsync(uri).ConfigureAwait(false);
+
             if (response == null)
             {
-                throw new Exception($"{nameof(T)} api is not reachable.");
+                throw new Exception($"Housing API to get {typeof(T)} is not reachable.");
             }
             else if (!response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.NotFound)
                     return null;
-                throw new Exception(response.StatusCode.ToString());
+                throw new Exception($"Exception in receiving {typeof(T)}: {response.StatusCode.ToString()}");
             }
 
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);

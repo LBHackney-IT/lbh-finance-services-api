@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.V1.Gateways;
@@ -10,6 +11,7 @@ using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Gateways
 {
+    [ExcludeFromCodeCoverage]
     public class TenureInformationGatewayTests
     {
         private readonly Fixture _fixture;

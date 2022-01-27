@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
@@ -15,6 +16,7 @@ using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Gateways
 {
+    [ExcludeFromCodeCoverage]
     public class ChargesGatewayTests
     {
         private readonly Mock<IAmazonDynamoDB> _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
@@ -60,6 +62,23 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             var result = func.Invoke();
             result.Should().NotBeNull();
             result.Result.Count.Should().Be(0);
+        }
+
+
+        [Fact]
+        public void GetAllByAssetIdWitNullResponseFromAmazonDynamoDbReturnsNull()
+        {
+            // Arrange
+            _amazonDynamoDb.Setup(_ => _.QueryAsync(It.IsAny<QueryRequest>(), CancellationToken.None))
+                .ReturnsAsync((QueryResponse) null);
+
+            // Act
+            Func<Task<List<Charge>>> func = async () => await _sut.GetAllByAssetId(Guid.NewGuid()).ConfigureAwait(false);
+            var result = func.Invoke();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Result.Should().BeNull();
         }
     }
 }

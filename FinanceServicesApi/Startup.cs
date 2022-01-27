@@ -177,7 +177,6 @@ namespace FinanceServicesApi
             services.AddScoped<IAccountGateway, AccountGateway>();
             services.AddScoped<ITransactionGateway, TransactionGateway>();
             services.AddScoped<IPersonGateway, PersonGateway>();
-            services.AddScoped<IFinancialSummaryByTargetIdGateway, FinancialSummaryByTargetIdGateway>();
             services.AddScoped<IContactDetailsGateway, ContactDetailsGateway>();
             services.AddScoped<ITenureInformationGateway, TenureInformationGateway>();
             services.AddScoped<IChargesGateway, ChargesGateway>();
@@ -191,7 +190,6 @@ namespace FinanceServicesApi
             services.AddScoped<IGetTransactionByIdUseCase, GetTransactionByIdUseCase>();
             services.AddScoped<IGetLastPaymentTransactionsByTargetIdUseCase, GetLastPaymentTransactionsByTargetIdUseCase>();
             services.AddScoped<IGetPersonByIdUseCase, GetPersonByIdUseCase>();
-            services.AddScoped<IGetFinancialSummaryByTargetIdUseCase, GetFinancialSummaryByTargetIdUseCase>();
             services.AddScoped<IGetContactDetailsByTargetIdUseCase, GetContactDetailsByTargetIdUseCase>();
             services.AddScoped<IGetTenureInformationByIdUseCase, GetTenureInformationByIdUseCase>();
             services.AddScoped<IGetChargeByAssetIdUseCase, GetChargeByAssetIdUseCase>();

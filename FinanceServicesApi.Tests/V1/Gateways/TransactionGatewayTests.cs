@@ -109,5 +109,22 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             var exception = func.Should().ThrowAsync<ArgumentException>();
             exception.WithMessage("transactionsRequest shouldn't be empty.");
         }
+
+        [Fact]
+        public void GetAllByAssetIdWitNullResponseFromAmazonDynamoDbReturnsNull()
+        {
+            // Arrange
+            TransactionsRequest transactionsRequest = _fixture.Create<TransactionsRequest>();
+            _amazonDynamoDb.Setup(_ => _.QueryAsync(It.IsAny<QueryRequest>(), CancellationToken.None))
+                .ReturnsAsync((QueryResponse) null);
+
+            // Act
+            Func<Task<List<Transaction>>> func = async () => await _sutGateway.GetByTargetId(transactionsRequest).ConfigureAwait(false);
+            var result = func.Invoke();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Result.Should().BeNull();
+        }
     }
 }
