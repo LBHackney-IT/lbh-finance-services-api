@@ -44,7 +44,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             async Task<GetContactDetailsResponse> Func() => await _sutGateway.GetByTargetId(Guid.Empty).ConfigureAwait(false);
             ArgumentException exception =
                 await Assert.ThrowsAsync<ArgumentException>((Func<Task<GetContactDetailsResponse>>) Func).ConfigureAwait(false);
-            exception.Message.Should().Be("id shouldn't be empty.");
+            exception.Message.Should().Be("targetId shouldn't be empty.");
         }
     }
 }
