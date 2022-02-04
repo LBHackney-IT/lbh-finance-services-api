@@ -131,6 +131,7 @@ namespace FinanceServicesApi.V1.Infrastructure
                     TargetId = Guid.Parse(item["target_id"].S),
                     ChargeGroup = Enum.Parse<ChargeGroup>(item["charge_group"].S),
                     TargetType = Enum.Parse<TargetType>(item["target_type"].S),
+                    ChargeYear = Convert.ToInt16(item["charge_year"].N),
                     DetailedCharges = detailCharges
                 });
             }

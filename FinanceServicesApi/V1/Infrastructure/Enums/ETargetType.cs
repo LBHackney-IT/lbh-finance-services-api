@@ -10,6 +10,7 @@ namespace FinanceServicesApi.V1.Infrastructure.Enums
         Organisation,
         Asset,
         Block,
-        Estate
+        Estate,
+        Dwelling
     }
 }
