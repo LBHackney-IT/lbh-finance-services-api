@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Reflection;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using FinanceServicesApi.V1;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Gateways;
+using FinanceServicesApi.V1.Gateways.Common;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Environments;
@@ -181,6 +183,17 @@ namespace FinanceServicesApi
             services.AddScoped<ITenureInformationGateway, TenureInformationGateway>();
             services.AddScoped<IChargesGateway, ChargesGateway>();
             services.AddScoped<IAssetGateway, AssetGateway>();
+
+            services.AddTransient<LoggingDelegatingHandler>();
+            var housingSearchApiUrl = Environment.GetEnvironmentVariable("SEARCH_API_URL");
+            var housingSearchApiToken = Environment.GetEnvironmentVariable("HOUSING_SEARCH_API_TOKEN");
+
+            services.AddHttpClient<IHousingSearchGateway, HousingSearchGateway>(c =>
+            {
+                c.BaseAddress = new Uri(housingSearchApiUrl);
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(housingSearchApiToken);
+            })
+           .AddHttpMessageHandler<LoggingDelegatingHandler>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)
@@ -194,6 +207,7 @@ namespace FinanceServicesApi
             services.AddScoped<IGetTenureInformationByIdUseCase, GetTenureInformationByIdUseCase>();
             services.AddScoped<IGetChargeByAssetIdUseCase, GetChargeByAssetIdUseCase>();
             services.AddScoped<IGetAssetByIdUseCase, GetAssetByIdUseCase>();
+            services.AddScoped<IGetLeaseholdAssetsListUseCase, GetLeaseholdAssetsListUseCase>();
         }
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -218,7 +232,7 @@ namespace FinanceServicesApi
 
             var api = app.ApplicationServices.GetService<IApiVersionDescriptionProvider>();
             _apiVersions = api.ApiVersionDescriptions.ToList();
-
+            app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 foreach (var apiVersionDescription in _apiVersions)
@@ -229,7 +243,7 @@ namespace FinanceServicesApi
             });
             app.UseSwagger();
             app.UseRouting();
-            app.UseGoogleGroupAuthorization();
+            //app.UseGoogleGroupAuthorization();
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseEndpoints(endpoints =>
             {
