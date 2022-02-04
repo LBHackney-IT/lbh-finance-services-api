@@ -47,15 +47,20 @@ namespace FinanceServicesApi.V1.UseCase
             var block = new ActionBlock<Asset>(
                     async x =>
                     {
+                        var totalCharge = 0;
                         var detailCharge = await _getChargeByAssetIdUseCase.ExecuteAsync(x.Id).ConfigureAwait(false);
-                        var leaseholdData = detailCharge.FirstOrDefault(_ =>
+                        if (detailCharge != null && detailCharge.Any())
+                        {
+                            var leaseholdData = detailCharge.FirstOrDefault(_ =>
                             _.ChargeGroup == Infrastructure.Enums.ChargeGroup.Leaseholders &&
                             _.ChargeYear == housingSearchRequest.Year);
-                        var totalCharge = 0;
-                        if (leaseholdData != null)
-                        {
-                            totalCharge = Convert.ToInt32(leaseholdData.DetailedCharges.Sum(_ => _.Amount));
+
+                            if (leaseholdData != null)
+                            {
+                                totalCharge = Convert.ToInt32(leaseholdData.DetailedCharges.Sum(_ => _.Amount));
+                            }
                         }
+                        
                         var resultData = new PropertySearchResponse
                         {
                             AssetId = x.Id,
