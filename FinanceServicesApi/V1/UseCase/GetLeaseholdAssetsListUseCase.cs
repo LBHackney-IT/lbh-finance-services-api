@@ -37,7 +37,7 @@ namespace FinanceServicesApi.V1.UseCase
 
             var totalPropertiesCount = filteredList.Count;
 
-            var data = filteredList.Skip((housingSearchRequest.Page -1) *housingSearchRequest.PageSize).Take(housingSearchRequest.PageSize);
+            var data = filteredList.Skip((housingSearchRequest.Page - 1) * housingSearchRequest.PageSize).Take(housingSearchRequest.PageSize);
 
 
             var properties = new List<PropertySearchResponse>();
@@ -75,8 +75,9 @@ namespace FinanceServicesApi.V1.UseCase
 
             block.Complete();
             await block.Completion.ConfigureAwait(false);
-           
-            return new GetPropertyListResponse {
+
+            return new GetPropertyListResponse
+            {
                 Total = totalPropertiesCount,
                 Properties = properties
             };
@@ -88,7 +89,7 @@ namespace FinanceServicesApi.V1.UseCase
         {
             if (assets == null || !assets.Any()) return new List<Asset>();
             var filteredData = assets.Where(
-                   x => x.Tenure?.Type  == TenureTypes.LeaseholdRTB.Description
+                   x => x.Tenure?.Type == TenureTypes.LeaseholdRTB.Description
                 || x.Tenure?.Type == TenureTypes.PrivateSaleLH.Description
                 || x.Tenure?.Type == TenureTypes.SharedOwners.Description
                 || x.Tenure?.Type == TenureTypes.SharedEquity.Description
