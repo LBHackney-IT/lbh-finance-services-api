@@ -18,7 +18,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             QueryResponse response = FakeDataHelper.MockQueryResponse<Charge>(5);
             var result = response.ToCharge();
             result.Should().AllBeOfType<Charge>();
-            response.Items[0].Count.Should().Be(9);
+            response.Items[0].Count.Should().Be(10);
             response.Items[0].Count.Should().Be(result[0].GetType().Properties().Count());
         }
         [Fact]
