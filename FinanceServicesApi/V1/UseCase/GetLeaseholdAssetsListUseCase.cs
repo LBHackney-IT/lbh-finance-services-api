@@ -60,7 +60,7 @@ namespace FinanceServicesApi.V1.UseCase
                                 totalCharge = Convert.ToInt32(leaseholdData.DetailedCharges.Sum(_ => _.Amount));
                             }
                         }
-                        
+
                         var resultData = new PropertySearchResponse
                         {
                             AssetId = x.Id,
