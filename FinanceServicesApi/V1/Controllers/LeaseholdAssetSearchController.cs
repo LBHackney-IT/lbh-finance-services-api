@@ -16,7 +16,7 @@ namespace FinanceServicesApi.V1.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/v1/leasehold-searh")]
+    [Route("api/v1/leasehold-search")]
     [ApiVersion("1.0")]
     public class LeaseholdAssetSearchController : BaseController
     {
