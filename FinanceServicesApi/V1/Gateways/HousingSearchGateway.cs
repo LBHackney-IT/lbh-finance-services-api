@@ -18,7 +18,7 @@ namespace FinanceServicesApi.V1.Gateways
         }
         public async Task<AssetListResponse> GetAssets(string searchText)
         {
-            var uri = new Uri($"api/v1/search/assets/all?sortBy=assetId&isDesc=false&assetTypes=Dwelling&searchText={searchText}", UriKind.Relative);
+            var uri = new Uri($"api/v1/search/assets/all?sortBy=assetId&isDesc=false&assetTypes=Dwelling&searchText={searchText}&pageSize=7000&page=1", UriKind.Relative);
 
             var response = await _client.GetAsync(uri).ConfigureAwait(true);
             var result = await response.ReadContentAs<AssetListResponse>().ConfigureAwait(true);
