@@ -124,14 +124,15 @@ namespace FinanceServicesApi.V1.Infrastructure
                         EndDate = DateTime.Parse(detail.M["endDate"].S)
                     });
                 }
-
+                var chargeYear = !string.IsNullOrEmpty(item["charge_year"].N)
+                        ? Convert.ToInt16(item["charge_year"].N) : 0;
                 chargesList.Add(new Charge
                 {
                     Id = Guid.Parse(item["id"].S),
                     TargetId = Guid.Parse(item["target_id"].S),
                     ChargeGroup = Enum.Parse<ChargeGroup>(item["charge_group"].S),
                     TargetType = Enum.Parse<TargetType>(item["target_type"].S),
-                    ChargeYear = Convert.ToInt16(item["charge_year"].N),
+                    ChargeYear = Convert.ToInt16(chargeYear),
                     DetailedCharges = detailCharges
                 });
             }
