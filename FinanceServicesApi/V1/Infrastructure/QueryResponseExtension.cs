@@ -112,7 +112,7 @@ namespace FinanceServicesApi.V1.Infrastructure
                 var innerItem = item["detailed_charges"].L;
                 foreach (var detail in innerItem)
                 {
-                   
+
                     detailCharges.Add(new DetailedCharges
                     {
                         Amount = Convert.ToDecimal(detail.M["amount"].N),
