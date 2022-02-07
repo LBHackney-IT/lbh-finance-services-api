@@ -11,6 +11,24 @@ namespace FinanceServicesApi.V1.Infrastructure.Enums
         Asset,
         Block,
         Estate,
-        Dwelling
+        Dwelling,
+        Concierge,
+        LettableNonDwelling,
+        MediumRiseBlock,
+        NA,
+        TravellerSite,
+        AdministrativeBuilding,
+        BoilerHouse,
+        BoosterPump,
+        CleanersFacilities,
+        CombinedHeatAndPowerUnit,
+        CommunityHall,
+        HighRiseBlock,
+        Lift,
+        LowRiseBlock,
+        NBD,
+        OutBuilding,
+        TerracedBlock,
+        WalkUpBlock
     }
 }
