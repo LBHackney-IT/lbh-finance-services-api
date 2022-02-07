@@ -48,6 +48,7 @@ namespace FinanceServicesApi.V1.UseCase
                     async x =>
                     {
                         var totalCharge = 0;
+                        Guid? chargeId = null;
                         var detailCharge = await _getChargeByAssetIdUseCase.ExecuteAsync(x.Id).ConfigureAwait(false);
                         if (detailCharge != null && detailCharge.Any())
                         {
@@ -58,13 +59,15 @@ namespace FinanceServicesApi.V1.UseCase
                             if (leaseholdData != null)
                             {
                                 totalCharge = Convert.ToInt32(leaseholdData.DetailedCharges.Sum(_ => _.Amount));
+                                chargeId = leaseholdData.Id;
                             }
                         }
-
                         var resultData = new PropertySearchResponse
                         {
                             AssetId = x.Id,
                             Address = x.AssetAddress,
+                            TenureId = Guid.Parse(x.Tenure?.Id),
+                            ChargeId = chargeId.HasValue ? chargeId : null,
                             TotalEstimateAmount = totalCharge
                         };
                         properties.Add(resultData);
@@ -87,8 +90,6 @@ namespace FinanceServicesApi.V1.UseCase
                 Properties = properties
             };
         }
-
-
 
         public static List<Asset> GetLeaseholdersAssets(List<Asset> assets)
         {

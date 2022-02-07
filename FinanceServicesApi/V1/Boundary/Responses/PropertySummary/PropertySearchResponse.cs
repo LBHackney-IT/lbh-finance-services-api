@@ -6,6 +6,10 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
     public class PropertySearchResponse
     {
         public Guid AssetId { get; set; }
+
+        public Guid TenureId { get; set; }
+
+        public Guid? ChargeId { get; set; }
         /// <summary>
         /// 
         /// </summary>
