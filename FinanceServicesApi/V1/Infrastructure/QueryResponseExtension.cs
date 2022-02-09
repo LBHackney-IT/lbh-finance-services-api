@@ -185,8 +185,8 @@ namespace FinanceServicesApi.V1.Infrastructure
                             {
                                 tenure.PrimaryTenants.Add(new PrimaryTenants
                                 {
-                                    FullName = primaryItems.M.ContainsKey("fullName")? primaryItems.M["fullName"].S:"",
-                                    Id = primaryItems.M.ContainsKey("id") ? Guid.Parse(primaryItems.M["id"].S): Guid.Empty
+                                    FullName = primaryItems.M.ContainsKey("fullName") ? primaryItems.M["fullName"].S : "",
+                                    Id = primaryItems.M.ContainsKey("id") ? Guid.Parse(primaryItems.M["id"].S) : Guid.Empty
                                 });
                             }
                         }
