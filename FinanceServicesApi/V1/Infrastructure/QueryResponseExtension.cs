@@ -164,20 +164,21 @@ namespace FinanceServicesApi.V1.Infrastructure
                 }
 
                 AccountTenureSubSet tenure = null;
-                if (item.Keys.Any(p => p == "tenure"))
+                if (item.Keys.Any(p => p == "tenure") && !item["tenure"].NULL)
                 {
                     var tenureItem = item["tenure"].M;
                     tenure = new AccountTenureSubSet
                     {
                         FullAddress = tenureItem.ContainsKey("fullAddress") ? tenureItem["fullAddress"].S : "",
-                        TenureId = tenureItem["tenureId"].NULL ? null : tenureItem["tenureId"].S,
+                        TenureId = tenureItem.ContainsKey("tenureId") ? tenureItem["tenureId"].S : "",
                         TenureType = new TenureType
                         {
-                            Code = tenureItem["tenureType"].NULL ? "" : tenureItem["tenureType"].M["code"].NULL ? "" : tenureItem["tenureType"].M["code"].S,
-                            Description = tenureItem["tenureType"].NULL ? "" : tenureItem["tenureType"].M["description"].NULL ? "" : tenureItem["tenureType"].M["description"].S
+                            Code = tenureItem.ContainsKey("tenureType") ? tenureItem["tenureType"].M.ContainsKey("code") ? tenureItem["tenureType"].M["code"].S : "" : "",
+                            Description = tenureItem.ContainsKey("tenureType") ?
+                                tenureItem["tenureType"].M.ContainsKey("description") ? tenureItem["tenureType"].M["description"].S : "" : ""
                         }
                     };
-                    if (tenureItem.ContainsKey("primaryTenants"))
+                    if (tenureItem.ContainsKey("primaryTenants") && !tenureItem["primaryTenants"].NULL)
                     {
                         tenure.PrimaryTenants = new List<PrimaryTenants>();
                         if (!tenureItem["primaryTenants"].NULL)
@@ -186,8 +187,8 @@ namespace FinanceServicesApi.V1.Infrastructure
                             {
                                 tenure.PrimaryTenants.Add(new PrimaryTenants
                                 {
-                                    FullName = primaryItems.M["fullName"].NULL ? "" : primaryItems.M["fullName"].S,
-                                    Id = primaryItems.M["id"].NULL ? Guid.Empty : Guid.Parse(primaryItems.M["id"].S)
+                                    FullName = primaryItems.M.ContainsKey("fullName") ? primaryItems.M["fullName"].S : "",
+                                    Id = primaryItems.M.ContainsKey("id") ? Guid.Parse(primaryItems.M["id"].S) : Guid.Empty
                                 });
                             }
                         }
