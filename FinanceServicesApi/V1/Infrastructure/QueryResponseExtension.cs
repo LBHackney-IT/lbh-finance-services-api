@@ -169,7 +169,7 @@ namespace FinanceServicesApi.V1.Infrastructure
                     var tenureItem = item["tenure"].M;
                     tenure = new AccountTenureSubSet
                     {
-                        FullAddress = tenureItem["fullAddress"].NULL ? "" : tenureItem["fullAddress"].S,
+                        FullAddress = tenureItem.ContainsKey("fullAddress") ? tenureItem["fullAddress"].S : "",
                         TenureId = tenureItem["tenureId"].NULL ? null : tenureItem["tenureId"].S,
                         TenureType = new TenureType
                         {
