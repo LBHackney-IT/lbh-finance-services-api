@@ -10,7 +10,7 @@ namespace FinanceServicesApi.Tests.V1.Domain
 {
     public class AccountTests
     {
-        private readonly Fixture _fixture;
+        /*private readonly Fixture _fixture;
 
         public AccountTests()
         {
@@ -78,6 +78,6 @@ namespace FinanceServicesApi.Tests.V1.Domain
             Assert.IsType<string>(primaryTenant.FullName);
             Assert.IsType<Guid>(primaryTenant.Id);
             #endregion
-        }
+        }*/
     }
 }
