@@ -7,7 +7,8 @@ namespace FinanceServicesApi.V1.Domain.AccountModels
 {
     public class Account
     {
-        public Guid Id { get; set; }
+        /*public Guid Id { get; set; }*/
+        public string Id { get; set; }
         public Guid ParentAccountId { get; set; }
         public string PaymentReference { get; set; }
         public string EndReasonCode { get; set; }

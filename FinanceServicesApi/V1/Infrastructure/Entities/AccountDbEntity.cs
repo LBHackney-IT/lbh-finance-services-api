@@ -12,7 +12,8 @@ namespace FinanceServicesApi.V1.Infrastructure.Entities
     {
         [DynamoDBHashKey]
         [DynamoDBProperty(AttributeName = "id")]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
+        /*public Guid Id { get; set; }*/
 
         [DynamoDBProperty(AttributeName = "parent_account_id")]
         public Guid ParentAccountId { get; set; }

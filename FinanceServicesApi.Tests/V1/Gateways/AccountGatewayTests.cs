@@ -34,7 +34,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _sut = new AccountGateway(_dynamoDbContext.Object, _amazonDynamoDb.Object);
         }
 
-        [Fact]
+       /* [Fact]
         public async Task GetByIdWithExistenceIdReturnsDomain()
         {
             // Arrange
@@ -52,7 +52,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             //Assert
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(account);
-        }
+        }*/
 
         [Fact]
         public async Task GetByIdWithNonExistenceIdReturnsNull()
