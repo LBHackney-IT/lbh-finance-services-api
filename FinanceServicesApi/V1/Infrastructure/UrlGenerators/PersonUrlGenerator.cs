@@ -2,7 +2,7 @@ using System;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Hackney.Shared.Person;
 
-namespace FinanceServicesApi.V1.Infrastructure
+namespace FinanceServicesApi.V1.Infrastructure.UrlGenerators
 {
     public class PersonUrlGenerator : IGenerateUrl<Person>
     {

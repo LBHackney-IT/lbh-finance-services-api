@@ -8,7 +8,7 @@ namespace FinanceServicesApi.V1.Infrastructure.Environments
     {
         public Uri GetUrl()
         {
-            string result = Environment.GetEnvironmentVariable("TENURE_API_URL") ?? string.Empty; ;
+            string result = Environment.GetEnvironmentVariable("TENURE_API_URL") ?? string.Empty;
             if (string.IsNullOrEmpty(result))
                 throw new Exception("Tenure api url shouldn't be null or empty.");
             return new Uri(result);
