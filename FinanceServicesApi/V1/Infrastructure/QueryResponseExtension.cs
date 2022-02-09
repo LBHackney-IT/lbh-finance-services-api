@@ -117,6 +117,7 @@ namespace FinanceServicesApi.V1.Infrastructure
                     {
                         Amount = Convert.ToDecimal(detail.M["amount"].N),
                         ChargeCode = detail.M["chargeCode"].S,
+                        ChargeType = Enum.Parse<ChargeType>(detail.M["chargeType"].S),
                         Type = detail.M["type"].S,
                         SubType = detail.M["subType"].S,
                         Frequency = detail.M["frequency"].S,
@@ -131,7 +132,7 @@ namespace FinanceServicesApi.V1.Infrastructure
                     Id = Guid.Parse(item["id"].S),
                     TargetId = Guid.Parse(item["target_id"].S),
                     ChargeGroup = Enum.Parse<ChargeGroup>(item["charge_group"].S),
-                    //TargetType = Enum.Parse<TargetType>(item["target_type"].S),
+                    TargetType = Enum.Parse<TargetType>(item["target_type"].S),
                     ChargeYear = Convert.ToInt16(chargeYear),
                     DetailedCharges = detailCharges
                 });
