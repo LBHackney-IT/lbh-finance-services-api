@@ -45,8 +45,7 @@ namespace FinanceServicesApi.V1.Gateways
                 {
                     {":V_target_id",new AttributeValue{S = targetId.ToString()}}
                 },
-                ScanIndexForward = true,
-                Limit = 1
+                ScanIndexForward = true
             };
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
