@@ -34,25 +34,25 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _sut = new AccountGateway(_dynamoDbContext.Object, _amazonDynamoDb.Object);
         }
 
-       /* [Fact]
-        public async Task GetByIdWithExistenceIdReturnsDomain()
-        {
-            // Arrange
-            Guid id = Guid.NewGuid();
-            AccountDbEntity account = _fixture.Build<AccountDbEntity>()
-                .With(p => p.Id, id)
-                .Create();
+        /* [Fact]
+         public async Task GetByIdWithExistenceIdReturnsDomain()
+         {
+             // Arrange
+             Guid id = Guid.NewGuid();
+             AccountDbEntity account = _fixture.Build<AccountDbEntity>()
+                 .With(p => p.Id, id)
+                 .Create();
 
-            _dynamoDbContext.Setup(p => p.LoadAsync<AccountDbEntity>(It.IsAny<Guid>(), CancellationToken.None))
-                .ReturnsAsync(account);
+             _dynamoDbContext.Setup(p => p.LoadAsync<AccountDbEntity>(It.IsAny<Guid>(), CancellationToken.None))
+                 .ReturnsAsync(account);
 
-            // Act
-            var result = await _sut.GetById(id).ConfigureAwait(false);
+             // Act
+             var result = await _sut.GetById(id).ConfigureAwait(false);
 
-            //Assert
-            result.Should().NotBeNull();
-            result.Should().BeEquivalentTo(account);
-        }*/
+             //Assert
+             result.Should().NotBeNull();
+             result.Should().BeEquivalentTo(account);
+         }*/
 
         [Fact]
         public async Task GetByIdWithNonExistenceIdReturnsNull()
