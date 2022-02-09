@@ -7,8 +7,7 @@ namespace FinanceServicesApi.V1.Domain.AccountModels
 {
     public class AccountPatchModel
     {
-        /*public Guid Id { get; set; }*/
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public IList<AccountBalanceUpdateModel> Patch { get; set; }
     }
 }

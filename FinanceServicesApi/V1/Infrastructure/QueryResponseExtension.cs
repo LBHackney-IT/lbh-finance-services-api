@@ -195,10 +195,10 @@ namespace FinanceServicesApi.V1.Infrastructure
                     }
                 }
 
+
                 return new Account
                 {
-                    /*Id = Guid.Parse(item["id"].S),*/
-                    Id = item["id"].S,
+                    Id = Guid.Parse(item["id"].S),
                     AccountBalance = decimal.Parse(item["account_balance"].N),
                     ConsolidatedCharges = consolidatedChargesList,
                     Tenure = tenure,
