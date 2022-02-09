@@ -169,24 +169,27 @@ namespace FinanceServicesApi.V1.Infrastructure
                     var tenureItem = item["tenure"].M;
                     tenure = new AccountTenureSubSet
                     {
-                        FullAddress = tenureItem["fullAddress"].S,
-                        TenureId = tenureItem["tenureId"].S,
+                        FullAddress = tenureItem["fullAddress"].NULL ? "" : tenureItem["fullAddress"].S,
+                        TenureId = tenureItem["tenureId"].NULL ? null : tenureItem["tenureId"].S,
                         TenureType = new TenureType
                         {
-                            Code = tenureItem["tenureType"].M["code"].S,
-                            Description = tenureItem["tenureType"].M["description"].S
+                            Code = tenureItem["tenureType"].NULL ? "" : tenureItem["tenureType"].M["code"].NULL ? "" : tenureItem["tenureType"].M["code"].S,
+                            Description = tenureItem["tenureType"].NULL ? "" : tenureItem["tenureType"].M["description"].NULL ? "" : tenureItem["tenureType"].M["description"].S
                         }
                     };
                     if (tenureItem.ContainsKey("primaryTenants"))
                     {
                         tenure.PrimaryTenants = new List<PrimaryTenants>();
-                        foreach (var primaryItems in tenureItem["primaryTenants"].L)
+                        if (!tenureItem["primaryTenants"].NULL)
                         {
-                            tenure.PrimaryTenants.Add(new PrimaryTenants
+                            foreach (var primaryItems in tenureItem["primaryTenants"].L)
                             {
-                                FullName = primaryItems.M["fullName"].S,
-                                Id = Guid.Parse(primaryItems.M["id"].S)
-                            });
+                                tenure.PrimaryTenants.Add(new PrimaryTenants
+                                {
+                                    FullName = primaryItems.M["fullName"].NULL ? "" : primaryItems.M["fullName"].S,
+                                    Id = primaryItems.M["id"].NULL ? Guid.Empty : Guid.Parse(primaryItems.M["id"].S)
+                                });
+                            }
                         }
                     }
                 }
