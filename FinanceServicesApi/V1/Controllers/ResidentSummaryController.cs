@@ -47,7 +47,6 @@ namespace FinanceServicesApi.V1.Controllers
             _assetUseCase = assetByIdUseCase;
         }
 
-
         /// <summary>
         /// 
         /// </summary>

@@ -2,7 +2,7 @@ using System;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Hackney.Shared.Tenure.Domain;
 
-namespace FinanceServicesApi.V1.Infrastructure
+namespace FinanceServicesApi.V1.Infrastructure.UrlGenerators
 {
     public class TenureUrlGenerator : IGenerateUrl<TenureInformation>
     {
@@ -12,6 +12,7 @@ namespace FinanceServicesApi.V1.Infrastructure
         {
             _getEnvironmentVariables = getEnvironmentVariables;
         }
+
         public Uri Execute(Guid id)
         {
             var url = _getEnvironmentVariables.GetUrl();

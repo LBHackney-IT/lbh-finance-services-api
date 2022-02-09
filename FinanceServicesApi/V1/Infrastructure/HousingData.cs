@@ -1,13 +1,12 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Authentication;
-using System.Threading.Tasks;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Security.Authentication;
+using System.Threading.Tasks;
 
 namespace FinanceServicesApi.V1.Infrastructure
 {
@@ -28,6 +27,14 @@ namespace FinanceServicesApi.V1.Infrastructure
             _contextAccessor = contextAccessor;
         }
 
+        /// <summary>
+        /// Sends GET request to the API to get entity by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns null if entity wasn't fount</returns>
+        /// <exception cref="ArgumentException">If provided entity id is empty</exception>
+        /// <exception cref="InvalidCredentialException">If request doesn't have Authorization header with JWT token</exception>
+        /// <exception cref="Exception">If response is null or have unsuccess status code</exception>
         public async Task<T> DownloadAsync(Guid id)
         {
             if (id == Guid.Empty)
