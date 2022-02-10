@@ -19,5 +19,9 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         public AssetAddress Address { get; set; }
 
         public int TotalEstimateAmount { get; set; }
+
+        public int TotalActualAmount { get; set; }
+
+        public int TotalEstimateFutureAmount { get; set; }
     }
 }
