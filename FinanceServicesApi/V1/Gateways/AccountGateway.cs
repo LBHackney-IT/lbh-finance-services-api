@@ -1,15 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.Model;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
-using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Entities;
+using FinanceServicesApi.V1.Infrastructure.Interfaces;
 
 namespace FinanceServicesApi.V1.Gateways
 {
@@ -17,11 +15,14 @@ namespace FinanceServicesApi.V1.Gateways
     {
         private readonly IDynamoDBContext _dynamoDbContext;
         private readonly IAmazonDynamoDB _amazonDynamoDb;
+        private readonly IHousingData<Account> _housingData;
+
         [ExcludeFromCodeCoverage]
-        public AccountGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb)
+        public AccountGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb,IHousingData<Account> housingData)
         {
             _dynamoDbContext = dynamoDbContext;
             _amazonDynamoDb = amazonDynamoDb;
+            _housingData = housingData;
         }
 
         public async Task<Account> GetById(Guid id)
@@ -35,6 +36,14 @@ namespace FinanceServicesApi.V1.Gateways
         }
 
         public async Task<Account> GetByTargetId(Guid targetId)
+        {
+            if (targetId == Guid.Empty)
+                throw new ArgumentException($"{nameof(targetId).ToString()} shouldn't be empty.");
+            return await _housingData.DownloadAsync(targetId).ConfigureAwait(false);
+        }
+
+
+        /*public async Task<Account> GetByTargetId(Guid targetId)
         {
             QueryRequest request = new QueryRequest
             {
@@ -51,6 +60,6 @@ namespace FinanceServicesApi.V1.Gateways
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
 
             return response?.ToAccount();
-        }
+        }*/
     }
 }
