@@ -26,7 +26,7 @@ namespace FinanceServicesApi.V1.Gateways
 
         public async Task<Transaction> GetById(Guid id)
         {
-            /*if (id == Guid.Empty)
+            if (id == Guid.Empty)
                 throw new ArgumentException($"{nameof(id).ToString()} shouldn't be empty.");
 
             var response = await _dynamoDbContext.LoadAsync<TransactionDbEntity>(Guid.Empty, id).ConfigureAwait(false);
@@ -36,7 +36,7 @@ namespace FinanceServicesApi.V1.Gateways
                 throw new Exception("The transaction api is not reachable!");
             }
 
-            return response.ToDomain();*/
+            return response.ToDomain();
         }
 
         public async Task<List<Transaction>> GetByTargetId(TransactionsRequest transactionsRequest)
