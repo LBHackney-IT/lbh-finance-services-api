@@ -1,14 +1,9 @@
 using FinanceServicesApi.V1.Boundary.Request;
-using FinanceServicesApi.V1.Boundary.Request.MetaData;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.UseCase.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -52,6 +47,5 @@ namespace FinanceServicesApi.V1.Controllers
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
                     $"No match found"));
         }
-
     }
 }

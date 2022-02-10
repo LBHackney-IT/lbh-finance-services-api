@@ -1,5 +1,4 @@
 using FinanceServicesApi.V1.Boundary.Request;
-using FinanceServicesApi.V1.Boundary.Request.MetaData;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
 using FinanceServicesApi.V1.Gateways.Interfaces;
@@ -38,7 +37,6 @@ namespace FinanceServicesApi.V1.UseCase
             var totalPropertiesCount = filteredList.Count;
 
             var data = filteredList.Skip((housingSearchRequest.Page - 1) * housingSearchRequest.PageSize).Take(housingSearchRequest.PageSize);
-
 
             var properties = new List<PropertySearchResponse>();
 
