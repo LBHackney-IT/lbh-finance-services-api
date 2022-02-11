@@ -35,8 +35,10 @@ namespace FinanceServicesApi.V1.Controllers
         public async Task<IActionResult> GetLeaseholdAssetsByAddress([FromQuery] LeaseholdAssetsRequest housingSearchRequest)
         {
             if (housingSearchRequest == null)
+            {
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
                     $"Search request cannot be empty."));
+            }
 
             var response = await _getLeaseholdAssetsListUseCase.ExecuteAsync(housingSearchRequest).ConfigureAwait(false);
             if (response != null)
@@ -44,8 +46,10 @@ namespace FinanceServicesApi.V1.Controllers
                 return Ok(response);
             }
             else
+            {
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
                     $"No match found"));
+            }
         }
     }
 }

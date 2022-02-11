@@ -1,6 +1,7 @@
 using FinanceServicesApi.V1.Boundary.Request;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
+using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.UseCase.Interfaces;
@@ -27,73 +28,42 @@ namespace FinanceServicesApi.V1.UseCase
         }
         public async Task<GetPropertyListResponse> ExecuteAsync(LeaseholdAssetsRequest housingSearchRequest)
         {
-            var filteredList = new List<Asset>();
+            var leaseholdAssets = new List<Asset>();
 
-            var assetList = await _housingSearchGateway.GetAssets(housingSearchRequest.SearchText).ConfigureAwait(false);
-
+            var assetList = await _housingSearchGateway.GetAssets(housingSearchRequest.SearchText, housingSearchRequest.AssetType).ConfigureAwait(false);
+            // ToDo: handle pagination
             if (assetList is null) throw new Exception("Housing Search Service is not returning any asset list response");
 
-            filteredList.AddRange(GetLeaseholdersAssets(assetList.Results.Assets));
+            leaseholdAssets.AddRange(GetLeaseholdersAssets(assetList.Results.Assets));
 
-            var totalPropertiesCount = filteredList.Count;
+            var data = leaseholdAssets.Skip((housingSearchRequest.Page - 1) * housingSearchRequest.PageSize).Take(housingSearchRequest.PageSize);
 
-            var data = filteredList.Skip((housingSearchRequest.Page - 1) * housingSearchRequest.PageSize).Take(housingSearchRequest.PageSize);
-
-            var propertiesActual = new List<PropertySearchResponse>();
-
-            var propertiesEstimate = new List<PropertySearchResponse>();
-
-            var propertiesEstimateFuture = new List<PropertySearchResponse>();
+            var assetTotals = new List<PropertySearchResponse>();
 
             var degree = Convert.ToInt32(Math.Ceiling((Environment.ProcessorCount * 0.75) * 2.0));
-
+            var x = data.First();
             var block = new ActionBlock<Asset>(
                     async x =>
                     {
-                        var totalChargeActual = 0;
-                        Guid? chargeIdActual = null;
-
-                        var totalChargeEstimate = 0;
-                        Guid? chargeIdEstimate = null;
-
-                        var totalChargeEstimateFuture = 0;
-                        Guid? chargeIdEstimateFuture = null;
+                        var assetTotal = new PropertySearchResponse()
+                        {
+                            AssetId = x.Id,
+                            Address = x.AssetAddress,
+                            TenureId = Guid.Parse(x.Tenure?.Id),
+                        };
 
                         var detailCharge = await _getChargeByAssetIdUseCase.ExecuteAsync(x.Id).ConfigureAwait(false);
+
                         if (detailCharge != null && detailCharge.Any())
                         {
-                            var leaseholdData = detailCharge.Where(_ => _.ChargeGroup == ChargeGroup.Leaseholders);
+                            var leaseholdCharges = detailCharge.Where(_ => _.ChargeGroup == ChargeGroup.Leaseholders);
 
-                            var chargesActual = detailCharge.FirstOrDefault(_ => _.ChargeYear == (housingSearchRequest.Year - 2)
-                                                                              && _.ChargeSubGroup == ChargeSubGroup.Actual);
-
-                            if (chargesActual != null)
-                            {
-                                totalChargeActual = Convert.ToInt32(chargesActual.DetailedCharges.Sum(_ => _.Amount));
-                                chargeIdActual = chargesActual.Id;
-                            }
-
-                            var chargesEstimate = detailCharge.FirstOrDefault(_ => _.ChargeYear == (housingSearchRequest.Year - 1)
-                                                                                && _.ChargeSubGroup == ChargeSubGroup.Estimate);
-
-                            if (chargesEstimate != null)
-                            {
-                                totalChargeEstimate = Convert.ToInt32(chargesActual.DetailedCharges.Sum(_ => _.Amount));
-                                chargeIdEstimate = chargesEstimate.Id;
-                            }
-
-                            var chargesEstimateFuture = detailCharge.FirstOrDefault(_ => _.ChargeYear == housingSearchRequest.Year
-                                                                                      && _.ChargeSubGroup == ChargeSubGroup.Estimate);
-
-                            if (chargesEstimateFuture != null)
-                            {
-                                totalChargeEstimateFuture = Convert.ToInt32(chargesActual.DetailedCharges.Sum(_ => _.Amount));
-                                chargeIdEstimateFuture = chargesEstimateFuture.Id;
-                            }
+                            assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, housingSearchRequest.Year - 2, ChargeSubGroup.Actual));
+                            assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, housingSearchRequest.Year - 1, ChargeSubGroup.Estimate));
+                            assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, housingSearchRequest.Year, ChargeSubGroup.Estimate));
                         }
-                        propertiesActual.Add(CreateProperty(x, chargeIdActual, totalChargeActual));
-                        propertiesEstimate.Add(CreateProperty(x, chargeIdEstimate, totalChargeEstimate));
-                        propertiesEstimateFuture.Add(CreateProperty(x, chargeIdEstimateFuture, totalChargeEstimateFuture));
+
+                        assetTotals.Add(assetTotal);
                     },
                     new ExecutionDataflowBlockOptions
                     {
@@ -109,25 +79,15 @@ namespace FinanceServicesApi.V1.UseCase
 
             return new GetPropertyListResponse
             {
-                Total = totalPropertiesCount,
-                PropertiesActual = propertiesActual,
-                PropertiesEstimate = propertiesEstimate,
-                PropertiesEstimateFuture = propertiesEstimateFuture
+                Total = leaseholdAssets.Count,
+                Properties = assetTotals
             };
         }
-
-        private static PropertySearchResponse CreateProperty(Asset asset, Guid? chargeId, int totalCharge) => new PropertySearchResponse
-        {
-            AssetId = asset.Id,
-            Address = asset.AssetAddress,
-            TenureId = Guid.Parse(asset.Tenure?.Id),
-            ChargeId = chargeId.HasValue ? chargeId : null,
-            TotalEstimateAmount = totalCharge
-        };
 
         public static List<Asset> GetLeaseholdersAssets(List<Asset> assets)
         {
             if (assets == null || !assets.Any()) return new List<Asset>();
+
             var filteredData = assets.Where(
                    x => x.Tenure?.Type == TenureTypes.LeaseholdRTB.Description
                 || x.Tenure?.Type == TenureTypes.PrivateSaleLH.Description
@@ -137,8 +97,23 @@ namespace FinanceServicesApi.V1.UseCase
                 || x.Tenure?.Type == TenureTypes.LeaseholdStair.Description
                 || x.Tenure?.Type == TenureTypes.FreeholdServ.Description
             );
-            return filteredData.ToList();
 
+            return filteredData.ToList();
+        }
+
+        public static ChargesTotalResponse CalculateTotal( IEnumerable<Charge> charges, int year, ChargeSubGroup group)
+        {
+            var chargesToProcess = charges.Where(_ => _.ChargeYear == year
+                                                   && _.ChargeSubGroup == group);
+
+            var chargesTotal = new ChargesTotalResponse
+            {
+                Amount = Convert.ToInt32(chargesToProcess.SelectMany(_ => _.DetailedCharges).Sum(_ => _.Amount)),
+                Year = (short) year,
+                Type = group
+            };
+
+            return chargesTotal;
         }
     }
 }
