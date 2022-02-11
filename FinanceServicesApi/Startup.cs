@@ -7,7 +7,9 @@ using System.Reflection;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using FinanceServicesApi.V1;
 using FinanceServicesApi.V1.Boundary.Responses;
+using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.Charges;
+using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Gateways;
 using FinanceServicesApi.V1.Gateways.Common;
 using FinanceServicesApi.V1.Gateways.Interfaces;
@@ -143,6 +145,9 @@ namespace FinanceServicesApi
             services.AddScoped<IGetEnvironmentVariables<Asset>, GetAssetEnvironmentVariables>();
             services.AddScoped<IGetEnvironmentVariables<Person>, GetPersonEnvironmentVariables>();
             services.AddScoped<IGetEnvironmentVariables<GetContactDetailsResponse>, GetContactEnvironmentVariables>();
+            services.AddScoped<IGetEnvironmentVariables<Account>, GetAccountEnvironmentVariables>();
+            services.AddScoped<IGetEnvironmentVariables<Transaction>, GetTransactionEnvironmentVariable>();
+            services.AddScoped<IGetEnvironmentVariables<List<Transaction>>, GetTransactionsEnvironmentVariable>();
             services.AddScoped<IGetEnvironmentVariables<List<Charge>>, GetChargesEnvironmentVariables>();
 
             services.AddScoped<IHousingData<TenureInformation>, HousingData<TenureInformation>>();
@@ -150,8 +155,14 @@ namespace FinanceServicesApi
             services.AddScoped<IHousingData<Person>, HousingData<Person>>();
             services.AddScoped<IHousingData<GetContactDetailsResponse>, HousingData<GetContactDetailsResponse>>();
             services.AddScoped<IHousingData<List<Charge>>, HousingData<List<Charge>>>();
+            services.AddScoped<IHousingData<List<Transaction>>, HousingData<List<Transaction>>>();
+            services.AddScoped<IHousingData<Transaction>, HousingData<Transaction>>();
+            services.AddScoped<IHousingData<Account>, HousingData<Account>>();
 
             services.AddScoped<IGenerateUrl<TenureInformation>, TenureUrlGenerator>();
+            services.AddScoped<IGenerateUrl<Account>, AccountUrlGenerator>();
+            services.AddScoped<IGenerateUrl<Transaction>, TransactionUrlGenerator>();
+            services.AddScoped<IGenerateUrl<List<Transaction>>, TransactionTargetIdUrlGenerator>();
             services.AddScoped<IGenerateUrl<Asset>, AssetUrlGenerator>();
             services.AddScoped<IGenerateUrl<Person>, PersonUrlGenerator>();
             services.AddScoped<IGenerateUrl<GetContactDetailsResponse>, ContactDetailUrlGenerator>();
@@ -194,8 +205,8 @@ namespace FinanceServicesApi
             services.AddScoped<IAssetGateway, AssetGateway>();
 
             services.AddTransient<LoggingDelegatingHandler>();
-            var housingSearchApiUrl = Environment.GetEnvironmentVariable("SEARCH_API_URL");
-            var housingSearchApiToken = Environment.GetEnvironmentVariable("HOUSING_SEARCH_API_TOKEN");
+            var housingSearchApiUrl = Environment.GetEnvironmentVariable("SEARCH_API_URL") ?? String.Empty;
+            var housingSearchApiToken = Environment.GetEnvironmentVariable("HOUSING_SEARCH_API_TOKEN") ?? String.Empty;
 
             services.AddHttpClient<IHousingSearchGateway, HousingSearchGateway>(c =>
             {

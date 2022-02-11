@@ -4,6 +4,7 @@ using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Entities;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -47,10 +48,7 @@ namespace FinanceServicesApi.V1.Gateways
             return await _housingData.DownloadAsync(targetId).ConfigureAwait(false);
         }
 
-
-        /*public async Task<Account> GetByTargetId(Guid targetId)
-        {
-            QueryRequest request = new QueryRequest
+            /*QueryRequest request = new QueryRequest
             {
                 TableName = "Accounts",
                 IndexName = "target_id_dx",
@@ -64,7 +62,7 @@ namespace FinanceServicesApi.V1.Gateways
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
 
-            return response?.ToAccount();
-        }*/
+            return response?.ToAccount();*/
+        }
     }
 }

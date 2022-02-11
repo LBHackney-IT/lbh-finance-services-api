@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Gateways;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using FluentAssertions;
 using Moq;
@@ -30,7 +31,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         public void GetByIdWithValidIdReturnsValidData()
         {
             GetContactDetailsResponse contactDetailsResponse = _fixture.Create<GetContactDetailsResponse>();
-            _housingData.Setup(p => p.DownloadAsync(It.IsAny<Guid>()))
+            _housingData.Setup(p => p.DownloadAsync(It.IsAny<Guid>(), It.IsAny<SearchBy>()))
                 .ReturnsAsync(contactDetailsResponse);
 
             var response = _sutGateway.GetByTargetId(Guid.NewGuid());

@@ -32,14 +32,16 @@ namespace FinanceServicesApi.V1.UseCase
                 IsDesc = true
             };
 
-            List<Transaction> transactions;
+            return await _gateway.GetByTargetId(request).ConfigureAwait(false);
+
+            /*List<Transaction> transactions;
             do
             {
                 transactions = await _gateway.GetByTargetId(request).ConfigureAwait(false);
                 request.Page++;
             } while (!(transactions.Count == 0 || transactions.Any(p => p.PaidAmount > 0)));
 
-            return transactions;
+            return transactions;*/
         }
     }
 }
