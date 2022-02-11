@@ -208,5 +208,20 @@ namespace FinanceServicesApi.V1.Controllers
 
             return Ok(ResponseFactory.ToResponse(assetData, chargeData));
         }
+
+        [HttpGet("charges/{id}")]
+        public async Task<IActionResult> GetChargesSummaryByType(Guid assetId)
+        {
+            var charges = await _chargeUseCase.ExecuteAsync(assetId).ConfigureAwait(false);
+
+            if (charges == null || charges.Count == 0)
+            {
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"no charges by this asset id"));
+            }
+
+
+
+            return Ok(assetId);
+        }
     }
 }
