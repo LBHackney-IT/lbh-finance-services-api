@@ -1,21 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.Model;
 using AutoFixture;
 using FinanceServicesApi.Tests.V1.Helper;
 using FinanceServicesApi.V1.Domain.AccountModels;
-using FinanceServicesApi.V1.Domain.Charges;
-using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Entities;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using FluentAssertions;
 using Moq;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Gateways

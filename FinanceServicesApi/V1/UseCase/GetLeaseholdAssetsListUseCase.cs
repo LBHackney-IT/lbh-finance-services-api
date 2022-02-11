@@ -1,8 +1,9 @@
 using FinanceServicesApi.V1.Boundary.Request;
-using FinanceServicesApi.V1.Boundary.Request.MetaData;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
+using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Gateways.Interfaces;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Tenure.Domain;
@@ -25,57 +26,63 @@ namespace FinanceServicesApi.V1.UseCase
             _housingSearchGateway = housingSearchGateway;
             _getChargeByAssetIdUseCase = getChargeByAssetIdUseCase;
         }
+
         public async Task<GetPropertyListResponse> ExecuteAsync(LeaseholdAssetsRequest housingSearchRequest)
         {
-            var filteredList = new List<Asset>();
+            var assetList = await _housingSearchGateway.GetAssets(housingSearchRequest.SearchText, housingSearchRequest.AssetType).ConfigureAwait(false);
+            // ToDo: handle pagination
+            if (assetList is null)
+            {
+                throw new Exception("Housing Search Service is not returning any asset list response");
+            }
 
-            var assetList = await _housingSearchGateway.GetAssets(housingSearchRequest.SearchText).ConfigureAwait(false);
+            var leaseholdAssets = new List<Asset>();
+            // Hanna Holasava
+            // We need to filter assets to be leasehold only for Dwelling type (for properties)
+            // Estate and Blocks doesn't have Tenure enity
+            if (housingSearchRequest.AssetType == Boundary.Request.Enums.AssetType.Dwelling)
+            {
+                leaseholdAssets.AddRange(GetLeaseholdersAssets(assetList.Results.Assets));
+            }
+            else
+            {
+                leaseholdAssets = assetList.Results.Assets;
+            }
 
-            if (assetList is null) throw new Exception("Housing Search Service is not returning any asset list response");
+            var data = leaseholdAssets.Skip((housingSearchRequest.Page - 1) * housingSearchRequest.PageSize).Take(housingSearchRequest.PageSize);
 
-            filteredList.AddRange(GetLeaseholdersAssets(assetList.Results.Assets));
+            var assetTotals = new List<PropertySearchResponse>();
 
-            var totalPropertiesCount = filteredList.Count;
-
-            var data = filteredList.Skip((housingSearchRequest.Page - 1) * housingSearchRequest.PageSize).Take(housingSearchRequest.PageSize);
-
-
-            var properties = new List<PropertySearchResponse>();
-
-            var degree = Convert.ToInt32(Math.Ceiling((Environment.ProcessorCount * 0.75) * 2.0));
-
+            var degree = Convert.ToInt32(Math.Ceiling(Environment.ProcessorCount * 0.75 * 2.0));
             var block = new ActionBlock<Asset>(
                     async x =>
                     {
-                        var totalCharge = 0;
-                        Guid? chargeId = null;
-                        var detailCharge = await _getChargeByAssetIdUseCase.ExecuteAsync(x.Id).ConfigureAwait(false);
-                        if (detailCharge != null && detailCharge.Any())
-                        {
-                            var leaseholdData = detailCharge.FirstOrDefault(_ =>
-                            _.ChargeGroup == Infrastructure.Enums.ChargeGroup.Leaseholders &&
-                            _.ChargeYear == housingSearchRequest.Year);
-
-                            if (leaseholdData != null)
-                            {
-                                totalCharge = Convert.ToInt32(leaseholdData.DetailedCharges.Sum(_ => _.Amount));
-                                chargeId = leaseholdData.Id;
-                            }
-                        }
-                        var resultData = new PropertySearchResponse
+                        var assetTotal = new PropertySearchResponse()
                         {
                             AssetId = x.Id,
                             Address = x.AssetAddress,
                             TenureId = Guid.Parse(x.Tenure?.Id),
-                            ChargeId = chargeId.HasValue ? chargeId : null,
-                            TotalEstimateAmount = totalCharge
                         };
-                        properties.Add(resultData);
+
+                        var detailCharge = await _getChargeByAssetIdUseCase.ExecuteAsync(x.Id).ConfigureAwait(false);
+
+                        if (detailCharge != null)
+                        {
+                            var leaseholdCharges = detailCharge.Where(_ => _.ChargeGroup == ChargeGroup.Leaseholders);
+
+                            for (var year = housingSearchRequest.FromYear; year <= DateTime.Now.Year; year++)
+                            {
+                                assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, year));
+                            }
+                        }
+
+                        assetTotals.Add(assetTotal);
                     },
                     new ExecutionDataflowBlockOptions
                     {
                         MaxDegreeOfParallelism = degree, // Parallelize on all cores
                     });
+
             foreach (var asset in data)
             {
                 block.Post(asset);
@@ -86,14 +93,15 @@ namespace FinanceServicesApi.V1.UseCase
 
             return new GetPropertyListResponse
             {
-                Total = totalPropertiesCount,
-                Properties = properties
+                Total = leaseholdAssets.Count,
+                Assets = assetTotals
             };
         }
 
         public static List<Asset> GetLeaseholdersAssets(List<Asset> assets)
         {
             if (assets == null || !assets.Any()) return new List<Asset>();
+
             var filteredData = assets.Where(
                    x => x.Tenure?.Type == TenureTypes.LeaseholdRTB.Description
                 || x.Tenure?.Type == TenureTypes.PrivateSaleLH.Description
@@ -103,8 +111,29 @@ namespace FinanceServicesApi.V1.UseCase
                 || x.Tenure?.Type == TenureTypes.LeaseholdStair.Description
                 || x.Tenure?.Type == TenureTypes.FreeholdServ.Description
             );
-            return filteredData.ToList();
 
+            return filteredData.ToList();
+        }
+
+        public static ChargesTotalResponse CalculateTotal(IEnumerable<Charge> charges, int year)
+        {
+            ChargeSubGroup subGroup = year >= DateTime.Now.Year - 1
+                ? ChargeSubGroup.Estimate
+                : ChargeSubGroup.Actual;
+
+            var chargesToProcess = charges.Where(_ => _.ChargeYear == year
+                                                   && _.ChargeSubGroup == subGroup);
+
+            var detailedChargesToProcess = chargesToProcess.SelectMany(_ => _.DetailedCharges);
+
+            var chargesTotal = new ChargesTotalResponse
+            {
+                Amount = detailedChargesToProcess.Any() ? detailedChargesToProcess.Sum(_ => _.Amount) : 0,
+                Year = (short) year,
+                Type = subGroup
+            };
+
+            return chargesTotal;
         }
     }
 }
