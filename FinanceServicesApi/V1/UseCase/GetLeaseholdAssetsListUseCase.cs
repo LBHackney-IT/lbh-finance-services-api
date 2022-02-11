@@ -45,7 +45,6 @@ namespace FinanceServicesApi.V1.UseCase
             var assetTotals = new List<PropertySearchResponse>();
 
             var degree = Convert.ToInt32(Math.Ceiling((Environment.ProcessorCount * 0.75) * 2.0));
-            var x = data.First();
             var block = new ActionBlock<Asset>(
                     async x =>
                     {
@@ -110,9 +109,11 @@ namespace FinanceServicesApi.V1.UseCase
             var chargesToProcess = charges.Where(_ => _.ChargeYear == year
                                                    && _.ChargeSubGroup == group);
 
+            var detailedChargesToProcess = chargesToProcess.SelectMany(_ => _.DetailedCharges);
+
             var chargesTotal = new ChargesTotalResponse
             {
-                Amount = Convert.ToInt32(chargesToProcess.SelectMany(_ => _.DetailedCharges).Sum(_ => _.Amount)),
+                Amount = Convert.ToInt32(detailedChargesToProcess.Any() ? detailedChargesToProcess.Sum(_ => _.Amount) : 0),
                 Year = (short) year,
                 Type = group
             };
