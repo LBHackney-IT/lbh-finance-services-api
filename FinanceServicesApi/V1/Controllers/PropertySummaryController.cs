@@ -29,6 +29,7 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetAccountByTargetIdUseCase _accountByTargetIdUseCase;
         private readonly IGetLastPaymentTransactionsByTargetIdUseCase _transactionUseCase;
         private readonly IGetAssetByIdUseCase _assetUseCase;
+        private readonly IGetChargesSummaryByTypeUseCase _getChargesSummaryByTypeUseCase;
 
         public PropertySummaryController(IGetPersonByIdUseCase personUseCase
             , IGetChargeByAssetIdUseCase chargeUseCase
@@ -36,7 +37,8 @@ namespace FinanceServicesApi.V1.Controllers
             , IGetContactDetailsByTargetIdUseCase contactUseCase
             , IGetAccountByTargetIdUseCase accountByTargetIdUseCase
             , IGetLastPaymentTransactionsByTargetIdUseCase lastPaymentTransactionsByTargetIdUseCase
-            , IGetAssetByIdUseCase assetByIdUseCase)
+            , IGetAssetByIdUseCase assetByIdUseCase
+            , IGetChargesSummaryByTypeUseCase getChargesSummaryByTypeUseCase)
         {
             _personUseCase = personUseCase;
             _chargeUseCase = chargeUseCase;
@@ -45,6 +47,7 @@ namespace FinanceServicesApi.V1.Controllers
             _accountByTargetIdUseCase = accountByTargetIdUseCase;
             _transactionUseCase = lastPaymentTransactionsByTargetIdUseCase;
             _assetUseCase = assetByIdUseCase;
+            _getChargesSummaryByTypeUseCase = getChargesSummaryByTypeUseCase;
         }
 
         /// <summary>
@@ -210,106 +213,15 @@ namespace FinanceServicesApi.V1.Controllers
         }
 
         [HttpGet("{assetId}/appointments")]
-        public IActionResult GetChargesSummaryByType(Guid assetId)
+        public async Task<IActionResult> GetChargesSummaryByType([FromQuery] Guid assetId, [FromQuery] Boundary.Responses.PropertySummary.AssetType assetType)
         {
-            //var charges = await _chargeUseCase.ExecuteAsync(assetId).ConfigureAwait(false);
+            if (assetId == Guid.Empty)
+                return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
+                    $"{nameof(assetId)} cannot be empty."));
 
-            //if (charges == null || charges.Count == 0)
-            //{
-            //    return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"no charges by this asset id"));
-            //}
+            var result = await _getChargesSummaryByTypeUseCase.ExecuteAsync(assetId, assetType).ConfigureAwait(false);
 
-            var dummyResponse = new AssetAppointmentResponse
-            {
-                AssetId = assetId,
-                AssetType = Boundary.Responses.PropertySummary.AssetType.Property,
-
-                PropertyCosts = new List<PropertyCostTotals>
-                {
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Building insurance",
-                        Totals = GenerateDummyTotals()
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Ground rent",
-                        Totals = GenerateDummyTotals()
-                    }
-                },
-                PropertyCostTotal = GenerateDummyTotals(),
-                BlockName = "Marcon Court",
-                BlockCosts = new List<PropertyCostTotals>
-                {
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Block Repairs",
-                        Totals = GenerateDummyTotals()
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Block Cleaning",
-                        Totals = GenerateDummyTotals()
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Door Entry System",
-                        Totals = GenerateDummyTotals()
-                    }
-                },
-                BlockCostTotal = GenerateDummyTotals(),
-
-                EstateName = "Estate 1",
-                EstateCosts = new List<PropertyCostTotals>
-                {
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Estate Repairs",
-                        Totals = GenerateDummyTotals()
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Ground Maintenance",
-                        Totals = GenerateDummyTotals()
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Estate Repairs",
-                        Totals = GenerateDummyTotals()
-                    }
-                },
-                EstateCostTotal = GenerateDummyTotals(),
-
-            };
-
-            return Ok(dummyResponse);
-        }
-
-        private static List<ChargesTotalResponse> GenerateDummyTotals()
-        {
-            var random = new Random();
-
-            return new List<ChargesTotalResponse>
-            {
-                new ChargesTotalResponse
-                {
-                    Year = 2020,
-                    Type = ChargeSubGroup.Actual,
-                    Amount = (decimal)random.NextDouble() * random.Next(1000)
-                },
-                new ChargesTotalResponse
-                {
-                    Year = 2021,
-                    Type = ChargeSubGroup.Estimate,
-                    Amount = (decimal)random.NextDouble() * random.Next(1000)
-                },
-                new ChargesTotalResponse
-                {
-                    Year = 2022,
-                    Type = ChargeSubGroup.Estimate,
-                    Amount = (decimal)random.NextDouble() * random.Next(1000)
-                }
-            };
+            return Ok(result);
         }
     }
 }
