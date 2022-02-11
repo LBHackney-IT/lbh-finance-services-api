@@ -29,8 +29,6 @@ namespace FinanceServicesApi.V1.UseCase
 
         public async Task<GetPropertyListResponse> ExecuteAsync(LeaseholdAssetsRequest housingSearchRequest)
         {
-            var leaseholdAssets = new List<Asset>();
-
             var assetList = await _housingSearchGateway.GetAssets(housingSearchRequest.SearchText, housingSearchRequest.AssetType).ConfigureAwait(false);
             // ToDo: handle pagination
             if (assetList is null)
@@ -38,13 +36,24 @@ namespace FinanceServicesApi.V1.UseCase
                 throw new Exception("Housing Search Service is not returning any asset list response");
             }
 
-            leaseholdAssets.AddRange(GetLeaseholdersAssets(assetList.Results.Assets));
+            var leaseholdAssets = new List<Asset>();
+            // Hanna Holasava
+            // We need to filter assets to be leasehold only for Dwelling type (for properties)
+            // Estate and Blocks doesn't have Tenure enity
+            if (housingSearchRequest.AssetType == Boundary.Request.Enums.AssetType.Dwelling)
+            {
+                leaseholdAssets.AddRange(GetLeaseholdersAssets(assetList.Results.Assets));
+            }
+            else
+            {
+                leaseholdAssets = assetList.Results.Assets;
+            }
 
             var data = leaseholdAssets.Skip((housingSearchRequest.Page - 1) * housingSearchRequest.PageSize).Take(housingSearchRequest.PageSize);
 
             var assetTotals = new List<PropertySearchResponse>();
 
-            var degree = Convert.ToInt32(Math.Ceiling((Environment.ProcessorCount * 0.75) * 2.0));
+            var degree = Convert.ToInt32(Math.Ceiling(Environment.ProcessorCount * 0.75 * 2.0));
             var block = new ActionBlock<Asset>(
                     async x =>
                     {
@@ -57,13 +66,14 @@ namespace FinanceServicesApi.V1.UseCase
 
                         var detailCharge = await _getChargeByAssetIdUseCase.ExecuteAsync(x.Id).ConfigureAwait(false);
 
-                        if (detailCharge != null && detailCharge.Any())
+                        if (detailCharge != null)
                         {
                             var leaseholdCharges = detailCharge.Where(_ => _.ChargeGroup == ChargeGroup.Leaseholders);
 
-                            assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, housingSearchRequest.Year - 2, ChargeSubGroup.Actual));
-                            assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, housingSearchRequest.Year - 1, ChargeSubGroup.Estimate));
-                            assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, housingSearchRequest.Year, ChargeSubGroup.Estimate));
+                            for (var year = housingSearchRequest.FromYear; year <= DateTime.Now.Year; year ++)
+                            {
+                                assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, year));
+                            }
                         }
 
                         assetTotals.Add(assetTotal);
@@ -72,6 +82,7 @@ namespace FinanceServicesApi.V1.UseCase
                     {
                         MaxDegreeOfParallelism = degree, // Parallelize on all cores
                     });
+
             foreach (var asset in data)
             {
                 block.Post(asset);
@@ -104,18 +115,22 @@ namespace FinanceServicesApi.V1.UseCase
             return filteredData.ToList();
         }
 
-        public static ChargesTotalResponse CalculateTotal(IEnumerable<Charge> charges, int year, ChargeSubGroup group)
+        public static ChargesTotalResponse CalculateTotal(IEnumerable<Charge> charges, int year)
         {
+            ChargeSubGroup subGroup = year >= DateTime.Now.Year - 1
+                ? ChargeSubGroup.Estimate
+                : ChargeSubGroup.Actual;
+
             var chargesToProcess = charges.Where(_ => _.ChargeYear == year
-                                                   && _.ChargeSubGroup == group);
+                                                   && _.ChargeSubGroup == subGroup);
 
             var detailedChargesToProcess = chargesToProcess.SelectMany(_ => _.DetailedCharges);
 
             var chargesTotal = new ChargesTotalResponse
             {
-                Amount = Convert.ToInt32(detailedChargesToProcess.Any() ? detailedChargesToProcess.Sum(_ => _.Amount) : 0),
+                Amount = detailedChargesToProcess.Any() ? detailedChargesToProcess.Sum(_ => _.Amount) : 0,
                 Year = (short) year,
-                Type = group
+                Type = subGroup
             };
 
             return chargesTotal;
