@@ -1,7 +1,9 @@
 using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
+using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FinanceServicesApi.V1.UseCase
@@ -15,77 +17,41 @@ namespace FinanceServicesApi.V1.UseCase
             _chargeUseCase = chargeUseCase;
         }
 
+        private static IEnumerable<PropertyCostTotals> GetPropertyCosts(IEnumerable<DetailedCharges> detailedCharges)
+            => detailedCharges.Select(d => new PropertyCostTotals
+            {
+                ChargeGroup = d.SubType
+            });
+
         public async Task<AssetAppointmentResponse> ExecuteAsync(Guid assetId, AssetType assetType)
         {
             var charges = await _chargeUseCase.ExecuteAsync(assetId).ConfigureAwait(false);
 
             if (charges == null || charges.Count == 0)
             {
-                return null;
+                throw new ArgumentException($"{nameof(charges)} is empty"); ;
             }
+
+            var chargeDetails = charges.SelectMany(c => c.DetailedCharges);
+
+            var blocksDetails = chargeDetails.Where(d => d.ChargeType == Infrastructure.Enums.ChargeType.Block);
+            var propsDetails = chargeDetails.Where(d => d.ChargeType == Infrastructure.Enums.ChargeType.Property);
+            var estsatesDetails = chargeDetails.Where(d => d.ChargeType == Infrastructure.Enums.ChargeType.Estate);
 
             return new AssetAppointmentResponse
             {
                 AssetId = assetId,
                 AssetType = assetType,
 
-                PropertyCosts = new List<PropertyCostTotals>
-                {
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Building insurance",
-                        Totals = GenerateDummyTotals()
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Ground rent",
-                        Totals = GenerateDummyTotals()
-                    }
-                },
+                PropertyCosts = GetPropertyCosts(propsDetails).ToList(),
                 PropertyCostTotal = GenerateDummyTotals(),
 
                 BlockName = "Marcon Court",
-                BlockCosts = new List<PropertyCostTotals>
-                {
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Block Repairs",
-                        Totals = GenerateDummyTotals()
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Block Cleaning",
-                        Totals = GenerateDummyTotals()
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Door Entry System",
-                        Totals = GenerateDummyTotals()
-                    }
-                },
+                BlockCosts = GetPropertyCosts(blocksDetails).ToList(),
                 BlockCostTotal = GenerateDummyTotals(),
 
                 EstateName = "Estate 1",
-                EstateCosts = new List<PropertyCostTotals>
-                {
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Estate Repairs",
-                        Totals = GenerateDummyTotals()
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Ground Maintenance",
-                        Totals = GenerateDummyTotals()
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeGroup = "Estate Repairs",
-                        Totals = GenerateDummyTotals()
-                    }
-                },
-                EstateCostTotal = GenerateDummyTotals(),
-
+                EstateCosts = GetPropertyCosts(estsatesDetails).ToList(),
             };
         }
 
