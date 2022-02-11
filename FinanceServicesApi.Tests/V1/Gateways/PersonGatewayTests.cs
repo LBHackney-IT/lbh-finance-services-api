@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.V1.Gateways;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using FluentAssertions;
 using Hackney.Shared.Person;
@@ -30,7 +31,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         public void GetByIdWithValidIdReturnsValidData()
         {
             Person chargeResponse = _fixture.Create<Person>();
-            _housingData.Setup(p => p.DownloadAsync(It.IsAny<Guid>()))
+            _housingData.Setup(p => p.DownloadAsync(It.IsAny<Guid>(), It.IsAny<SearchBy>()))
                 .ReturnsAsync(chargeResponse);
 
             var response = _sutGateway.GetById(Guid.NewGuid());

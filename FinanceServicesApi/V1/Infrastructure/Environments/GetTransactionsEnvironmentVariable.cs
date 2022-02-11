@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 
 namespace FinanceServicesApi.V1.Infrastructure.Environments
 {
-    public class GetTransactionEnvironmentVariable : IGetEnvironmentVariables<Transaction>
+    public class GetTransactionsEnvironmentVariable : IGetEnvironmentVariables<List<Transaction>>
     {
         public Uri GetUrl()
         {

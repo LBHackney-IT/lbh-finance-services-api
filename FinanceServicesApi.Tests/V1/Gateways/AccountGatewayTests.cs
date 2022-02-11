@@ -13,6 +13,7 @@ using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Entities;
+using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -23,6 +24,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
     {
         private readonly Mock<IDynamoDBContext> _dynamoDbContext;
         private readonly Mock<IAmazonDynamoDB> _amazonDynamoDb;
+        private readonly Mock<IHousingData<Account>> _housingData;
         private readonly Fixture _fixture;
         private AccountGateway _sut;
 
@@ -31,7 +33,8 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _fixture = new Fixture();
             _dynamoDbContext = new Mock<IDynamoDBContext>();
             _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
-            _sut = new AccountGateway(_dynamoDbContext.Object, _amazonDynamoDb.Object);
+            _housingData = new Mock<IHousingData<Account>>();
+            _sut = new AccountGateway(_dynamoDbContext.Object, _amazonDynamoDb.Object, _housingData.Object);
         }
 
         /* [Fact]
