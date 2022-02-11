@@ -26,13 +26,17 @@ namespace FinanceServicesApi.V1.UseCase
             _housingSearchGateway = housingSearchGateway;
             _getChargeByAssetIdUseCase = getChargeByAssetIdUseCase;
         }
+
         public async Task<GetPropertyListResponse> ExecuteAsync(LeaseholdAssetsRequest housingSearchRequest)
         {
             var leaseholdAssets = new List<Asset>();
 
             var assetList = await _housingSearchGateway.GetAssets(housingSearchRequest.SearchText, housingSearchRequest.AssetType).ConfigureAwait(false);
             // ToDo: handle pagination
-            if (assetList is null) throw new Exception("Housing Search Service is not returning any asset list response");
+            if (assetList is null)
+            {
+                throw new Exception("Housing Search Service is not returning any asset list response");
+            }
 
             leaseholdAssets.AddRange(GetLeaseholdersAssets(assetList.Results.Assets));
 
