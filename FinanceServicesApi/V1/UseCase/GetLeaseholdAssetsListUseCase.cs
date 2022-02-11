@@ -70,7 +70,7 @@ namespace FinanceServicesApi.V1.UseCase
                         {
                             var leaseholdCharges = detailCharge.Where(_ => _.ChargeGroup == ChargeGroup.Leaseholders);
 
-                            for (var year = housingSearchRequest.FromYear; year <= DateTime.Now.Year; year ++)
+                            for (var year = housingSearchRequest.FromYear; year <= DateTime.Now.Year; year++)
                             {
                                 assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, year));
                             }
