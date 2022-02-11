@@ -84,7 +84,7 @@ namespace FinanceServicesApi.V1.UseCase
             return new GetPropertyListResponse
             {
                 Total = leaseholdAssets.Count,
-                Properties = assetTotals
+                Assets = assetTotals
             };
         }
 
