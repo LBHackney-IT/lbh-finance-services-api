@@ -19,15 +19,15 @@ namespace FinanceServicesApi.V1.Infrastructure.UrlGenerators
             switch (searchBy)
             {
                 case SearchBy.ById:
-                {
-                    var url = _getEnvironmentVariables.GetUrl();
-                    return new Uri($"{url}/accounts/{id}");
-}
+                    {
+                        var url = _getEnvironmentVariables.GetUrl();
+                        return new Uri($"{url}/accounts/{id}");
+                    }
                 case SearchBy.ByTargetId:
-                {
-                    var url = _getEnvironmentVariables.GetUrl();
-                    return new Uri($"{url}/accounts?targetId={id}");
-                }
+                    {
+                        var url = _getEnvironmentVariables.GetUrl();
+                        return new Uri($"{url}/accounts?targetId={id}");
+                    }
                 default:
                     throw new ArgumentException($"{nameof(searchBy)} is invalid.");
             }

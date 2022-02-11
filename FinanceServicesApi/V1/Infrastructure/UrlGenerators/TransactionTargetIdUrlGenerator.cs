@@ -31,10 +31,10 @@ namespace FinanceServicesApi.V1.Infrastructure.UrlGenerators
                         return new Uri($"{url}/transactions/{Guid.Empty}?targetId={id}");
                     }
                 case SearchBy.ByTargetId:
-                {
-                    var url = _getEnvironmentVariables.GetUrl();
-                    return new Uri($"{url}/transactions/{id}/tenureId");
-                }
+                    {
+                        var url = _getEnvironmentVariables.GetUrl();
+                        return new Uri($"{url}/transactions/{id}/tenureId");
+                    }
                 default:
                     throw new ArgumentException($"{nameof(searchBy)} is invalid.");
             }

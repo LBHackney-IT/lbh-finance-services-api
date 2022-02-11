@@ -31,18 +31,17 @@ namespace FinanceServicesApi.V1.UseCase
                 PageSize = 12,
                 IsDesc = true
             };
-#if DEBUG
+
             return await _gateway.GetByTargetId(request).ConfigureAwait(false);
-#else
-            List<Transaction> transactions;
+
+            /*List<Transaction> transactions;
             do
             {
                 transactions = await _gateway.GetByTargetId(request).ConfigureAwait(false);
                 request.Page++;
             } while (!(transactions.Count == 0 || transactions.Any(p => p.PaidAmount > 0)));
 
-            return transactions;
-#endif
+            return transactions;*/
         }
     }
 }

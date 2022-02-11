@@ -31,13 +31,11 @@ namespace FinanceServicesApi.V1.Gateways
 
         public async Task<Transaction> GetById(Guid id)
         {
-#if DEBUG
             if (id == Guid.Empty)
                 throw new ArgumentException($"{nameof(id).ToString()} shouldn't be empty.");
 
             return await _housingData.DownloadAsync(id).ConfigureAwait(false);
-#else
-            if (id == Guid.Empty)
+            /*if (id == Guid.Empty)
                 throw new ArgumentException($"{nameof(id).ToString()} shouldn't be empty.");
 
             var response = await _dynamoDbContext.LoadAsync<TransactionDbEntity>(Guid.Empty, id).ConfigureAwait(false);
@@ -47,20 +45,17 @@ namespace FinanceServicesApi.V1.Gateways
                 throw new Exception("The transaction api is not reachable!");
             }
 
-            return response.ToDomain();
-#endif
+            return response.ToDomain();*/
         }
 
         public async Task<List<Transaction>> GetByTargetId(TransactionsRequest transactionsRequest)
         {
-#if DEBUG
             if (transactionsRequest == null || transactionsRequest.TargetId == Guid.Empty)
                 throw new ArgumentException($"{nameof(transactionsRequest.TargetId).ToString()} shouldn't be empty.");
 
-            return await _iHousingData.DownloadAsync(transactionsRequest.TargetId,SearchBy.ByTargetId).ConfigureAwait(false);
-#else
+            return await _iHousingData.DownloadAsync(transactionsRequest.TargetId, SearchBy.ByTargetId).ConfigureAwait(false);
 
-            if (transactionsRequest.TargetId == Guid.Empty)
+            /*if (transactionsRequest.TargetId == Guid.Empty)
                 throw new ArgumentException($"{nameof(transactionsRequest.TargetId).ToString()} shouldn't be empty.");
 
             QueryRequest request = new QueryRequest
@@ -75,8 +70,7 @@ namespace FinanceServicesApi.V1.Gateways
             };
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
-            return response?.ToTransactions();
-#endif
+            return response?.ToTransactions();*/
         }
     }
 }

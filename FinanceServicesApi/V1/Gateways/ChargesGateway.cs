@@ -27,15 +27,14 @@ namespace FinanceServicesApi.V1.Gateways
 
         public async Task<List<Charge>> GetAllByAssetId(Guid assetId)
         {
-#if DEBUG
             if (assetId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(assetId));
             }
 
             return await _housingData.DownloadAsync(assetId).ConfigureAwait(false);
-#else
-            QueryRequest request = new QueryRequest
+
+            /*QueryRequest request = new QueryRequest
             {
                 TableName = "Charges",
                 KeyConditionExpression = "target_id = :V_target_id",
@@ -47,8 +46,7 @@ namespace FinanceServicesApi.V1.Gateways
             };
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
-            return response?.ToCharge();
-#endif
+            return response?.ToCharge();*/
         }
     }
 }

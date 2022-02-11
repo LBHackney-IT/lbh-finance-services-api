@@ -4,7 +4,7 @@ using FinanceServicesApi.V1.Infrastructure.Interfaces;
 
 namespace FinanceServicesApi.V1.Infrastructure.Environments
 {
-    public class GetTransactionEnvironmentVariable: IGetEnvironmentVariables<Transaction>
+    public class GetTransactionEnvironmentVariable : IGetEnvironmentVariables<Transaction>
     {
         public Uri GetUrl()
         {

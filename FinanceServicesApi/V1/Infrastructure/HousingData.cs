@@ -37,7 +37,7 @@ namespace FinanceServicesApi.V1.Infrastructure
         /// <exception cref="ArgumentException">If provided entity id is empty</exception>
         /// <exception cref="InvalidCredentialException">If request doesn't have Authorization header with JWT token</exception>
         /// <exception cref="Exception">If response is null or have unsuccessful status code</exception>
-        public async Task<T> DownloadAsync(Guid id,SearchBy searchBy=SearchBy.ById)
+        public async Task<T> DownloadAsync(Guid id, SearchBy searchBy = SearchBy.ById)
         {
             if (id == Guid.Empty)
                 throw new ArgumentException($"{nameof(id)} shouldn't be empty.");
@@ -47,7 +47,7 @@ namespace FinanceServicesApi.V1.Infrastructure
                 throw new InvalidCredentialException("Api token shouldn't be null or empty.");
 
             _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", apiToken));
-            Uri uri = _generateUrl.Execute(id,searchBy);
+            Uri uri = _generateUrl.Execute(id, searchBy);
 
             var response = await _client.GetAsync(uri).ConfigureAwait(false);
 

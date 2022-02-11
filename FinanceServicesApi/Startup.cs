@@ -205,10 +205,8 @@ namespace FinanceServicesApi
             services.AddScoped<IAssetGateway, AssetGateway>();
 
             services.AddTransient<LoggingDelegatingHandler>();
-            var housingSearchApiUrl = Environment.GetEnvironmentVariable("SEARCH_API_URL")??
-                throw new NullReferenceException("SEARCH_API_URL shouldn't be null or empty.");
-            var housingSearchApiToken = Environment.GetEnvironmentVariable("HOUSING_SEARCH_API_TOKEN")??
-                throw new NullReferenceException("HOUSING_SEARCH_API_TOKEN shouldn't be null or empty.");
+            var housingSearchApiUrl = Environment.GetEnvironmentVariable("SEARCH_API_URL") ?? String.Empty;
+            var housingSearchApiToken = Environment.GetEnvironmentVariable("HOUSING_SEARCH_API_TOKEN") ?? String.Empty;
 
             services.AddHttpClient<IHousingSearchGateway, HousingSearchGateway>(c =>
             {

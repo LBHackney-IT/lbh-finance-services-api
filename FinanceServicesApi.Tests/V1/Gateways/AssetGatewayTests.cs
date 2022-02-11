@@ -31,7 +31,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         public void GetByIdWithValidIdReturnsValidData()
         {
             Asset assetResponse = _fixture.Create<Asset>();
-            _housingData.Setup(p => p.DownloadAsync(It.IsAny<Guid>(),It.IsAny<SearchBy>()))
+            _housingData.Setup(p => p.DownloadAsync(It.IsAny<Guid>(), It.IsAny<SearchBy>()))
                 .ReturnsAsync(assetResponse);
 
             var response = _sutGateway.GetById(Guid.NewGuid());

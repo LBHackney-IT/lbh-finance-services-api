@@ -38,12 +38,11 @@ namespace FinanceServicesApi.V1.Gateways
 
         public async Task<Account> GetByTargetId(Guid targetId)
         {
-#if DEBUG
             if (targetId == Guid.Empty)
                 throw new ArgumentException($"{nameof(targetId).ToString()} shouldn't be empty.");
-            return await _housingData.DownloadAsync(targetId,SearchBy.ByTargetId).ConfigureAwait(false);
-#else
-            QueryRequest request = new QueryRequest
+            return await _housingData.DownloadAsync(targetId, SearchBy.ByTargetId).ConfigureAwait(false);
+
+            /*QueryRequest request = new QueryRequest
             {
                 TableName = "Accounts",
                 IndexName = "target_id_dx",
@@ -57,8 +56,7 @@ namespace FinanceServicesApi.V1.Gateways
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
 
-            return response?.ToAccount();
-#endif
+            return response?.ToAccount();*/
         }
     }
 }
