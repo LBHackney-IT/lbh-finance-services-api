@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Domain.AccountModels;
-using FinanceServicesApi.V1.Gateways;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 

@@ -1,15 +1,15 @@
-using FinanceServicesApi.V1.Domain.AccountModels;
-using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using System;
+using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Infrastructure.Enums;
+using FinanceServicesApi.V1.Infrastructure.Interfaces;
 
 namespace FinanceServicesApi.V1.Infrastructure.UrlGenerators
 {
-    public class AccountUrlGenerator : IGenerateUrl<Account>
+    public class TransactionUrlGenerator:IGenerateUrl<Transaction>
     {
-        private readonly IGetEnvironmentVariables<Account> _getEnvironmentVariables;
+        private readonly IGetEnvironmentVariables<Transaction> _getEnvironmentVariables;
 
-        public AccountUrlGenerator(IGetEnvironmentVariables<Account> getEnvironmentVariables)
+        public TransactionUrlGenerator(IGetEnvironmentVariables<Transaction> getEnvironmentVariables)
         {
             _getEnvironmentVariables = getEnvironmentVariables;
         }
@@ -21,12 +21,12 @@ namespace FinanceServicesApi.V1.Infrastructure.UrlGenerators
                 case SearchBy.ById:
                 {
                     var url = _getEnvironmentVariables.GetUrl();
-                    return new Uri($"{url}/accounts/{id}");
-}
+                    return new Uri($"{url}/transactions/{Guid.Empty}?targetId={id}");
+                }
                 case SearchBy.ByTargetId:
                 {
                     var url = _getEnvironmentVariables.GetUrl();
-                    return new Uri($"{url}/accounts?targetId={id}");
+                    return new Uri($"{url}/transactions/{id}/tenureId");
                 }
                 default:
                     throw new ArgumentException($"{nameof(searchBy)} is invalid.");

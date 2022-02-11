@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Gateways
@@ -16,6 +18,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
     public class ChargesGatewayTests
     {
         private readonly Mock<IHousingData<List<Charge>>> _housingData;
+        private readonly Mock<IAmazonDynamoDB> _amazonDynamoDb;
         private readonly Fixture _fixture;
         private ChargesGateway _sut;
 
@@ -23,7 +26,8 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         {
             _fixture = new Fixture();
             _housingData = new Mock<IHousingData<List<Charge>>>();
-            _sut = new ChargesGateway(_housingData.Object);
+            _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
+            _sut = new ChargesGateway(_amazonDynamoDb.Object, _housingData.Object);
         }
 
         [Fact]
@@ -38,7 +42,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         {
             var expectedResponse = _fixture.Create<List<Charge>>();
 
-            _housingData.Setup(_ => _.DownloadAsync(It.IsAny<Guid>()))
+            _housingData.Setup(_ => _.DownloadAsync(It.IsAny<Guid>(), It.IsAny<SearchBy>()))
                 .ReturnsAsync(expectedResponse);
 
             Func<Task<List<Charge>>> func = async () => await _sut.GetAllByAssetId(Guid.NewGuid()).ConfigureAwait(false);
@@ -53,7 +57,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         {
             var expectedResponse = new List<Charge>(0);
 
-            _housingData.Setup(_ => _.DownloadAsync(It.IsAny<Guid>()))
+            _housingData.Setup(_ => _.DownloadAsync(It.IsAny<Guid>(), It.IsAny<SearchBy>()))
                 .ReturnsAsync(expectedResponse);
 
             Func<Task<List<Charge>>> func = async () => await _sut.GetAllByAssetId(Guid.NewGuid()).ConfigureAwait(false);
@@ -68,7 +72,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         public void GetAllByAssetIdWitNullResponseFromAmazonDynamoDbReturnsNull()
         {
             // Arrange
-            _housingData.Setup(_ => _.DownloadAsync(It.IsAny<Guid>()))
+            _housingData.Setup(_ => _.DownloadAsync(It.IsAny<Guid>(), It.IsAny<SearchBy>()))
                 .ReturnsAsync((List<Charge>) null);
 
             // Act

@@ -7,6 +7,7 @@ using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Entities;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 
 namespace FinanceServicesApi.V1.Gateways
@@ -18,7 +19,7 @@ namespace FinanceServicesApi.V1.Gateways
         private readonly IHousingData<Account> _housingData;
 
         [ExcludeFromCodeCoverage]
-        public AccountGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb,IHousingData<Account> housingData)
+        public AccountGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb, IHousingData<Account> housingData)
         {
             _dynamoDbContext = dynamoDbContext;
             _amazonDynamoDb = amazonDynamoDb;
@@ -37,14 +38,11 @@ namespace FinanceServicesApi.V1.Gateways
 
         public async Task<Account> GetByTargetId(Guid targetId)
         {
+#if DEBUG
             if (targetId == Guid.Empty)
                 throw new ArgumentException($"{nameof(targetId).ToString()} shouldn't be empty.");
-            return await _housingData.DownloadAsync(targetId).ConfigureAwait(false);
-        }
-
-
-        /*public async Task<Account> GetByTargetId(Guid targetId)
-        {
+            return await _housingData.DownloadAsync(targetId,SearchBy.ByTargetId).ConfigureAwait(false);
+#else
             QueryRequest request = new QueryRequest
             {
                 TableName = "Accounts",
@@ -60,6 +58,7 @@ namespace FinanceServicesApi.V1.Gateways
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
 
             return response?.ToAccount();
-        }*/
+#endif
+        }
     }
 }

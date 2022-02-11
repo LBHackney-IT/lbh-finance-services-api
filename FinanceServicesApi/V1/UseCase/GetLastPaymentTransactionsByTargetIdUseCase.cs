@@ -31,7 +31,9 @@ namespace FinanceServicesApi.V1.UseCase
                 PageSize = 12,
                 IsDesc = true
             };
-
+#if DEBUG
+            return await _gateway.GetByTargetId(request).ConfigureAwait(false);
+#else
             List<Transaction> transactions;
             do
             {
@@ -40,6 +42,7 @@ namespace FinanceServicesApi.V1.UseCase
             } while (!(transactions.Count == 0 || transactions.Any(p => p.PaidAmount > 0)));
 
             return transactions;
+#endif
         }
     }
 }
