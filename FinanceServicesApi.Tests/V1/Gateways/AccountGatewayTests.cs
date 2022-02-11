@@ -20,7 +20,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
     public class AccountGatewayTests
     {
         private readonly Mock<IDynamoDBContext> _dynamoDbContext;
-        private readonly Mock<IAmazonDynamoDB> _amazonDynamoDb;
+        private readonly mock<iamazondynamodb> _amazondynamodb;
         private readonly Mock<IHousingData<Account>> _housingData;
         private readonly Fixture _fixture;
         private AccountGateway _sut;
@@ -31,7 +31,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _dynamoDbContext = new Mock<IDynamoDBContext>();
             _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
             _housingData = new Mock<IHousingData<Account>>();
-            _sut = new AccountGateway(_dynamoDbContext.Object, _amazonDynamoDb.Object, _housingData.Object);
+            _sut = new AccountGateway(_dynamoDbContext.Object, /*_amazonDynamoDb.Object,*/ _housingData.Object);
         }
 
         /* [Fact]

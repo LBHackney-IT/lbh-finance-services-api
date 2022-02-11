@@ -1,3 +1,4 @@
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Factories;
@@ -13,14 +14,14 @@ namespace FinanceServicesApi.V1.Gateways
     public class AccountGateway : IAccountGateway
     {
         private readonly IDynamoDBContext _dynamoDbContext;
-        //private readonly IAmazonDynamoDB _amazonDynamoDb;
+        private readonly IAmazonDynamoDB _amazonDynamoDb;
         private readonly IHousingData<Account> _housingData;
 
         [ExcludeFromCodeCoverage]
-        public AccountGateway(IDynamoDBContext dynamoDbContext, /*IAmazonDynamoDB amazonDynamoDb,*/ IHousingData<Account> housingData)
+        public AccountGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb, IHousingData<Account> housingData)
         {
             _dynamoDbContext = dynamoDbContext;
-            //_amazonDynamoDb = amazonDynamoDb;
+            _amazonDynamoDb = amazonDynamoDb;
             _housingData = housingData;
         }
 
