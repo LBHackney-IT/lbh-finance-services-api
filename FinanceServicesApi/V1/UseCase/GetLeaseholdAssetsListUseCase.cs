@@ -105,7 +105,7 @@ namespace FinanceServicesApi.V1.UseCase
             return filteredData.ToList();
         }
 
-        public static ChargesTotalResponse CalculateTotal( IEnumerable<Charge> charges, int year, ChargeSubGroup group)
+        public static ChargesTotalResponse CalculateTotal(IEnumerable<Charge> charges, int year, ChargeSubGroup group)
         {
             var chargesToProcess = charges.Where(_ => _.ChargeYear == year
                                                    && _.ChargeSubGroup == group);
