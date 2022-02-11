@@ -4,7 +4,6 @@ using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure.Entities;
-using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -46,23 +45,6 @@ namespace FinanceServicesApi.V1.Gateways
             }
 
             return await _housingData.DownloadAsync(targetId).ConfigureAwait(false);
-        }
-
-            /*QueryRequest request = new QueryRequest
-            {
-                TableName = "Accounts",
-                IndexName = "target_id_dx",
-                KeyConditionExpression = "target_id = :V_target_id",
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-                {
-                    {":V_target_id",new AttributeValue{S = targetId.ToString()}}
-                },
-                ScanIndexForward = true
-            };
-
-            var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
-
-            return response?.ToAccount();*/
         }
     }
 }
