@@ -113,7 +113,7 @@ namespace FinanceServicesApi.V1.Factories
             return new PropertySummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance,
-                HousingBenefit = transactions.Sum(s => s.HousingBenefitAmount),
+                HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount) ?? 0,
                 ServiceCharge = charges?.Count == 0 ? 0 :
                     charges?.Sum(p =>
                         p.DetailedCharges.Where(c =>
