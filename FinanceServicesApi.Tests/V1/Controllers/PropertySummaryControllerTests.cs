@@ -33,6 +33,7 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         private readonly Mock<IGetAccountByTargetIdUseCase> _mockAccountByTargetIdUseCase;
         private readonly Mock<IGetLastPaymentTransactionsByTargetIdUseCase> _mockLastPaymentTransactionsByTargetIdUseCase;
         private readonly Mock<IGetAssetByIdUseCase> _mockAssetByIdUseCase;
+        private readonly Mock<IGetChargesSummaryByTypeUseCase> _mockGetTransactionByIdUseCase;
 
         public PropertySummaryControllerTests()
         {
@@ -44,6 +45,7 @@ namespace FinanceServicesApi.Tests.V1.Controllers
             _mockAccountByTargetIdUseCase = new Mock<IGetAccountByTargetIdUseCase>();
             _mockLastPaymentTransactionsByTargetIdUseCase = new Mock<IGetLastPaymentTransactionsByTargetIdUseCase>();
             _mockAssetByIdUseCase = new Mock<IGetAssetByIdUseCase>();
+            _mockGetTransactionByIdUseCase = new Mock<IGetChargesSummaryByTypeUseCase>();
 
             _sutController = new PropertySummaryController(_mockPerson.Object,
                 _mockChargeUseCase.Object,
@@ -51,7 +53,8 @@ namespace FinanceServicesApi.Tests.V1.Controllers
                 _mockContactUseCase.Object,
                 _mockAccountByTargetIdUseCase.Object,
                 _mockLastPaymentTransactionsByTargetIdUseCase.Object,
-                _mockAssetByIdUseCase.Object);
+                _mockAssetByIdUseCase.Object,
+                _mockGetTransactionByIdUseCase.Object);
         }
 
         [Fact]
