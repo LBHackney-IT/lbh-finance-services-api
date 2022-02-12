@@ -42,6 +42,7 @@ namespace FinanceServicesApi.V1.Gateways
                 throw new ArgumentException($"{nameof(targetId).ToString()} shouldn't be empty.");
             return await _housingData.DownloadAsync(targetId, SearchBy.ByTargetId).ConfigureAwait(false);
 
+            #region To be Deleted
             /*QueryRequest request = new QueryRequest
             {
                 TableName = "Accounts",
@@ -56,7 +57,8 @@ namespace FinanceServicesApi.V1.Gateways
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
 
-            return response?.ToAccount();*/
+            return response?.ToAccount();*/ 
+            #endregion
         }
     }
 }
