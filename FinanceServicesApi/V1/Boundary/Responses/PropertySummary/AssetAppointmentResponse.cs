@@ -26,8 +26,6 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
     {
         public Guid AssetId { get; set; }
 
-        public AssetType AssetType { get; set;}
-
         public List<ChargesTotalResponse> EstateCostTotal { get; set; }
         public List<ChargesTotalResponse> BlockCostTotal { get; set; }
         public List<ChargesTotalResponse> PropertyCostTotal { get; set; }

@@ -6,6 +6,6 @@ namespace FinanceServicesApi.V1.UseCase.Interfaces
 {
     public interface IGetChargesSummaryByTypeUseCase
     {
-        Task<AssetAppointmentResponse> ExecuteAsync(Guid assetId, AssetType assetType);
+        Task<AssetAppointmentResponse> ExecuteAsync(Guid assetId, short stratPeriodYear);
     }
 }

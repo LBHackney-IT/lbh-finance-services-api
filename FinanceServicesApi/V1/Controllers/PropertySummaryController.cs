@@ -212,14 +212,31 @@ namespace FinanceServicesApi.V1.Controllers
             return Ok(ResponseFactory.ToResponse(assetData, chargeData));
         }
 
+        /// <summary>
+        /// Returns Totals, Estate costs, Block costs, Property costs
+        /// </summary>
+        /// <param name="assetId"></param>
+        /// <param name="fromYear">Start year for totals sequense. Will be returned result for period from provided year until currect one. Should be more that 1970 ans less than currect year</param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(AssetAppointmentResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet("{assetId}/appointments")]
-        public async Task<IActionResult> GetChargesSummaryByType([FromQuery] Guid assetId, [FromQuery] Boundary.Responses.PropertySummary.AssetType assetType)
+        public async Task<IActionResult> GetChargesSummaryByType([FromRoute] Guid assetId, [FromQuery] short fromYear)
         {
             if (assetId == Guid.Empty)
+            {
                 return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
                     $"{nameof(assetId)} cannot be empty."));
+            }
+            if (fromYear < 1970 || fromYear > DateTime.UtcNow.Year)
+            {
+                return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
+                    $"{nameof(fromYear)} should be more that 1970 ans less than currect year"));
+            }
 
-            var result = await _getChargesSummaryByTypeUseCase.ExecuteAsync(assetId, assetType).ConfigureAwait(false);
+            var result = await _getChargesSummaryByTypeUseCase.ExecuteAsync(assetId, fromYear).ConfigureAwait(false);
 
             return Ok(result);
         }

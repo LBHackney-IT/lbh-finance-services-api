@@ -76,6 +76,7 @@ namespace FinanceServicesApi.V1.UseCase
                     {
                         MaxDegreeOfParallelism = degree, // Parallelize on all cores
                     });
+
             foreach (var asset in data)
             {
                 block.Post(asset);

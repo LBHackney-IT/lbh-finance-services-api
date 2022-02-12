@@ -1,5 +1,6 @@
 using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
-using FinanceServicesApi.V1.Domain.Charges;
+using FinanceServicesApi.V1.Infrastructure;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -11,75 +12,85 @@ namespace FinanceServicesApi.V1.UseCase
     public class GetChargesSummaryByTypeUseCase : IGetChargesSummaryByTypeUseCase
     {
         private readonly IGetChargeByAssetIdUseCase _chargeUseCase;
+        private List<short> _yearsToIterate;
 
         public GetChargesSummaryByTypeUseCase(IGetChargeByAssetIdUseCase chargeUseCase)
         {
             _chargeUseCase = chargeUseCase;
         }
 
-        private static IEnumerable<PropertyCostTotals> GetPropertyCosts(IEnumerable<DetailedCharges> detailedCharges)
-            => detailedCharges.Select(d => new PropertyCostTotals
-            {
-                ChargeGroup = d.SubType
-            });
-
-        public async Task<AssetAppointmentResponse> ExecuteAsync(Guid assetId, AssetType assetType)
+        public async Task<AssetAppointmentResponse> ExecuteAsync(Guid assetId, short startPeriodYear)
         {
-            var charges = await _chargeUseCase.ExecuteAsync(assetId).ConfigureAwait(false);
+            var allAssetCharges = await _chargeUseCase.ExecuteAsync(assetId).ConfigureAwait(false);
 
-            if (charges == null || charges.Count == 0)
+            _yearsToIterate = Enumerable
+                    .Range(startPeriodYear, DateTime.UtcNow.Year - startPeriodYear + 1)
+                    .Select(year => (short)year)
+                    .ToList();
+
+            if (allAssetCharges == null || allAssetCharges.Count == 0)
             {
-                throw new ArgumentException($"{nameof(charges)} is empty"); ;
+                throw new ArgumentException($"No charges was loaded from Charges API for asset id: [{assetId}]");
             }
 
-            var chargeDetails = charges.SelectMany(c => c.DetailedCharges);
+            var charges = allAssetCharges
+                .Where(_ => _.ChargeYear >= startPeriodYear)
+                .SelectMany(c => c.DetailedCharges.Select(dc => new DetailedChargeForYear(dc, c.ChargeYear, c.ChargeSubGroup)))
+                .ToList();
 
-            var blocksDetails = chargeDetails.Where(d => d.ChargeType == Infrastructure.Enums.ChargeType.Block);
-            var propsDetails = chargeDetails.Where(d => d.ChargeType == Infrastructure.Enums.ChargeType.Property);
-            var estsatesDetails = chargeDetails.Where(d => d.ChargeType == Infrastructure.Enums.ChargeType.Estate);
+            var assetAppointment = new AssetAppointmentResponse();
+            assetAppointment.AssetId = assetId;
+            assetAppointment.PropertyCosts = GetCostsGroupTotals(charges, ChargeType.Property);
+            assetAppointment.PropertyCostTotal = GetCostsTotals(assetAppointment.PropertyCosts);
 
-            return new AssetAppointmentResponse
-            {
-                AssetId = assetId,
-                AssetType = assetType,
+            assetAppointment.BlockName = "Marcon Court";
+            assetAppointment.BlockCosts = GetCostsGroupTotals(charges, ChargeType.Block);
+            assetAppointment.BlockCostTotal = GetCostsTotals(assetAppointment.BlockCosts);
 
-                PropertyCosts = GetPropertyCosts(propsDetails).ToList(),
-                PropertyCostTotal = GenerateDummyTotals(),
+            assetAppointment.EstateName = "Estate 1";
+            assetAppointment.EstateCosts = GetCostsGroupTotals(charges, ChargeType.Estate);
+            assetAppointment.EstateCostTotal = GetCostsTotals(assetAppointment.EstateCosts);
 
-                BlockName = "Marcon Court",
-                BlockCosts = GetPropertyCosts(blocksDetails).ToList(),
-                BlockCostTotal = GenerateDummyTotals(),
-
-                EstateName = "Estate 1",
-                EstateCosts = GetPropertyCosts(estsatesDetails).ToList(),
-            };
+            return assetAppointment;
         }
 
-        private static List<ChargesTotalResponse> GenerateDummyTotals()
+        private List<PropertyCostTotals> GetCostsGroupTotals(
+            List<DetailedChargeForYear> detailedCharges,
+            ChargeType costsGroupType)
         {
-            var random = new Random();
+            return detailedCharges
+                .Where(_ => _.ChargeType == costsGroupType)
+                .GroupBy(_ => _.SubType)
+                .Select(_ => new PropertyCostTotals
+                {
+                    ChargeGroup = _.Key,
+                    Totals = _yearsToIterate.Select(year => new ChargesTotalResponse()
+                    {
+                        Year = (short) year,
+                        Type = GetTargetSubGroup(year),
+                        Amount = _.Where(charge => charge.Year == year && charge.ChargeSubGroup == GetTargetSubGroup(year)).Sum(c => c.Amount)
+                    }).ToList()                    
+                }).ToList();
+        }
 
-            return new List<ChargesTotalResponse>
+        private List<ChargesTotalResponse> GetCostsTotals(List<PropertyCostTotals> propertyCostTotals)
+        {
+            return _yearsToIterate.Select(year => new ChargesTotalResponse()
             {
-                new ChargesTotalResponse
-                {
-                    Year = 2020,
-                    Type = ChargeSubGroup.Actual,
-                    Amount = (decimal)random.NextDouble() * random.Next(1000)
-                },
-                new ChargesTotalResponse
-                {
-                    Year = 2021,
-                    Type = ChargeSubGroup.Estimate,
-                    Amount = (decimal)random.NextDouble() * random.Next(1000)
-                },
-                new ChargesTotalResponse
-                {
-                    Year = 2022,
-                    Type = ChargeSubGroup.Estimate,
-                    Amount = (decimal)random.NextDouble() * random.Next(1000)
-                }
-            };
+                Year = year,
+                Type = GetTargetSubGroup(year),
+                Amount = propertyCostTotals
+                    .SelectMany(_ => _.Totals)
+                    .Where(charge => charge.Year == year && charge.Type == GetTargetSubGroup(year))
+                    .Sum(_ => _.Amount)
+            }).ToList();
+        }
+
+        private static ChargeSubGroup GetTargetSubGroup(short year)
+        {
+            return year >= DateTime.UtcNow.Year - 1
+                ? ChargeSubGroup.Estimate
+                : ChargeSubGroup.Actual;
         }
     }
 }
