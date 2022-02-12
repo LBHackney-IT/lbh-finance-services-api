@@ -94,11 +94,11 @@ namespace FinanceServicesApi.V1.Factories
                 firstMondayOfApril = firstMondayOfApril.AddDays(1);
             }
 
-            var ytd = transactions
+            var ytd = transactions?
                 .Where(p =>
                     p.TransactionDate >= firstMondayOfApril)
                 .Sum(p =>
-                    p.ChargedAmount - p.PaidAmount - p.HousingBenefitAmount);
+                    p.ChargedAmount - p.PaidAmount - p.HousingBenefitAmount) ?? 0;
             var wtc = charges?.Sum(p =>
                 p.DetailedCharges.Where(c =>
                     c.EndDate >= DateTime.UtcNow &&
@@ -113,7 +113,7 @@ namespace FinanceServicesApi.V1.Factories
             return new PropertySummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance,
-                HousingBenefit = transactions.Sum(s => s.HousingBenefitAmount),
+                HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount) ?? 0,
                 ServiceCharge = charges?.Count == 0 ? 0 :
                     charges?.Sum(p =>
                         p.DetailedCharges.Where(c =>

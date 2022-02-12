@@ -1,5 +1,6 @@
 using Hackney.Shared.Asset.Domain;
 using System;
+using System.Collections.Generic;
 
 namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 {
@@ -9,15 +10,11 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 
         public Guid TenureId { get; set; }
 
-        public Guid? ChargeId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
         /// <example>
         ///     15 Macron Court, Amhurst Rd, Hackney, London E8 1ND
         /// </example>
         public AssetAddress Address { get; set; }
 
-        public int TotalEstimateAmount { get; set; }
+        public List<ChargesTotalResponse> Totals { get; set; } = new List<ChargesTotalResponse> { };
     }
 }

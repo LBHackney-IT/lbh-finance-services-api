@@ -9,8 +9,12 @@ namespace FinanceServicesApi.V1.Infrastructure.Environments
         public Uri GetUrl()
         {
             string result = Environment.GetEnvironmentVariable("TRANSACTION_API_URL") ?? string.Empty;
+
             if (string.IsNullOrEmpty(result))
+            {
                 throw new Exception("Transaction api url shouldn't be null or empty.");
+            }
+
             return new Uri(result);
         }
     }
