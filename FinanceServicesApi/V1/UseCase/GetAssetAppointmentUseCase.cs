@@ -9,25 +9,24 @@ using System.Threading.Tasks;
 
 namespace FinanceServicesApi.V1.UseCase
 {
-    public class GetChargesSummaryByTypeUseCase : IGetChargesSummaryByTypeUseCase
+    public class GetAssetAppointmentUseCase : IGetAssetAppointmentUseCase
     {
         private readonly IGetChargeByAssetIdUseCase _chargeUseCase;
         private List<short> _yearsToIterate;
 
-        public GetChargesSummaryByTypeUseCase(IGetChargeByAssetIdUseCase chargeUseCase)
+        public GetAssetAppointmentUseCase(IGetChargeByAssetIdUseCase chargeUseCase)
         {
             _chargeUseCase = chargeUseCase;
         }
 
         public async Task<AssetAppointmentResponse> ExecuteAsync(Guid assetId, short startPeriodYear)
         {
-            var allAssetCharges = await _chargeUseCase.ExecuteAsync(assetId).ConfigureAwait(false);
-
             _yearsToIterate = Enumerable
                     .Range(startPeriodYear, DateTime.UtcNow.Year - startPeriodYear + 1)
                     .Select(year => (short)year)
                     .ToList();
 
+            var allAssetCharges = await _chargeUseCase.ExecuteAsync(assetId).ConfigureAwait(false);
             if (allAssetCharges == null || allAssetCharges.Count == 0)
             {
                 throw new ArgumentException($"No charges was loaded from Charges API for asset id: [{assetId}]");

@@ -29,7 +29,7 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetAccountByTargetIdUseCase _accountByTargetIdUseCase;
         private readonly IGetLastPaymentTransactionsByTargetIdUseCase _transactionUseCase;
         private readonly IGetAssetByIdUseCase _assetUseCase;
-        private readonly IGetChargesSummaryByTypeUseCase _getChargesSummaryByTypeUseCase;
+        private readonly IGetAssetAppointmentUseCase _getAssetAppointmentUseCase;
 
         public PropertySummaryController(IGetPersonByIdUseCase personUseCase
             , IGetChargeByAssetIdUseCase chargeUseCase
@@ -38,7 +38,7 @@ namespace FinanceServicesApi.V1.Controllers
             , IGetAccountByTargetIdUseCase accountByTargetIdUseCase
             , IGetLastPaymentTransactionsByTargetIdUseCase lastPaymentTransactionsByTargetIdUseCase
             , IGetAssetByIdUseCase assetByIdUseCase
-            , IGetChargesSummaryByTypeUseCase getChargesSummaryByTypeUseCase)
+            , IGetAssetAppointmentUseCase getAssetAppointmentUseCase)
         {
             _personUseCase = personUseCase;
             _chargeUseCase = chargeUseCase;
@@ -47,7 +47,7 @@ namespace FinanceServicesApi.V1.Controllers
             _accountByTargetIdUseCase = accountByTargetIdUseCase;
             _transactionUseCase = lastPaymentTransactionsByTargetIdUseCase;
             _assetUseCase = assetByIdUseCase;
-            _getChargesSummaryByTypeUseCase = getChargesSummaryByTypeUseCase;
+            _getAssetAppointmentUseCase = getAssetAppointmentUseCase;
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace FinanceServicesApi.V1.Controllers
                     $"{nameof(fromYear)} should be more that 1970 ans less than currect year"));
             }
 
-            var result = await _getChargesSummaryByTypeUseCase.ExecuteAsync(assetId, fromYear).ConfigureAwait(false);
+            var result = await _getAssetAppointmentUseCase.ExecuteAsync(assetId, fromYear).ConfigureAwait(false);
 
             return Ok(result);
         }

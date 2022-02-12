@@ -228,7 +228,7 @@ namespace FinanceServicesApi
             services.AddScoped<IGetChargeByAssetIdUseCase, GetChargeByAssetIdUseCase>();
             services.AddScoped<IGetAssetByIdUseCase, GetAssetByIdUseCase>();
             services.AddScoped<IGetLeaseholdAssetsListUseCase, GetLeaseholdAssetsListUseCase>();
-            services.AddScoped<IGetChargesSummaryByTypeUseCase, GetChargesSummaryByTypeUseCase>();
+            services.AddScoped<IGetAssetAppointmentUseCase, GetAssetAppointmentUseCase>();
         }
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
