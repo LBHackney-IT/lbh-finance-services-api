@@ -258,7 +258,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             _chargeUseCase.Setup(_ => _.ExecuteAsync(assetId))
                 .ReturnsAsync(charges);
 
-            var actualResponse = await _sut.ExecuteAsync(assetId, (short)(DateTime.Now.Year - 3)).ConfigureAwait(false);
+            var actualResponse = await _sut.ExecuteAsync(assetId, (short) (DateTime.Now.Year - 3)).ConfigureAwait(false);
 
             actualResponse.Should().NotBeNull();
             actualResponse.Should().BeEquivalentTo(expectedResponse);
