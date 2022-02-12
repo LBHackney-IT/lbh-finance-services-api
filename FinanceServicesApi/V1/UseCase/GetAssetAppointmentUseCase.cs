@@ -23,7 +23,7 @@ namespace FinanceServicesApi.V1.UseCase
         {
             _yearsToIterate = Enumerable
                     .Range(startPeriodYear, DateTime.UtcNow.Year - startPeriodYear + 1)
-                    .Select(year => (short)year)
+                    .Select(year => (short) year)
                     .ToList();
 
             var allAssetCharges = await _chargeUseCase.ExecuteAsync(assetId).ConfigureAwait(false);
@@ -68,7 +68,7 @@ namespace FinanceServicesApi.V1.UseCase
                         Year = (short) year,
                         Type = GetTargetSubGroup(year),
                         Amount = _.Where(charge => charge.Year == year && charge.ChargeSubGroup == GetTargetSubGroup(year)).Sum(c => c.Amount)
-                    }).ToList()                    
+                    }).ToList()
                 }).ToList();
         }
 
