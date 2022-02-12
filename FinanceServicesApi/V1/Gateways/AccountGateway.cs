@@ -57,7 +57,7 @@ namespace FinanceServicesApi.V1.Gateways
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
 
-            return response?.ToAccount();*/ 
+            return response?.ToAccount();*/
             #endregion
         }
     }
