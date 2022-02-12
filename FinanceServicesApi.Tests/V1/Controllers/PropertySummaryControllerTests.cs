@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.V1.Boundary.Responses;
@@ -10,6 +11,7 @@ using FinanceServicesApi.V1.Controllers;
 using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Domain.TransactionModels;
+using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FluentAssertions;
 using Hackney.Shared.Asset.Domain;
@@ -103,6 +105,60 @@ namespace FinanceServicesApi.Tests.V1.Controllers
             var result = responseObject?.Value as PropertySummaryResponse;
             result.Should().NotBeNull();
             result?.CurrentBalance.Should().Be(account.ConsolidatedBalance);
+        }
+
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(1969)]
+        [InlineData(2050)]
+        public async Task GetAssetAppointmentWithWrongYearShouldReturn400(short year)
+        {
+            var actualResult = await _sutController.GetAssetAppointment(Guid.NewGuid(), year).ConfigureAwait(false);
+
+            actualResult.Should().NotBeNull();
+            actualResult.Should().BeOfType<BadRequestObjectResult>();
+            var responseObject = actualResult as BadRequestObjectResult;
+            responseObject.Should().NotBeNull();
+
+            var badErrorResponse = responseObject?.Value as BaseErrorResponse;
+
+            badErrorResponse.StatusCode.Should().Be((int) HttpStatusCode.BadRequest);
+            badErrorResponse.Message.Should().Be("fromYear should be more that 1970 ans less than currect year");
+        }
+
+        [Fact]
+        public async Task GetAssetAppointmentWithWrongAssetIdShouldReturn400()
+        {
+            var actualResult = await _sutController.GetAssetAppointment(Guid.Empty, 2022).ConfigureAwait(false);
+
+            actualResult.Should().NotBeNull();
+            actualResult.Should().BeOfType<BadRequestObjectResult>();
+            var responseObject = actualResult as BadRequestObjectResult;
+            responseObject.Should().NotBeNull();
+
+            var badErrorResponse = responseObject?.Value as BaseErrorResponse;
+
+            badErrorResponse.StatusCode.Should().Be((int) HttpStatusCode.BadRequest);
+            badErrorResponse.Message.Should().Be("assetId cannot be empty.");
+        }
+
+        [Fact]
+        public async Task GetAssetAppointmentCallsUseCaseReturnsResponse()
+        {
+            var expectedResponse = _fixture.Create<AssetAppointmentResponse>();
+            _mockGetAssetAppointmentUseCase.Setup(_ => _.ExecuteAsync(It.IsAny<Guid>(), It.IsAny<short>()))
+                .ReturnsAsync(expectedResponse);
+
+            var actualResult = await _sutController.GetAssetAppointment(Guid.NewGuid(), 2022).ConfigureAwait(false);
+
+            actualResult.Should().NotBeNull();
+            actualResult.Should().BeOfType<OkObjectResult>();
+            var responseObject = actualResult as OkObjectResult;
+            responseObject.Should().NotBeNull();
+
+            var actualResponse = responseObject?.Value as AssetAppointmentResponse;
+            actualResponse.Should().NotBeNull();
+            actualResponse.Should().BeEquivalentTo(expectedResponse);
         }
     }
 }

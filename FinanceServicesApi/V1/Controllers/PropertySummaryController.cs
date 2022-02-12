@@ -223,7 +223,7 @@ namespace FinanceServicesApi.V1.Controllers
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet("{assetId}/appointments")]
-        public async Task<IActionResult> GetChargesSummaryByType([FromRoute] Guid assetId, [FromQuery] short fromYear)
+        public async Task<IActionResult> GetAssetAppointment([FromRoute] Guid assetId, [FromQuery] short fromYear)
         {
             if (assetId == Guid.Empty)
             {
