@@ -86,7 +86,7 @@ namespace FinanceServicesApi.V1.Controllers
                                      p.PersonTenureType == PersonTenureType.Tenant)?.Id ?? Guid.Empty;
 
             if (personId == Guid.Empty)
-                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no household member as tenant or leaseholder for provided tenure."));
 
             Asset assetResponse = null;
             List<Charge> chargeResponse = null;
