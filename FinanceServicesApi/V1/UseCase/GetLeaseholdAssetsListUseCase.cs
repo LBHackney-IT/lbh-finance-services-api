@@ -57,11 +57,18 @@ namespace FinanceServicesApi.V1.UseCase
             var block = new ActionBlock<Asset>(
                     async x =>
                     {
+                        Guid? tenureId = null;
+
+                        if (Guid.TryParse(x.Tenure?.Id, out Guid result))
+                        {
+                            tenureId = result;
+                        }
+
                         var assetTotal = new PropertySearchResponse()
                         {
                             AssetId = x.Id,
                             Address = x.AssetAddress,
-                            TenureId = Guid.Parse(x.Tenure?.Id),
+                            TenureId = tenureId
                         };
 
                         var detailCharge = await _getChargeByAssetIdUseCase.ExecuteAsync(x.Id).ConfigureAwait(false);
