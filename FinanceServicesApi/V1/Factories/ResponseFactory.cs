@@ -48,8 +48,8 @@ namespace FinanceServicesApi.V1.Factories
                 TenureId = account?.Tenure?.TenureId,
 
                 HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount),
-                LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.LastOrDefault(p => p.PaidAmount > 0)?.PaidAmount ?? 0,
-                LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.LastOrDefault(p => p.PaidAmount > 0)?.TransactionDate,
+                LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.LastOrDefault(p => p.PaidAmount != 0)?.PaidAmount ?? 0,
+                LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.LastOrDefault(p => p.PaidAmount != 0)?.TransactionDate,
 
                 ServiceCharge = charges?.Count == 0 ? 0m : charges?.Sum(p =>
                     p.DetailedCharges?.Where(c =>

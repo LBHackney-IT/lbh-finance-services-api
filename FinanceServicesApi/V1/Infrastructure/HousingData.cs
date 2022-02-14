@@ -2,11 +2,13 @@ using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Threading.Tasks;
+using FinanceServicesApi.V1.Domain.AccountModels;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 
 namespace FinanceServicesApi.V1.Infrastructure
@@ -61,6 +63,7 @@ namespace FinanceServicesApi.V1.Infrastructure
                     return null;
                 throw new Exception($"Exception in receiving {typeof(T)}: {response.StatusCode.ToString()}");
             }
+
 
             var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
