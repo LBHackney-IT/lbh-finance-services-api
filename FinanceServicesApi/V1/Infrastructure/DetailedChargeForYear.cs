@@ -8,7 +8,7 @@ namespace FinanceServicesApi.V1.Infrastructure
     {
         public short Year { get; set; }
 
-        public ChargeSubGroup ChargeSubGroup { get; set; }
+        public ChargeSubGroup? ChargeSubGroup { get; set; }
 
         public string Type { get; set; }
 
@@ -18,7 +18,7 @@ namespace FinanceServicesApi.V1.Infrastructure
 
         public decimal Amount { get; set; }
 
-        public DetailedChargeForYear(DetailedCharges detailedCharges, short year, ChargeSubGroup chargeSubGroup)
+        public DetailedChargeForYear(DetailedCharges detailedCharges, short year, ChargeSubGroup? chargeSubGroup)
         {
             Year = year;
             ChargeSubGroup = chargeSubGroup;
