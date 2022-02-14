@@ -74,7 +74,7 @@ namespace FinanceServicesApi.V1.UseCase
                 .GroupBy(_ => _.SubType)
                 .Select(_ => new PropertyCostTotals
                 {
-                    ChargeGroup = _.Key,
+                    ChargeName = _.Key,
                     Totals = _yearsToIterate.Select(year => new ChargesTotalResponse()
                     {
                         Year = (short) year,
