@@ -83,6 +83,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
         public async Task GatewatReturnsChargesCalculateApportionmentFrom2019()
         {
             Guid assetId = Guid.NewGuid();
+            Asset asset = _fixture.Create<Asset>();
             List<Charge> charges = new List<Charge>()
             {
                 CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Estimate, ChargeType.Estate, "Estate Cleaning", 100),
@@ -133,6 +134,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             AssetApportionmentResponse expectedResponse = new AssetApportionmentResponse()
             {
                 AssetId = assetId,
+                AssetAddress = asset.AssetAddress,
                 EstateCosts = new List<PropertyCostTotals>
                 {
                     new PropertyCostTotals()
@@ -270,7 +272,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             _chargeUseCase.Setup(_ => _.ExecuteAsync(assetId))
                 .ReturnsAsync(charges);
             _assetGateway.Setup(_ => _.GetById(It.IsAny<Guid>()))
-                    .ReturnsAsync(_fixture.Create<Asset>());
+                    .ReturnsAsync(asset);
 
             var actualResponse = await _sut.ExecuteAsync(assetId, (short) (DateTime.Now.Year - 3)).ConfigureAwait(false);
 
