@@ -27,7 +27,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
         {
             _chargeUseCase = new Mock<IGetChargeByAssetIdUseCase>();
             _assetGateway = new Mock<IAssetGateway>();
-           _fixture = new Fixture();
+            _fixture = new Fixture();
 
             _sut = new GetAssetApportionmentUseCase(_chargeUseCase.Object, _assetGateway.Object);
         }
@@ -241,7 +241,6 @@ namespace FinanceServicesApi.Tests.V1.UseCase
                     //    }
                     //}
                 },
-                
                 PropertyCosts = new List<PropertyCostTotals>
                 {
                     new PropertyCostTotals
