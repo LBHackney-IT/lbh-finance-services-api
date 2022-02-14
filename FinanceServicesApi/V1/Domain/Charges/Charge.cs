@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
 using FinanceServicesApi.V1.Infrastructure.Enums;
 
 namespace FinanceServicesApi.V1.Domain.Charges
