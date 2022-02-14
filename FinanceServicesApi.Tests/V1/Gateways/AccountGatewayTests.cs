@@ -13,6 +13,7 @@ using Moq;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FinanceServicesApi.V1.Boundary.Responses;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Gateways
@@ -22,6 +23,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         private readonly Mock<IDynamoDBContext> _dynamoDbContext;
         private readonly Mock<IAmazonDynamoDB> _amazonDynamoDb;
         private readonly Mock<IHousingData<Account>> _housingData;
+        private readonly Mock<IHousingData<GetAccountListResponse>> _housingDataList;
         private readonly Fixture _fixture;
         private AccountGateway _sut;
 
@@ -31,7 +33,8 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _dynamoDbContext = new Mock<IDynamoDBContext>();
             _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
             _housingData = new Mock<IHousingData<Account>>();
-            _sut = new AccountGateway(_dynamoDbContext.Object, _amazonDynamoDb.Object, _housingData.Object);
+            _housingDataList = new Mock<IHousingData<GetAccountListResponse>>();
+            _sut = new AccountGateway(_dynamoDbContext.Object, _amazonDynamoDb.Object, _housingData.Object, _housingDataList.Object);
         }
 
         /* [Fact]

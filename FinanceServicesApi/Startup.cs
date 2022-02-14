@@ -146,6 +146,7 @@ namespace FinanceServicesApi
             services.AddScoped<IGetEnvironmentVariables<Person>, GetPersonEnvironmentVariables>();
             services.AddScoped<IGetEnvironmentVariables<GetContactDetailsResponse>, GetContactEnvironmentVariables>();
             services.AddScoped<IGetEnvironmentVariables<Account>, GetAccountEnvironmentVariables>();
+            services.AddScoped<IGetEnvironmentVariables<GetAccountListResponse>, GetAccountsEnvironmentVariables>();
             services.AddScoped<IGetEnvironmentVariables<Transaction>, GetTransactionEnvironmentVariable>();
             services.AddScoped<IGetEnvironmentVariables<List<Transaction>>, GetTransactionsEnvironmentVariable>();
             services.AddScoped<IGetEnvironmentVariables<List<Charge>>, GetChargesEnvironmentVariables>();
@@ -158,9 +159,11 @@ namespace FinanceServicesApi
             services.AddScoped<IHousingData<List<Transaction>>, HousingData<List<Transaction>>>();
             services.AddScoped<IHousingData<Transaction>, HousingData<Transaction>>();
             services.AddScoped<IHousingData<Account>, HousingData<Account>>();
+            services.AddScoped<IHousingData<GetAccountListResponse>, HousingData<GetAccountListResponse>>();
 
             services.AddScoped<IGenerateUrl<TenureInformation>, TenureUrlGenerator>();
             services.AddScoped<IGenerateUrl<Account>, AccountUrlGenerator>();
+            services.AddScoped<IGenerateUrl<GetAccountListResponse>, AccountsUrlGenerator>();
             services.AddScoped<IGenerateUrl<Transaction>, TransactionUrlGenerator>();
             services.AddScoped<IGenerateUrl<List<Transaction>>, TransactionTargetIdUrlGenerator>();
             services.AddScoped<IGenerateUrl<Asset>, AssetUrlGenerator>();
