@@ -21,12 +21,12 @@ namespace FinanceServicesApi.V1.Controllers
         {
             _getLeaseholdAssetsListUseCase = getLeaseholdAssetsListUseCase;
         }
+
         /// <summary>
         /// LeaseholdProperty Search
         /// </summary>
         /// <param name="housingSearchRequest">Search Request</param>
         /// <returns>Property Summary</returns>
-
         [ProducesResponseType(typeof(GetPropertyListResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
