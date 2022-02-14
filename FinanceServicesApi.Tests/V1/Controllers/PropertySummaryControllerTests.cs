@@ -35,7 +35,7 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         private readonly Mock<IGetAccountByTargetIdUseCase> _mockAccountByTargetIdUseCase;
         private readonly Mock<IGetLastPaymentTransactionsByTargetIdUseCase> _mockLastPaymentTransactionsByTargetIdUseCase;
         private readonly Mock<IGetAssetByIdUseCase> _mockAssetByIdUseCase;
-        private readonly Mock<IGetAssetAppointmentUseCase> _mockGetAssetAppointmentUseCase;
+        private readonly Mock<IGetAssetApportionmentUseCase> _mockGetAssetApportionmentUseCase;
 
         public PropertySummaryControllerTests()
         {
@@ -47,7 +47,7 @@ namespace FinanceServicesApi.Tests.V1.Controllers
             _mockAccountByTargetIdUseCase = new Mock<IGetAccountByTargetIdUseCase>();
             _mockLastPaymentTransactionsByTargetIdUseCase = new Mock<IGetLastPaymentTransactionsByTargetIdUseCase>();
             _mockAssetByIdUseCase = new Mock<IGetAssetByIdUseCase>();
-            _mockGetAssetAppointmentUseCase = new Mock<IGetAssetAppointmentUseCase>();
+            _mockGetAssetApportionmentUseCase = new Mock<IGetAssetApportionmentUseCase>();
 
             _sutController = new PropertySummaryController(_mockPerson.Object,
                 _mockChargeUseCase.Object,
@@ -56,7 +56,7 @@ namespace FinanceServicesApi.Tests.V1.Controllers
                 _mockAccountByTargetIdUseCase.Object,
                 _mockLastPaymentTransactionsByTargetIdUseCase.Object,
                 _mockAssetByIdUseCase.Object,
-                _mockGetAssetAppointmentUseCase.Object);
+                _mockGetAssetApportionmentUseCase.Object);
         }
 
         [Fact]
@@ -111,9 +111,9 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         [InlineData(-1)]
         [InlineData(1969)]
         [InlineData(2050)]
-        public async Task GetAssetAppointmentWithWrongYearShouldReturn400(short year)
+        public async Task GetAssetApportionmentWithWrongYearShouldReturn400(short year)
         {
-            var actualResult = await _sutController.GetAssetAppointment(Guid.NewGuid(), year).ConfigureAwait(false);
+            var actualResult = await _sutController.GetAssetApportionments(Guid.NewGuid(), year).ConfigureAwait(false);
 
             actualResult.Should().NotBeNull();
             actualResult.Should().BeOfType<BadRequestObjectResult>();
@@ -127,9 +127,9 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         }
 
         [Fact]
-        public async Task GetAssetAppointmentWithWrongAssetIdShouldReturn400()
+        public async Task GetAssetApportionmentWithWrongAssetIdShouldReturn400()
         {
-            var actualResult = await _sutController.GetAssetAppointment(Guid.Empty, 2022).ConfigureAwait(false);
+            var actualResult = await _sutController.GetAssetApportionments(Guid.Empty, 2022).ConfigureAwait(false);
 
             actualResult.Should().NotBeNull();
             actualResult.Should().BeOfType<BadRequestObjectResult>();
@@ -143,20 +143,20 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         }
 
         [Fact]
-        public async Task GetAssetAppointmentCallsUseCaseReturnsResponse()
+        public async Task GetAssetApportionmentCallsUseCaseReturnsResponse()
         {
-            var expectedResponse = _fixture.Create<AssetAppointmentResponse>();
-            _mockGetAssetAppointmentUseCase.Setup(_ => _.ExecuteAsync(It.IsAny<Guid>(), It.IsAny<short>()))
+            var expectedResponse = _fixture.Create<AssetApportionmentResponse>();
+            _mockGetAssetApportionmentUseCase.Setup(_ => _.ExecuteAsync(It.IsAny<Guid>(), It.IsAny<short>()))
                 .ReturnsAsync(expectedResponse);
 
-            var actualResult = await _sutController.GetAssetAppointment(Guid.NewGuid(), 2022).ConfigureAwait(false);
+            var actualResult = await _sutController.GetAssetApportionments(Guid.NewGuid(), 2022).ConfigureAwait(false);
 
             actualResult.Should().NotBeNull();
             actualResult.Should().BeOfType<OkObjectResult>();
             var responseObject = actualResult as OkObjectResult;
             responseObject.Should().NotBeNull();
 
-            var actualResponse = responseObject?.Value as AssetAppointmentResponse;
+            var actualResponse = responseObject?.Value as AssetApportionmentResponse;
             actualResponse.Should().NotBeNull();
             actualResponse.Should().BeEquivalentTo(expectedResponse);
         }

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace FinanceServicesApi.V1.UseCase.Interfaces
 {
-    public interface IGetAssetAppointmentUseCase
+    public interface IGetAssetApportionmentUseCase
     {
-        Task<AssetAppointmentResponse> ExecuteAsync(Guid assetId, short stratPeriodYear);
+        Task<AssetApportionmentResponse> ExecuteAsync(Guid assetId, short stratPeriodYear);
     }
 }

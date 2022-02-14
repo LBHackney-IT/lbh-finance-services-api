@@ -13,19 +13,19 @@ using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.UseCase
 {
-    public class GetAssetAppointmentUseCaseTests
+    public class GetAssetApportionmentUseCaseTests
     {
         private Mock<IGetChargeByAssetIdUseCase> _chargeUseCase;
         private Fixture _fixture;
 
-        private GetAssetAppointmentUseCase _sut { get; set; }
+        private GetAssetApportionmentUseCase _sut { get; set; }
 
-        public GetAssetAppointmentUseCaseTests()
+        public GetAssetApportionmentUseCaseTests()
         {
             _chargeUseCase = new Mock<IGetChargeByAssetIdUseCase>();
             _fixture = new Fixture();
 
-            _sut = new GetAssetAppointmentUseCase(_chargeUseCase.Object);
+            _sut = new GetAssetApportionmentUseCase(_chargeUseCase.Object);
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
         }
 
         [Fact]
-        public async Task GatewatReturnsChargesCalculateAppointmentFrom2019()
+        public async Task GatewatReturnsChargesCalculateApportionmentFrom2019()
         {
             Guid assetId = Guid.NewGuid();
             List<Charge> charges = new List<Charge>()
@@ -120,7 +120,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
                 CreateCharge(DateTime.Now.Year, ChargeSubGroup.Actual, ChargeType.Property, "Management Fee", 50),
             };
 
-            AssetAppointmentResponse expectedResponse = new AssetAppointmentResponse()
+            AssetApportionmentResponse expectedResponse = new AssetApportionmentResponse()
             {
                 AssetId = assetId,
                 EstateCosts = new List<PropertyCostTotals>

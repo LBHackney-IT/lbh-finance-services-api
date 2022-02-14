@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 {
-    public class AssetAppointmentResponse
+    public class AssetApportionmentResponse
     {
         ///<example>007b989f-a188-e187-1b2d-f8cb44cb8450</example>
         public Guid AssetId { get; set; }

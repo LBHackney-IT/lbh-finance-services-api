@@ -29,7 +29,7 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetAccountByTargetIdUseCase _accountByTargetIdUseCase;
         private readonly IGetLastPaymentTransactionsByTargetIdUseCase _transactionUseCase;
         private readonly IGetAssetByIdUseCase _assetUseCase;
-        private readonly IGetAssetAppointmentUseCase _getAssetAppointmentUseCase;
+        private readonly IGetAssetApportionmentUseCase _getAssetApportionmentUseCase;
 
         public PropertySummaryController(IGetPersonByIdUseCase personUseCase
             , IGetChargeByAssetIdUseCase chargeUseCase
@@ -38,7 +38,7 @@ namespace FinanceServicesApi.V1.Controllers
             , IGetAccountByTargetIdUseCase accountByTargetIdUseCase
             , IGetLastPaymentTransactionsByTargetIdUseCase lastPaymentTransactionsByTargetIdUseCase
             , IGetAssetByIdUseCase assetByIdUseCase
-            , IGetAssetAppointmentUseCase getAssetAppointmentUseCase)
+            , IGetAssetApportionmentUseCase getAssetApportionmentUseCase)
         {
             _personUseCase = personUseCase;
             _chargeUseCase = chargeUseCase;
@@ -47,7 +47,7 @@ namespace FinanceServicesApi.V1.Controllers
             _accountByTargetIdUseCase = accountByTargetIdUseCase;
             _transactionUseCase = lastPaymentTransactionsByTargetIdUseCase;
             _assetUseCase = assetByIdUseCase;
-            _getAssetAppointmentUseCase = getAssetAppointmentUseCase;
+            _getAssetApportionmentUseCase = getAssetApportionmentUseCase;
         }
 
         /// <summary>
@@ -218,12 +218,12 @@ namespace FinanceServicesApi.V1.Controllers
         /// <param name="assetId"></param>
         /// <param name="fromYear">Start year for totals sequense. Will be returned result for period from provided year until currect one. Should be more that 1970 ans less than currect year</param>
         /// <returns></returns>
-        [ProducesResponseType(typeof(AssetAppointmentResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AssetApportionmentResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
-        [HttpGet("{assetId}/appointments")]
-        public async Task<IActionResult> GetAssetAppointment([FromRoute] Guid assetId, [FromQuery] short fromYear)
+        [HttpGet("{assetId}/apportionments")]
+        public async Task<IActionResult> GetAssetApportionments([FromRoute] Guid assetId, [FromQuery] short fromYear)
         {
             if (assetId == Guid.Empty)
             {
@@ -236,7 +236,7 @@ namespace FinanceServicesApi.V1.Controllers
                     $"{nameof(fromYear)} should be more that 1970 ans less than currect year"));
             }
 
-            var result = await _getAssetAppointmentUseCase.ExecuteAsync(assetId, fromYear).ConfigureAwait(false);
+            var result = await _getAssetApportionmentUseCase.ExecuteAsync(assetId, fromYear).ConfigureAwait(false);
 
             return Ok(result);
         }

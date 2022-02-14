@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace FinanceServicesApi.V1.UseCase
 {
-    public class GetAssetAppointmentUseCase : IGetAssetAppointmentUseCase
+    public class GetAssetApportionmentUseCase : IGetAssetApportionmentUseCase
     {
         private readonly IGetChargeByAssetIdUseCase _chargeUseCase;
         private List<short> _yearsToIterate;
 
-        public GetAssetAppointmentUseCase(IGetChargeByAssetIdUseCase chargeUseCase)
+        public GetAssetApportionmentUseCase(IGetChargeByAssetIdUseCase chargeUseCase)
         {
             _chargeUseCase = chargeUseCase;
         }
 
-        public async Task<AssetAppointmentResponse> ExecuteAsync(Guid assetId, short startPeriodYear)
+        public async Task<AssetApportionmentResponse> ExecuteAsync(Guid assetId, short startPeriodYear)
         {
             _yearsToIterate = Enumerable
                     .Range(startPeriodYear, DateTime.UtcNow.Year - startPeriodYear + 1)
@@ -37,20 +37,20 @@ namespace FinanceServicesApi.V1.UseCase
                 .SelectMany(c => c.DetailedCharges.Select(dc => new DetailedChargeForYear(dc, c.ChargeYear, c.ChargeSubGroup)))
                 .ToList();
 
-            var assetAppointment = new AssetAppointmentResponse();
-            assetAppointment.AssetId = assetId;
-            assetAppointment.PropertyCosts = GetCostsGroupTotals(charges, ChargeType.Property);
-            assetAppointment.PropertyCostTotal = GetCostsTotals(assetAppointment.PropertyCosts);
+            var assetApportionment = new AssetApportionmentResponse();
+            assetApportionment.AssetId = assetId;
+            assetApportionment.PropertyCosts = GetCostsGroupTotals(charges, ChargeType.Property);
+            assetApportionment.PropertyCostTotal = GetCostsTotals(assetApportionment.PropertyCosts);
 
-            assetAppointment.BlockName = "Marcon Court";
-            assetAppointment.BlockCosts = GetCostsGroupTotals(charges, ChargeType.Block);
-            assetAppointment.BlockCostTotal = GetCostsTotals(assetAppointment.BlockCosts);
+            assetApportionment.BlockName = "Marcon Court";
+            assetApportionment.BlockCosts = GetCostsGroupTotals(charges, ChargeType.Block);
+            assetApportionment.BlockCostTotal = GetCostsTotals(assetApportionment.BlockCosts);
 
-            assetAppointment.EstateName = "Estate 1";
-            assetAppointment.EstateCosts = GetCostsGroupTotals(charges, ChargeType.Estate);
-            assetAppointment.EstateCostTotal = GetCostsTotals(assetAppointment.EstateCosts);
+            assetApportionment.EstateName = "Estate 1";
+            assetApportionment.EstateCosts = GetCostsGroupTotals(charges, ChargeType.Estate);
+            assetApportionment.EstateCostTotal = GetCostsTotals(assetApportionment.EstateCosts);
 
-            return assetAppointment;
+            return assetApportionment;
         }
 
         private List<PropertyCostTotals> GetCostsGroupTotals(
