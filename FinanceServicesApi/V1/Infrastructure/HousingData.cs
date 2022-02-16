@@ -28,6 +28,14 @@ namespace FinanceServicesApi.V1.Infrastructure
             _client = client;
             _generateUrl = generateUrl;
             _contextAccessor = contextAccessor;
+
+            var apiToken = _contextAccessor.HttpContext?.Request?.Headers["Authorization"];
+            if (string.IsNullOrEmpty(apiToken))
+            {
+                throw new InvalidCredentialException("Api token shouldn't be null or empty.");
+            }
+
+            _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", apiToken));
         }
 
         /// <summary>
@@ -44,11 +52,6 @@ namespace FinanceServicesApi.V1.Infrastructure
             if (id == Guid.Empty)
                 throw new ArgumentException($"{nameof(id)} shouldn't be empty.");
 
-            var apiToken = _contextAccessor.HttpContext?.Request?.Headers["Authorization"];
-            if (string.IsNullOrEmpty(apiToken))
-                throw new InvalidCredentialException("Api token shouldn't be null or empty.");
-
-            _client.AddAuthorization(new AuthenticationHeaderValue("Bearer", apiToken));
             Uri uri = _generateUrl.Execute(id, searchBy);
 
             var response = await _client.GetAsync(uri).ConfigureAwait(false);

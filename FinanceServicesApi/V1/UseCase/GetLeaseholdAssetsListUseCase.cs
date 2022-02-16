@@ -7,7 +7,9 @@ using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Tenure.Domain;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,12 +21,15 @@ namespace FinanceServicesApi.V1.UseCase
     {
         private readonly IHousingSearchGateway _housingSearchGateway;
         private readonly IGetChargeByAssetIdUseCase _getChargeByAssetIdUseCase;
+        private readonly ILogger<GetLeaseholdAssetsListUseCase> _logger;
 
         public GetLeaseholdAssetsListUseCase(IHousingSearchGateway housingSearchGateway,
-            IGetChargeByAssetIdUseCase getChargeByAssetIdUseCase)
+            IGetChargeByAssetIdUseCase getChargeByAssetIdUseCase,
+            ILogger<GetLeaseholdAssetsListUseCase> logger)
         {
             _housingSearchGateway = housingSearchGateway;
             _getChargeByAssetIdUseCase = getChargeByAssetIdUseCase;
+            _logger = logger;
         }
 
         public async Task<GetPropertyListResponse> ExecuteAsync(LeaseholdAssetsRequest housingSearchRequest)
@@ -51,7 +56,7 @@ namespace FinanceServicesApi.V1.UseCase
 
             var data = leaseholdAssets.Skip((housingSearchRequest.Page - 1) * housingSearchRequest.PageSize).Take(housingSearchRequest.PageSize);
 
-            var assetTotals = new List<PropertySearchResponse>();
+            var assetTotals = new ConcurrentBag<PropertySearchResponse>();
 
             var degree = Convert.ToInt32(Math.Ceiling(Environment.ProcessorCount * 0.75 * 2.0));
             var block = new ActionBlock<Asset>(
@@ -71,19 +76,26 @@ namespace FinanceServicesApi.V1.UseCase
                             TenureId = tenureId
                         };
 
-                        var detailCharge = await _getChargeByAssetIdUseCase.ExecuteAsync(x.Id).ConfigureAwait(false);
-
-                        if (detailCharge != null)
+                        try
                         {
-                            var leaseholdCharges = detailCharge.Where(_ => _.ChargeGroup == ChargeGroup.Leaseholders);
+                            List<Charge> detailCharge = await _getChargeByAssetIdUseCase.ExecuteAsync(x.Id).ConfigureAwait(false);
 
-                            for (var year = housingSearchRequest.FromYear; year <= DateTime.Now.Year; year++)
+                            if (detailCharge != null)
                             {
-                                assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, year));
-                            }
-                        }
+                                var leaseholdCharges = detailCharge.Where(_ => _.ChargeGroup == ChargeGroup.Leaseholders);
 
-                        assetTotals.Add(assetTotal);
+                                for (var year = housingSearchRequest.FromYear; year <= DateTime.Now.Year; year++)
+                                {
+                                    assetTotal.Totals.Add(CalculateTotal(leaseholdCharges, year));
+                                }
+                            }
+
+                            assetTotals.Add(assetTotal);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError("There is an error loading charges from ChargesAPI. Exception message " + ex.Message);
+                        }
                     },
                     new ExecutionDataflowBlockOptions
                     {
@@ -101,7 +113,7 @@ namespace FinanceServicesApi.V1.UseCase
             return new GetPropertyListResponse
             {
                 Total = leaseholdAssets.Count,
-                Assets = assetTotals
+                Assets = assetTotals.ToList()
             };
         }
 
