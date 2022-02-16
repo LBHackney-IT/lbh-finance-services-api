@@ -155,20 +155,5 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             var exception = Assert.ThrowsAsync<Exception>(func);
             exception.Result.Message.Should().Contain(HttpStatusCode.Unauthorized.ToString());
         }
-
-        public virtual void DownloadAsyncWithoutApiTokenThrowsInvalidCredentialException()
-        {
-            // Arrange
-            Guid id = Guid.NewGuid();
-            HttpResponseMessage responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-            _context.SetupGet(x => x.HttpContext).Returns((HttpContext) null);
-
-            // Act
-            Func<Task<T>> func = async () => await _sutHousingData.DownloadAsync(id).ConfigureAwait(false);
-
-            // Assert
-            var exception = Assert.ThrowsAsync<InvalidCredentialException>(func);
-            exception.Result.Should().BeOfType<InvalidCredentialException>();
-        }
     }
 }
