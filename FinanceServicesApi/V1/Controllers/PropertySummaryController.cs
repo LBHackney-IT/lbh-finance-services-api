@@ -141,9 +141,7 @@ namespace FinanceServicesApi.V1.Controllers
 
             var tenureInformation = await _tenureUseCase.ExecuteAsync(id).ConfigureAwait(false);
 
-            var personId = tenureInformation?.HouseholdMembers?
-                .FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Leaseholder ||
-                                     p.PersonTenureType == PersonTenureType.Tenant)?.Id ?? Guid.Empty;
+            var personId = tenureInformation?.HouseholdMembers?.FirstOrDefault(p => p.IsResponsible)?.Id ?? Guid.Empty;
 
             if (personId == Guid.Empty)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided person"));
