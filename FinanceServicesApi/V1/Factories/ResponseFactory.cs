@@ -208,6 +208,8 @@ namespace FinanceServicesApi.V1.Factories
                 c.Type.ToLower() == "service" &&
                 c.Frequency.ToLower() == "weekly").Sum(s => s.Amount);
 
+            var lastYear = chargesList.Max(r => r.EndDate).Year;
+
             return new PropertyDetailsResponse()
             {
                 Bedrooms = asset.AssetCharacteristics.NumberOfBedrooms,
@@ -215,12 +217,14 @@ namespace FinanceServicesApi.V1.Factories
                 PropertyValue = chargesList?.FirstOrDefault(c => c.Type.ToLower() == "valuation")?.Amount,
                 RentModel = null,
                 The1999Value = chargesList?.FirstOrDefault(c => c.Type.ToLower().Contains("1999"))?.Amount,
-                ExtraCharges = chargesList.ToList().Where(w => w.Type.ToLower() != "valuation" && w.Type.ToLower() != "rent" &&
-                                                              !w.Type.ToLower().Contains("1999")).Select(p => new ExtraCharge
-                                                              {
-                                                                  Name = p.SubType,
-                                                                  Value = p.Amount
-                                                              }).ToList(),
+                ExtraCharges = chargesList.ToList().Where(w => w.Type.ToLower() != "valuation"
+                                                               && w.Type.ToLower() != "rent"
+                                                               && w.EndDate.Year == lastYear
+                                                               && !w.Type.ToLower().Contains("1999")).Select(p => new ExtraCharge
+                                                               {
+                                                                   Name = p.SubType,
+                                                                   Value = p.Amount
+                                                               }).ToList(),
                 WeeklyCharge = weeklyCharges,
                 YearlyCharge = weeklyCharges * 52
             };
