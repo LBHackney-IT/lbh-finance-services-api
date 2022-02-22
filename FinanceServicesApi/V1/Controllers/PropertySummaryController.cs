@@ -84,9 +84,7 @@ namespace FinanceServicesApi.V1.Controllers
             var transactionResponse = transactionResponseTask.Result;
             var tenureInformationResponse = tenureInformationResponseTask.Result;
 
-            var personId = tenureInformationResponse?.HouseholdMembers
-                .FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Leaseholder ||
-                                     p.PersonTenureType == PersonTenureType.Tenant)?.Id ?? Guid.Empty;
+            var personId = tenureInformationResponse?.HouseholdMembers.FirstOrDefault(p => p.IsResponsible)?.Id ?? Guid.Empty;
 
             if (personId == Guid.Empty)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no household member as tenant or leaseholder for provided tenure."));
