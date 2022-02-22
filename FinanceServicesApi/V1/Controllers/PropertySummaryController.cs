@@ -87,7 +87,7 @@ namespace FinanceServicesApi.V1.Controllers
             var personId = tenureInformationResponse?.HouseholdMembers.FirstOrDefault(p => p.IsResponsible)?.Id ?? Guid.Empty;
 
             if (personId == Guid.Empty)
-                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no household member as tenant or leaseholder for provided tenure."));
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no responsible household member for provided tenure."));
 
             Asset assetResponse = null;
             List<Charge> chargeResponse = null;
