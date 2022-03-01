@@ -16,12 +16,14 @@ namespace FinanceServicesApi.V1.Controllers
     {
         private readonly IGetAccountByIdUseCase _getAccountByIdUseCase;
         private readonly IGetTransactionByIdUseCase _getTransactionByIdUseCase;
+        private readonly IGetAccountByTargetIdUseCase _getAccountByTargetIdUseCase;
 
 
-        public SuspenseAccountController(IGetAccountByIdUseCase getAccountByIdUseCase, IGetTransactionByIdUseCase getTransactionByIdUseCase)
+        public SuspenseAccountController(IGetAccountByIdUseCase getAccountByIdUseCase, IGetTransactionByIdUseCase getTransactionByIdUseCase, IGetAccountByTargetIdUseCase getAccountByTargetIdUseCase)
         {
             _getAccountByIdUseCase = getAccountByIdUseCase;
             _getTransactionByIdUseCase = getTransactionByIdUseCase;
+            _getAccountByTargetIdUseCase = getAccountByTargetIdUseCase;
         }
 
         [ProducesResponseType(typeof(ConfirmTransferResponse), StatusCodes.Status200OK)]
@@ -29,12 +31,12 @@ namespace FinanceServicesApi.V1.Controllers
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet]
-        public async Task<IActionResult> GetById([FromQuery] Guid transactionId, [FromQuery] Guid accountId)
+        public async Task<IActionResult> GetById([FromQuery] Guid transactionId, [FromQuery] Guid tenueId)
         {
-            if (transactionId == Guid.Empty || accountId == Guid.Empty)
-                throw new ArgumentException($"The {nameof(accountId).ToString()} or {nameof(transactionId).ToString()} shouldn't be empty!");
+            if (transactionId == Guid.Empty || tenueId == Guid.Empty)
+                throw new ArgumentException($"The {nameof(tenueId).ToString()} or {nameof(transactionId).ToString()} shouldn't be empty!");
 
-            var accountResponse = await _getAccountByIdUseCase.ExecuteAsync(accountId).ConfigureAwait(false);
+            var accountResponse = await _getAccountByTargetIdUseCase.ExecuteAsync(tenueId).ConfigureAwait(false);
             if (accountResponse == null)
             {
                 return NotFound(new BaseErrorResponse((int) StatusCodes.Status404NotFound,

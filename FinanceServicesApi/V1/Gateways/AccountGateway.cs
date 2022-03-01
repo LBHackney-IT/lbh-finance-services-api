@@ -18,11 +18,11 @@ namespace FinanceServicesApi.V1.Gateways
     {
         private readonly IDynamoDBContext _dynamoDbContext;
         private readonly IAmazonDynamoDB _amazonDynamoDb;
-        private readonly IHousingData<Account> _housingData;
-        private readonly IHousingData<GetAccountListResponse> _housingDataList;
+        private readonly IFinanceDomainApiData<Account> _housingData;
+        private readonly IFinanceDomainApiData<GetAccountListResponse> _housingDataList;
 
         [ExcludeFromCodeCoverage]
-        public AccountGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb, IHousingData<Account> housingData, IHousingData<GetAccountListResponse> housingDataList)
+        public AccountGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb, IFinanceDomainApiData<Account> housingData, IFinanceDomainApiData<GetAccountListResponse> housingDataList)
         {
             _dynamoDbContext = dynamoDbContext;
             _amazonDynamoDb = amazonDynamoDb;
@@ -49,26 +49,6 @@ namespace FinanceServicesApi.V1.Gateways
             if (result?.AccountResponseList == null || result.AccountResponseList.Count == 0)
                 return null;
             return result.AccountResponseList[0];
-
-            #region To be Deleted
-
-            /*QueryRequest request = new QueryRequest
-            {
-                TableName = "Accounts",
-                IndexName = "target_id_dx",
-                KeyConditionExpression = "target_id = :V_target_id",
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-                {
-                    {":V_target_id",new AttributeValue{S = targetId.ToString()}}
-                },
-                ScanIndexForward = true
-            };
-
-            var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
-
-            return response?.ToAccount();*/
-
-            #endregion
         }
     }
 }

@@ -26,7 +26,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         private readonly Mock<IHttpContextAccessor> _context;
 
         private readonly Mock<IGenerateUrl<T>> _generateUrl;
-        private readonly HousingData<T> _sutHousingData;
+        private readonly FinanceDomainApiData<T> _sutHousingData;
 
         protected HousingDataTests()
         {
@@ -40,7 +40,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             _httpContext.Request.Headers["Authorization"] = token.ToString();
             _context.Setup(_ => _.HttpContext).Returns(_httpContext);
 
-            _sutHousingData = new HousingData<T>(_client.Object, _generateUrl.Object, _context.Object);
+            _sutHousingData = new FinanceDomainApiData<T>(_client.Object, _generateUrl.Object, _context.Object);
         }
 
         public virtual void DownloadAsyncWithEmptyIdThrowsArgumentException()

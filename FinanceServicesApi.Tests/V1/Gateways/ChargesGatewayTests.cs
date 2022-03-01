@@ -17,7 +17,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
     [ExcludeFromCodeCoverage]
     public class ChargesGatewayTests
     {
-        private readonly Mock<IHousingData<List<Charge>>> _housingData;
+        private readonly Mock<IFinanceDomainApiData<List<Charge>>> _housingData;
         private readonly Mock<IAmazonDynamoDB> _amazonDynamoDb;
         private readonly Fixture _fixture;
         private ChargesGateway _sut;
@@ -25,7 +25,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
         public ChargesGatewayTests()
         {
             _fixture = new Fixture();
-            _housingData = new Mock<IHousingData<List<Charge>>>();
+            _housingData = new Mock<IFinanceDomainApiData<List<Charge>>>();
             _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
             _sut = new ChargesGateway(_amazonDynamoDb.Object, _housingData.Object);
         }

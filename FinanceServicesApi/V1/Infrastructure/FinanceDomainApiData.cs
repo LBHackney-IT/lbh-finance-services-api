@@ -1,19 +1,17 @@
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Threading.Tasks;
-using FinanceServicesApi.V1.Domain.AccountModels;
-using FinanceServicesApi.V1.Infrastructure.Enums;
 
 namespace FinanceServicesApi.V1.Infrastructure
 {
-    public class HousingData<T> : IHousingData<T>
+    public class FinanceDomainApiData<T> : IFinanceDomainApiData<T>
         where T : class
     {
         private readonly ICustomeHttpClient _client;
@@ -21,9 +19,9 @@ namespace FinanceServicesApi.V1.Infrastructure
         private readonly IHttpContextAccessor _contextAccessor;
 
         [ExcludeFromCodeCoverage]
-        public HousingData() { }
+        public FinanceDomainApiData() { }
 
-        public HousingData(ICustomeHttpClient client, IGenerateUrl<T> generateUrl, IHttpContextAccessor contextAccessor)
+        public FinanceDomainApiData(ICustomeHttpClient client, IGenerateUrl<T> generateUrl, IHttpContextAccessor contextAccessor)
         {
             _client = client;
             _generateUrl = generateUrl;
@@ -58,7 +56,7 @@ namespace FinanceServicesApi.V1.Infrastructure
 
             if (response == null)
             {
-                throw new Exception($"Housing API to get {typeof(T)} is not reachable.");
+                throw new Exception($"API to get {typeof(T)} is not reachable.");
             }
             else if (!response.IsSuccessStatusCode)
             {

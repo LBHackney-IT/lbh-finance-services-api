@@ -15,11 +15,11 @@ namespace FinanceServicesApi.V1.Gateways
         // We need to be able to uncomment it and debug the logic
 
         private readonly IAmazonDynamoDB _amazonDynamoDb;
-        private readonly IHousingData<List<Charge>> _housingData;
+        private readonly IFinanceDomainApiData<List<Charge>> _housingData;
 
         public ChargesGateway(
             IAmazonDynamoDB amazonDynamoDb,
-            IHousingData<List<Charge>> housingData)
+            IFinanceDomainApiData<List<Charge>> housingData)
         {
             _amazonDynamoDb = amazonDynamoDb;
             _housingData = housingData;

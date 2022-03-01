@@ -16,14 +16,14 @@ namespace FinanceServicesApi.Tests.V1.Gateways
     public class AssetGatewayTests
     {
         private readonly Fixture _fixture;
-        private readonly Mock<IHousingData<Asset>> _housingData;
+        private readonly Mock<IFinanceDomainApiData<Asset>> _housingData;
         private readonly AssetGateway _sutGateway;
 
 
         public AssetGatewayTests()
         {
             _fixture = new Fixture();
-            _housingData = new Mock<IHousingData<Asset>>();
+            _housingData = new Mock<IFinanceDomainApiData<Asset>>();
             _sutGateway = new AssetGateway(_housingData.Object);
         }
 

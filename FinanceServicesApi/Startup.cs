@@ -151,15 +151,15 @@ namespace FinanceServicesApi
             services.AddScoped<IGetEnvironmentVariables<List<Transaction>>, GetTransactionsEnvironmentVariable>();
             services.AddScoped<IGetEnvironmentVariables<List<Charge>>, GetChargesEnvironmentVariables>();
 
-            services.AddScoped<IHousingData<TenureInformation>, HousingData<TenureInformation>>();
-            services.AddScoped<IHousingData<Asset>, HousingData<Asset>>();
-            services.AddScoped<IHousingData<Person>, HousingData<Person>>();
-            services.AddScoped<IHousingData<GetContactDetailsResponse>, HousingData<GetContactDetailsResponse>>();
-            services.AddScoped<IHousingData<List<Charge>>, HousingData<List<Charge>>>();
-            services.AddScoped<IHousingData<List<Transaction>>, HousingData<List<Transaction>>>();
-            services.AddScoped<IHousingData<Transaction>, HousingData<Transaction>>();
-            services.AddScoped<IHousingData<Account>, HousingData<Account>>();
-            services.AddScoped<IHousingData<GetAccountListResponse>, HousingData<GetAccountListResponse>>();
+            services.AddScoped<IFinanceDomainApiData<TenureInformation>, FinanceDomainApiData<TenureInformation>>();
+            services.AddScoped<IFinanceDomainApiData<Asset>, FinanceDomainApiData<Asset>>();
+            services.AddScoped<IFinanceDomainApiData<Person>, FinanceDomainApiData<Person>>();
+            services.AddScoped<IFinanceDomainApiData<GetContactDetailsResponse>, FinanceDomainApiData<GetContactDetailsResponse>>();
+            services.AddScoped<IFinanceDomainApiData<List<Charge>>, FinanceDomainApiData<List<Charge>>>();
+            services.AddScoped<IFinanceDomainApiData<List<Transaction>>, FinanceDomainApiData<List<Transaction>>>();
+            services.AddScoped<IFinanceDomainApiData<Transaction>, FinanceDomainApiData<Transaction>>();
+            services.AddScoped<IFinanceDomainApiData<Account>, FinanceDomainApiData<Account>>();
+            services.AddScoped<IFinanceDomainApiData<GetAccountListResponse>, FinanceDomainApiData<GetAccountListResponse>>();
 
             services.AddScoped<IGenerateUrl<TenureInformation>, TenureUrlGenerator>();
             services.AddScoped<IGenerateUrl<Account>, AccountUrlGenerator>();
