@@ -14,14 +14,12 @@ namespace FinanceServicesApi.V1.Controllers
     [ApiVersion("1.0")]
     public class SuspenseAccountController : BaseController
     {
-        private readonly IGetAccountByIdUseCase _getAccountByIdUseCase;
         private readonly IGetTransactionByIdUseCase _getTransactionByIdUseCase;
         private readonly IGetAccountByTargetIdUseCase _getAccountByTargetIdUseCase;
 
 
-        public SuspenseAccountController(IGetAccountByIdUseCase getAccountByIdUseCase, IGetTransactionByIdUseCase getTransactionByIdUseCase, IGetAccountByTargetIdUseCase getAccountByTargetIdUseCase)
+        public SuspenseAccountController(IGetTransactionByIdUseCase getTransactionByIdUseCase, IGetAccountByTargetIdUseCase getAccountByTargetIdUseCase)
         {
-            _getAccountByIdUseCase = getAccountByIdUseCase;
             _getTransactionByIdUseCase = getTransactionByIdUseCase;
             _getAccountByTargetIdUseCase = getAccountByTargetIdUseCase;
         }
