@@ -20,7 +20,7 @@ namespace FinanceServicesApi.V1.Gateways
         private readonly IFinanceDomainApiData<GetAccountListResponse> _housingDataList;
 
         [ExcludeFromCodeCoverage]
-        public AccountGateway(IDynamoDBContext dynamoDbContext,IFinanceDomainApiData<GetAccountListResponse> housingDataList)
+        public AccountGateway(IDynamoDBContext dynamoDbContext, IFinanceDomainApiData<GetAccountListResponse> housingDataList)
         {
             _dynamoDbContext = dynamoDbContext;
             _housingDataList = housingDataList;

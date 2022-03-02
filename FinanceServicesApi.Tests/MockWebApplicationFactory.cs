@@ -19,7 +19,7 @@ namespace FinanceServicesApi.Tests
         {
             builder.ConfigureAppConfiguration(b => b.AddEnvironmentVariables())
                 .UseStartup<Startup>();
-           
+
         }
     }
 }
