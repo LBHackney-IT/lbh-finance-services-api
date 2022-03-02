@@ -34,7 +34,7 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
             _housingData = new Mock<IFinanceDomainApiData<Account>>();
             _housingDataList = new Mock<IFinanceDomainApiData<GetAccountListResponse>>();
-            _sut = new AccountGateway(_dynamoDbContext.Object, _amazonDynamoDb.Object, _housingData.Object, _housingDataList.Object);
+            _sut = new AccountGateway(_dynamoDbContext.Object, _housingDataList.Object);
         }
 
         /* [Fact]
