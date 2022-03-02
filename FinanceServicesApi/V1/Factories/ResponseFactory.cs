@@ -88,9 +88,9 @@ namespace FinanceServicesApi.V1.Factories
             List<Transaction> transactions,
             Asset asset)
         {
-            var firstMondayOfApril = new DateTime(DateTime.UtcNow.Year, 4, 1);
-            var financialYear = DateTime.UtcNow.Year + (DateTime.UtcNow > firstMondayOfApril ? 0 : -1);
-            var financialCurrentDate = new DateTime(financialYear, 1, 1);
+            var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
+            var firstMondayOfApril = new DateTime(financialYear, 4, 1);
+            var financialDate = new DateTime(financialYear, 1, 1);
             while (firstMondayOfApril.DayOfWeek != DayOfWeek.Monday)
             {
                 firstMondayOfApril = firstMondayOfApril.AddDays(1);
@@ -103,15 +103,16 @@ namespace FinanceServicesApi.V1.Factories
                     p.ChargedAmount - p.PaidAmount - p.HousingBenefitAmount) ?? 0;
             var wtc = charges?.Sum(p =>
                 p.DetailedCharges.Where(c =>
-                    c.EndDate >= financialCurrentDate &&
+                    c.EndDate >= financialDate &&
                     c.Type.ToLower() == "service" &&
                     c.Frequency.ToLower() == "weekly").Sum(c => c.Amount));
             var yrd = charges?.Sum(p =>
                 p.DetailedCharges.Where(c =>
-                    c.EndDate >= financialCurrentDate &&
+                    c.EndDate >= financialDate &&
                     c.Type.ToLower() == "rent" &&
                     c.Frequency.ToLower() == "weekly").Sum(c => c.Amount)) * 52;
             var pty = transactions?.Where(p => p.TransactionDate.Year >= financialYear).Sum(p => p.PaidAmount);
+
             return new PropertySummaryResponse
             {
                 CurrentBalance = account?.ConsolidatedBalance,
