@@ -23,8 +23,8 @@ namespace FinanceServicesApi.Tests.V1.Gateways
     {
         private readonly Mock<IDynamoDBContext> _dynamoDbContext;
         private readonly Mock<IAmazonDynamoDB> _amazonDynamoDb;
-        private readonly Mock<IHousingData<Transaction>> _housingSingleRecord;
-        private readonly Mock<IHousingData<List<Transaction>>> _housingMultipleRecords;
+        private readonly Mock<IFinanceDomainApiData<Transaction>> _housingSingleRecord;
+        private readonly Mock<IFinanceDomainApiData<List<Transaction>>> _housingMultipleRecords;
         private TransactionGateway _sutGateway;
         private readonly Fixture _fixture;
 
@@ -33,8 +33,8 @@ namespace FinanceServicesApi.Tests.V1.Gateways
             _fixture = new Fixture();
             _dynamoDbContext = new Mock<IDynamoDBContext>();
             _amazonDynamoDb = new Mock<IAmazonDynamoDB>();
-            _housingSingleRecord = new Mock<IHousingData<Transaction>>();
-            _housingMultipleRecords = new Mock<IHousingData<List<Transaction>>>();
+            _housingSingleRecord = new Mock<IFinanceDomainApiData<Transaction>>();
+            _housingMultipleRecords = new Mock<IFinanceDomainApiData<List<Transaction>>>();
             _sutGateway = new TransactionGateway(_amazonDynamoDb.Object,
                 _dynamoDbContext.Object,
                 _housingSingleRecord.Object,

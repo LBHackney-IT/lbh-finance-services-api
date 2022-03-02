@@ -15,13 +15,13 @@ namespace FinanceServicesApi.V1.Gateways
     {
         private readonly IAmazonDynamoDB _amazonDynamoDb;
         private readonly IDynamoDBContext _dynamoDbContext;
-        private readonly IHousingData<Transaction> _housingData;
-        private readonly IHousingData<List<Transaction>> _iHousingData;
+        private readonly IFinanceDomainApiData<Transaction> _housingData;
+        private readonly IFinanceDomainApiData<List<Transaction>> _iHousingData;
 
         public TransactionGateway(IAmazonDynamoDB amazonDynamoDb,
             IDynamoDBContext dynamoDbContext,
-            IHousingData<Transaction> housingData,
-            IHousingData<List<Transaction>> iHousingData)
+            IFinanceDomainApiData<Transaction> housingData,
+            IFinanceDomainApiData<List<Transaction>> iHousingData)
         {
             _amazonDynamoDb = amazonDynamoDb;
             _dynamoDbContext = dynamoDbContext;

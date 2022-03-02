@@ -8,9 +8,9 @@ namespace FinanceServicesApi.V1.Gateways
 {
     public class TenureInformationGateway : ITenureInformationGateway
     {
-        private readonly IHousingData<TenureInformation> _housingData;
+        private readonly IFinanceDomainApiData<TenureInformation> _housingData;
 
-        public TenureInformationGateway(IHousingData<TenureInformation> housingData)
+        public TenureInformationGateway(IFinanceDomainApiData<TenureInformation> housingData)
         {
             _housingData = housingData;
         }

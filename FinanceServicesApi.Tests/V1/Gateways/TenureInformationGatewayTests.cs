@@ -16,13 +16,13 @@ namespace FinanceServicesApi.Tests.V1.Gateways
     public class TenureInformationGatewayTests
     {
         private readonly Fixture _fixture;
-        private Mock<IHousingData<TenureInformation>> _housingData;
+        private Mock<IFinanceDomainApiData<TenureInformation>> _housingData;
         private TenureInformationGateway _sut;
 
         public TenureInformationGatewayTests()
         {
             _fixture = new Fixture();
-            _housingData = new Mock<IHousingData<TenureInformation>>();
+            _housingData = new Mock<IFinanceDomainApiData<TenureInformation>>();
             _sut = new TenureInformationGateway(_housingData.Object);
         }
 
