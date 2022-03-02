@@ -90,7 +90,7 @@ namespace FinanceServicesApi.V1.Factories
         {
             var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
             var firstMondayOfApril = new DateTime(financialYear, 4, 1);
-            var financialDate = new DateTime(financialYear, 1, 1);
+            var financialDate = new DateTime(financialYear, 4, 1);
             while (firstMondayOfApril.DayOfWeek != DayOfWeek.Monday)
             {
                 firstMondayOfApril = firstMondayOfApril.AddDays(1);
