@@ -17,23 +17,19 @@ namespace FinanceServicesApi.V1.Gateways
     public class AccountGateway : IAccountGateway
     {
         private readonly IDynamoDBContext _dynamoDbContext;
-        private readonly IAmazonDynamoDB _amazonDynamoDb;
-        private readonly IFinanceDomainApiData<Account> _housingData;
         private readonly IFinanceDomainApiData<GetAccountListResponse> _housingDataList;
 
         [ExcludeFromCodeCoverage]
-        public AccountGateway(IDynamoDBContext dynamoDbContext, IAmazonDynamoDB amazonDynamoDb, IFinanceDomainApiData<Account> housingData, IFinanceDomainApiData<GetAccountListResponse> housingDataList)
+        public AccountGateway(IDynamoDBContext dynamoDbContext,IFinanceDomainApiData<GetAccountListResponse> housingDataList)
         {
             _dynamoDbContext = dynamoDbContext;
-            _amazonDynamoDb = amazonDynamoDb;
-            _housingData = housingData;
             _housingDataList = housingDataList;
         }
 
         public async Task<Account> GetById(Guid id)
         {
             if (id == Guid.Empty)
-                throw new ArgumentException($"{nameof(id).ToString()} shouldn't be empty.");
+                throw new ArgumentException($"{nameof(id)} shouldn't be empty.");
 
             var result = await _dynamoDbContext.LoadAsync<AccountDbEntity>(id).ConfigureAwait(false);
 
@@ -43,7 +39,7 @@ namespace FinanceServicesApi.V1.Gateways
         public async Task<Account> GetByTargetId(Guid targetId)
         {
             if (targetId == Guid.Empty)
-                throw new ArgumentException($"{nameof(targetId).ToString()} shouldn't be empty.");
+                throw new ArgumentException($"{nameof(targetId)} shouldn't be empty.");
             var result = await _housingDataList.DownloadAsync(targetId, SearchBy.ByTargetId).ConfigureAwait(false);
 
             if (result?.AccountResponseList == null || result.AccountResponseList.Count == 0)

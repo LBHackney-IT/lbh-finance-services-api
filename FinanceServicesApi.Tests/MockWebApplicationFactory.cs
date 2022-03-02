@@ -19,18 +19,7 @@ namespace FinanceServicesApi.Tests
         {
             builder.ConfigureAppConfiguration(b => b.AddEnvironmentVariables())
                 .UseStartup<Startup>();
-            /*builder.ConfigureServices(services =>
-            {
-                var dbBuilder = new DbContextOptionsBuilder();
-                dbBuilder.UseNpgsql(_connection);
-                var context = new DatabaseContext(dbBuilder.Options);
-                services.AddSingleton(context);
-
-                var serviceProvider = services.BuildServiceProvider();
-                var dbContext = serviceProvider.GetRequiredService<DatabaseContext>();
-
-                dbContext.Database.EnsureCreated();
-            });*/
+           
         }
     }
 }

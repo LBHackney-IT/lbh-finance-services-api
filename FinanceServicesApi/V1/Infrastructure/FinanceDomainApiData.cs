@@ -62,7 +62,7 @@ namespace FinanceServicesApi.V1.Infrastructure
             {
                 if (response.StatusCode == HttpStatusCode.NotFound)
                     return null;
-                throw new Exception($"Exception in receiving {typeof(T)}: {response.StatusCode.ToString()}");
+                throw new Exception($"Exception in receiving {typeof(T)}: {response.StatusCode}");
             }
 
 

@@ -58,6 +58,19 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         }*/
 
         [Fact]
+        public async Task GetAccountByTargetIdWithNullResponseThrowsBadRequest()
+        {
+            Account accountResponse = _fixture.Build<Account>()
+                .Without(p => p.CreatedBy)
+                .Create();
+            _getAccountByTargetIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                .ReturnsAsync((Account) null);
+
+            var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
+            result.Should().BeOfType(typeof(NotFoundObjectResult));
+        }
+
+        [Fact]
         public async Task GetAccountByIdWithNullResponseThrowsBadRequest()
         {
             Account accountResponse = _fixture.Build<Account>()
