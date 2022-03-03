@@ -102,11 +102,13 @@ namespace FinanceServicesApi.V1.Factories
                     p.ChargedAmount - p.PaidAmount - p.HousingBenefitAmount) ?? 0;
             var wtc = charges?.Sum(p =>
                 p.DetailedCharges.Where(c =>
+                    c.StartDate <= DateTime.UtcNow &&
                     c.EndDate >= firstMondayOfApril &&
                     c.Type.ToLower() == "service" &&
                     c.Frequency.ToLower() == "weekly").Sum(c => c.Amount));
             var yrd = charges?.Sum(p =>
                 p.DetailedCharges.Where(c =>
+                    c.StartDate <= DateTime.UtcNow &&
                     c.EndDate >= firstMondayOfApril &&
                     c.Type.ToLower() == "rent" &&
                     c.Frequency.ToLower() == "weekly").Sum(c => c.Amount)) * 52;
