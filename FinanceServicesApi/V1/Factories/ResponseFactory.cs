@@ -112,7 +112,7 @@ namespace FinanceServicesApi.V1.Factories
                     c.EndDate >= firstMondayOfApril &&
                     c.Type.ToLower() == "rent" &&
                     c.Frequency.ToLower() == "weekly").Sum(c => c.Amount)) * 52;
-            var pty = transactions?.Where(p => p.TransactionDate.Year >= financialYear).Sum(p => p.PaidAmount);
+            var pty = transactions?.Where(p => p.TransactionDate >= firstMondayOfApril).Sum(p => p.PaidAmount);
 
             return new PropertySummaryResponse
             {
