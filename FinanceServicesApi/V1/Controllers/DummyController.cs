@@ -171,7 +171,7 @@ namespace FinanceServicesApi.V1.Controllers
                     },
                     EndDate = null,
                     EndReasonCode = null,
-                    Id = Guid.NewGuid(),
+                    /*Id = Guid.NewGuid(),*/
                     ParentAccountId = Guid.Empty,
                     RentGroupType = (RentGroupType) ((short) _generator.Next(1, (int) Enum.GetValues(typeof(RentGroupType)).Cast<RentGroupType>().Max())),
                     StartDate = RandomDay(),

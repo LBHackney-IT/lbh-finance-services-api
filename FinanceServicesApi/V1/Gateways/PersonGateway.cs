@@ -8,9 +8,9 @@ namespace FinanceServicesApi.V1.Gateways
 {
     public class PersonGateway : IPersonGateway
     {
-        private readonly IHousingData<Person> _housingData;
+        private readonly IFinanceDomainApiData<Person> _housingData;
 
-        public PersonGateway(IHousingData<Person> housingData)
+        public PersonGateway(IFinanceDomainApiData<Person> housingData)
         {
             _housingData = housingData;
         }

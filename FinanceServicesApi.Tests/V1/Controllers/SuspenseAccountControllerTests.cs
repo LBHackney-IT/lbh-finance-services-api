@@ -1,14 +1,13 @@
-using System;
-using System.Threading.Tasks;
 using AutoFixture;
 using FinanceServicesApi.Tests.V1.Helper;
 using FinanceServicesApi.V1.Controllers;
 using FinanceServicesApi.V1.Domain.AccountModels;
-using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FinanceServicesApi.Tests.V1.Controllers
@@ -16,16 +15,16 @@ namespace FinanceServicesApi.Tests.V1.Controllers
     public class SuspenseAccountControllerTests
     {
         private readonly Fixture _fixture;
-        private readonly Mock<IGetAccountByIdUseCase> _getAccountByIdUseCase;
+        private readonly Mock<IGetAccountByTargetIdUseCase> _getAccountByTargetIdUseCase;
         private readonly Mock<IGetTransactionByIdUseCase> _getTransactionByIdUseCase;
         private readonly SuspenseAccountController _sut;
 
         public SuspenseAccountControllerTests()
         {
             _fixture = new Fixture();
-            _getAccountByIdUseCase = new Mock<IGetAccountByIdUseCase>();
+            _getAccountByTargetIdUseCase = new Mock<IGetAccountByTargetIdUseCase>();
             _getTransactionByIdUseCase = new Mock<IGetTransactionByIdUseCase>();
-            _sut = new SuspenseAccountController(_getAccountByIdUseCase.Object, _getTransactionByIdUseCase.Object);
+            _sut = new SuspenseAccountController(_getTransactionByIdUseCase.Object, _getAccountByTargetIdUseCase.Object);
 
             /*var objectValidator = new Mock<IObjectModelValidator>();
             objectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
@@ -59,12 +58,25 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         }*/
 
         [Fact]
+        public async Task GetAccountByTargetIdWithNullResponseThrowsBadRequest()
+        {
+            Account accountResponse = _fixture.Build<Account>()
+                .Without(p => p.CreatedBy)
+                .Create();
+            _getAccountByTargetIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+                .ReturnsAsync((Account) null);
+
+            var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);
+            result.Should().BeOfType(typeof(NotFoundObjectResult));
+        }
+
+        [Fact]
         public async Task GetAccountByIdWithNullResponseThrowsBadRequest()
         {
             Account accountResponse = _fixture.Build<Account>()
                 .Without(p => p.CreatedBy)
                 .Create();
-            _getAccountByIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
+            _getAccountByTargetIdUseCase.Setup(p => p.ExecuteAsync(It.IsAny<Guid>()))
                 .ReturnsAsync((Account) null);
 
             var result = await _sut.GetById(Guid.NewGuid(), Guid.NewGuid()).ConfigureAwait(false);

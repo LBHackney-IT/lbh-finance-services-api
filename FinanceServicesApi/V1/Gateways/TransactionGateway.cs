@@ -1,18 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.Model;
 using FinanceServicesApi.V1.Boundary.Request;
 using FinanceServicesApi.V1.Domain.TransactionModels;
-using FinanceServicesApi.V1.Factories;
 using FinanceServicesApi.V1.Gateways.Interfaces;
-using FinanceServicesApi.V1.Infrastructure;
-using FinanceServicesApi.V1.Infrastructure.Entities;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
-using Newtonsoft.Json;
 
 namespace FinanceServicesApi.V1.Gateways
 {
@@ -20,16 +15,27 @@ namespace FinanceServicesApi.V1.Gateways
     {
         private readonly IAmazonDynamoDB _amazonDynamoDb;
         private readonly IDynamoDBContext _dynamoDbContext;
+        private readonly IFinanceDomainApiData<Transaction> _housingData;
+        private readonly IFinanceDomainApiData<List<Transaction>> _iHousingData;
 
-        public TransactionGateway(IAmazonDynamoDB amazonDynamoDb, IDynamoDBContext dynamoDbContext)
+        public TransactionGateway(IAmazonDynamoDB amazonDynamoDb,
+            IDynamoDBContext dynamoDbContext,
+            IFinanceDomainApiData<Transaction> housingData,
+            IFinanceDomainApiData<List<Transaction>> iHousingData)
         {
             _amazonDynamoDb = amazonDynamoDb;
             _dynamoDbContext = dynamoDbContext;
+            _housingData = housingData;
+            _iHousingData = iHousingData;
         }
 
         public async Task<Transaction> GetById(Guid id)
         {
             if (id == Guid.Empty)
+                throw new ArgumentException($"{nameof(id).ToString()} shouldn't be empty.");
+
+            return await _housingData.DownloadAsync(id).ConfigureAwait(false);
+            /*if (id == Guid.Empty)
                 throw new ArgumentException($"{nameof(id).ToString()} shouldn't be empty.");
 
             var response = await _dynamoDbContext.LoadAsync<TransactionDbEntity>(Guid.Empty, id).ConfigureAwait(false);
@@ -39,12 +45,17 @@ namespace FinanceServicesApi.V1.Gateways
                 throw new Exception("The transaction api is not reachable!");
             }
 
-            return response.ToDomain();
+            return response.ToDomain();*/
         }
 
         public async Task<List<Transaction>> GetByTargetId(TransactionsRequest transactionsRequest)
         {
-            if (transactionsRequest.TargetId == Guid.Empty)
+            if (transactionsRequest == null || transactionsRequest.TargetId == Guid.Empty)
+                throw new ArgumentException($"{nameof(transactionsRequest.TargetId).ToString()} shouldn't be empty.");
+
+            return await _iHousingData.DownloadAsync(transactionsRequest.TargetId, SearchBy.ByTargetId).ConfigureAwait(false);
+
+            /*if (transactionsRequest.TargetId == Guid.Empty)
                 throw new ArgumentException($"{nameof(transactionsRequest.TargetId).ToString()} shouldn't be empty.");
 
             QueryRequest request = new QueryRequest
@@ -59,9 +70,7 @@ namespace FinanceServicesApi.V1.Gateways
             };
 
             var response = await _amazonDynamoDb.QueryAsync(request).ConfigureAwait(false);
-            List<Transaction> data = response?.ToTransactions();
-
-            return data;
+            return response?.ToTransactions();*/
         }
     }
 }

@@ -30,6 +30,8 @@ namespace FinanceServicesApi.Tests.V1.Helper
                         { "target_id", new AttributeValue { S = _fixture.Create<Guid>().ToString() } },
                         { "target_type", new AttributeValue { S = _fixture.Create<TargetType>().ToString() } },
                         { "charge_group", new AttributeValue { S = _fixture.Create<ChargeGroup>().ToString() } },
+                        { "charge_sub_group", new AttributeValue { S = _fixture.Create<ChargeSubGroup>().ToString() } },
+                        { "charge_year", new AttributeValue { S = _fixture.Create<short>().ToString() } },
                         { "created_by", new AttributeValue { S = _fixture.Create<string>() } },
                         { "last_updated_by", new AttributeValue { S = _fixture.Create<string>() } },
                         { "created_date", new AttributeValue { S = _fixture.Create<DateTime>().ToString("F") } },

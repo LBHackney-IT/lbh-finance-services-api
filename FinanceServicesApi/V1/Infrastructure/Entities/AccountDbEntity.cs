@@ -14,6 +14,9 @@ namespace FinanceServicesApi.V1.Infrastructure.Entities
         [DynamoDBProperty(AttributeName = "id")]
         public Guid Id { get; set; }
 
+        [DynamoDBProperty(AttributeName = "target_id")]
+        public Guid TargetId { get; set; }
+
         [DynamoDBProperty(AttributeName = "parent_account_id")]
         public Guid ParentAccountId { get; set; }
 
@@ -25,9 +28,6 @@ namespace FinanceServicesApi.V1.Infrastructure.Entities
 
         [DynamoDBProperty(AttributeName = "target_type", Converter = typeof(DynamoDbEnumConverter<TargetType>))]
         public TargetType TargetType { get; set; }
-
-        [DynamoDBProperty(AttributeName = "target_id")]
-        public Guid TargetId { get; set; }
 
         [DynamoDBProperty(AttributeName = "account_type", Converter = typeof(DynamoDbEnumConverter<AccountType>))]
         public AccountType AccountType { get; set; }

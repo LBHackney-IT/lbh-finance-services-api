@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
@@ -46,7 +45,6 @@ namespace FinanceServicesApi.V1.Controllers
             _transactionUseCase = lastPaymentTransactionsByTargetIdUseCase;
             _assetUseCase = assetByIdUseCase;
         }
-
 
         /// <summary>
         /// 

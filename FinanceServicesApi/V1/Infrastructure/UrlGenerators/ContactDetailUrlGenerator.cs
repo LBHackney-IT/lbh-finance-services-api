@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
 using FinanceServicesApi.V1.Boundary.Responses;
-using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
+using System;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 
-namespace FinanceServicesApi.V1.Infrastructure
+namespace FinanceServicesApi.V1.Infrastructure.UrlGenerators
 {
     public class ContactDetailUrlGenerator : IGenerateUrl<GetContactDetailsResponse>
     {
@@ -14,7 +13,8 @@ namespace FinanceServicesApi.V1.Infrastructure
         {
             _getEnvironmentVariables = getEnvironmentVariables;
         }
-        public Uri Execute(Guid id)
+
+        public Uri Execute(Guid id, SearchBy searchBy = SearchBy.ById)
         {
             var url = _getEnvironmentVariables.GetUrl();
             return new Uri($"{url}/contactDetails?TargetId={id}");

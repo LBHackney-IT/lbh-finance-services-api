@@ -8,9 +8,9 @@ namespace FinanceServicesApi.V1.Gateways
 {
     public class AssetGateway : IAssetGateway
     {
-        private readonly IHousingData<Asset> _housingData;
+        private readonly IFinanceDomainApiData<Asset> _housingData;
 
-        public AssetGateway(IHousingData<Asset> housingData)
+        public AssetGateway(IFinanceDomainApiData<Asset> housingData)
         {
             _housingData = housingData;
         }

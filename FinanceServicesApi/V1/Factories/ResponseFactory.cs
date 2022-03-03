@@ -48,8 +48,8 @@ namespace FinanceServicesApi.V1.Factories
                 TenureId = account?.Tenure?.TenureId,
 
                 HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount),
-                LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.LastOrDefault(p => p.PaidAmount > 0)?.PaidAmount ?? 0,
-                LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.LastOrDefault(p => p.PaidAmount > 0)?.TransactionDate,
+                LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.LastOrDefault(p => p.PaidAmount != 0)?.PaidAmount ?? 0,
+                LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.LastOrDefault(p => p.PaidAmount != 0)?.TransactionDate,
 
                 ServiceCharge = charges?.Count == 0 ? 0m : charges?.Sum(p =>
                     p.DetailedCharges?.Where(c =>
@@ -88,32 +88,45 @@ namespace FinanceServicesApi.V1.Factories
             List<Transaction> transactions,
             Asset asset)
         {
-            var firstMondayOfApril = new DateTime(DateTime.UtcNow.Year, 1, 1);
-            while (firstMondayOfApril.DayOfWeek != DayOfWeek.Monday)
+            var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
+            var firstDayOfFinancialYear = new DateTime(financialYear, 4, 1);
+            /*
+            Year    Month   fy      fdy     ldy
+            2022    March   2021    21-4-1  22-3-28
+            2022    Jun     2022    22-4-1  23-3-28
+            2021    Sep     2021    21-4-1  22-3-28
+             */
+            while (firstDayOfFinancialYear.DayOfWeek != DayOfWeek.Monday)
             {
-                firstMondayOfApril = firstMondayOfApril.AddDays(1);
+                firstDayOfFinancialYear = firstDayOfFinancialYear.AddDays(1);
             }
+            var lastDayOfFinancialYear = firstDayOfFinancialYear.AddYears(1).AddDays(-1);
 
-            var ytd = transactions
+            var ytd = transactions?
                 .Where(p =>
-                    p.TransactionDate >= firstMondayOfApril)
+                    p.TransactionDate >= firstDayOfFinancialYear)
                 .Sum(p =>
-                    p.ChargedAmount - p.PaidAmount - p.HousingBenefitAmount);
+                    p.ChargedAmount - p.PaidAmount - p.HousingBenefitAmount) ?? 0;
             var wtc = charges?.Sum(p =>
                 p.DetailedCharges.Where(c =>
-                    c.EndDate >= DateTime.UtcNow &&
+                    c.StartDate >= firstDayOfFinancialYear &&
+                    c.EndDate <= lastDayOfFinancialYear &&
                     c.Type.ToLower() == "service" &&
                     c.Frequency.ToLower() == "weekly").Sum(c => c.Amount));
             var yrd = charges?.Sum(p =>
                 p.DetailedCharges.Where(c =>
-                    c.EndDate >= DateTime.UtcNow &&
+                    c.StartDate >= firstDayOfFinancialYear &&
+                    c.EndDate <= lastDayOfFinancialYear &&
                     c.Type.ToLower() == "rent" &&
                     c.Frequency.ToLower() == "weekly").Sum(c => c.Amount)) * 52;
-            var pty = transactions?.Where(p => p.TransactionDate.Year >= DateTime.UtcNow.Year).Sum(p => p.PaidAmount);
+            var pty = transactions?.Where(p =>
+                p.TransactionDate >= firstDayOfFinancialYear &&
+                p.TransactionDate <= lastDayOfFinancialYear).Sum(p => p.PaidAmount);
+
             return new PropertySummaryResponse
             {
-                CurrentBalance = tenure?.Charges?.CurrentBalance,
-                HousingBenefit = transactions.Sum(s => s.HousingBenefitAmount),
+                CurrentBalance = account?.ConsolidatedBalance,
+                HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount) ?? 0,
                 ServiceCharge = charges?.Count == 0 ? 0 :
                     charges?.Sum(p =>
                         p.DetailedCharges.Where(c =>
@@ -208,6 +221,8 @@ namespace FinanceServicesApi.V1.Factories
                 c.Type.ToLower() == "service" &&
                 c.Frequency.ToLower() == "weekly").Sum(s => s.Amount);
 
+            var lastYear = chargesList.Max(r => r.EndDate).Year;
+
             return new PropertyDetailsResponse()
             {
                 Bedrooms = asset.AssetCharacteristics.NumberOfBedrooms,
@@ -215,12 +230,14 @@ namespace FinanceServicesApi.V1.Factories
                 PropertyValue = chargesList?.FirstOrDefault(c => c.Type.ToLower() == "valuation")?.Amount,
                 RentModel = null,
                 The1999Value = chargesList?.FirstOrDefault(c => c.Type.ToLower().Contains("1999"))?.Amount,
-                ExtraCharges = chargesList.ToList().Where(w => w.Type.ToLower() != "valuation" && w.Type.ToLower() != "rent" &&
-                                                              !w.Type.ToLower().Contains("1999")).Select(p => new ExtraCharge
-                                                              {
-                                                                  Name = p.SubType,
-                                                                  Value = p.Amount
-                                                              }).ToList(),
+                ExtraCharges = chargesList.ToList().Where(w => w.Type.ToLower() != "valuation"
+                                                               && w.Type.ToLower() != "rent"
+                                                               && w.EndDate.Year == lastYear
+                                                               && !w.Type.ToLower().Contains("1999")).Select(p => new ExtraCharge
+                                                               {
+                                                                   Name = p.SubType,
+                                                                   Value = p.Amount
+                                                               }).ToList(),
                 WeeklyCharge = weeklyCharges,
                 YearlyCharge = weeklyCharges * 52
             };

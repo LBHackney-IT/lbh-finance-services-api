@@ -2,15 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Reflection;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using FinanceServicesApi.V1;
 using FinanceServicesApi.V1.Boundary.Responses;
+using FinanceServicesApi.V1.Domain.AccountModels;
+using FinanceServicesApi.V1.Domain.Charges;
+using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Gateways;
+using FinanceServicesApi.V1.Gateways.Common;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Environments;
 using FinanceServicesApi.V1.Infrastructure.Interfaces;
+using FinanceServicesApi.V1.Infrastructure.UrlGenerators;
 using FinanceServicesApi.V1.UseCase;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FinanceServicesApi.Versioning;
@@ -134,18 +140,37 @@ namespace FinanceServicesApi
         private static void RegisterInfraService(IServiceCollection services)
         {
             services.AddScoped<ICustomeHttpClient, CustomeHttpClient>();
+
             services.AddScoped<IGetEnvironmentVariables<TenureInformation>, GetTenureEnvironmentVariables>();
             services.AddScoped<IGetEnvironmentVariables<Asset>, GetAssetEnvironmentVariables>();
             services.AddScoped<IGetEnvironmentVariables<Person>, GetPersonEnvironmentVariables>();
             services.AddScoped<IGetEnvironmentVariables<GetContactDetailsResponse>, GetContactEnvironmentVariables>();
-            services.AddScoped<IHousingData<TenureInformation>, HousingData<TenureInformation>>();
-            services.AddScoped<IHousingData<Asset>, HousingData<Asset>>();
-            services.AddScoped<IHousingData<Person>, HousingData<Person>>();
-            services.AddScoped<IHousingData<GetContactDetailsResponse>, HousingData<GetContactDetailsResponse>>();
+            services.AddScoped<IGetEnvironmentVariables<Account>, GetAccountEnvironmentVariables>();
+            services.AddScoped<IGetEnvironmentVariables<GetAccountListResponse>, GetAccountsEnvironmentVariables>();
+            services.AddScoped<IGetEnvironmentVariables<Transaction>, GetTransactionEnvironmentVariable>();
+            services.AddScoped<IGetEnvironmentVariables<List<Transaction>>, GetTransactionsEnvironmentVariable>();
+            services.AddScoped<IGetEnvironmentVariables<List<Charge>>, GetChargesEnvironmentVariables>();
+
+            services.AddScoped<IFinanceDomainApiData<TenureInformation>, FinanceDomainApiData<TenureInformation>>();
+            services.AddScoped<IFinanceDomainApiData<Asset>, FinanceDomainApiData<Asset>>();
+            services.AddScoped<IFinanceDomainApiData<Person>, FinanceDomainApiData<Person>>();
+            services.AddScoped<IFinanceDomainApiData<GetContactDetailsResponse>, FinanceDomainApiData<GetContactDetailsResponse>>();
+            services.AddScoped<IFinanceDomainApiData<List<Charge>>, FinanceDomainApiData<List<Charge>>>();
+            services.AddScoped<IFinanceDomainApiData<List<Transaction>>, FinanceDomainApiData<List<Transaction>>>();
+            services.AddScoped<IFinanceDomainApiData<Transaction>, FinanceDomainApiData<Transaction>>();
+            services.AddScoped<IFinanceDomainApiData<Account>, FinanceDomainApiData<Account>>();
+            services.AddScoped<IFinanceDomainApiData<GetAccountListResponse>, FinanceDomainApiData<GetAccountListResponse>>();
+
             services.AddScoped<IGenerateUrl<TenureInformation>, TenureUrlGenerator>();
+            services.AddScoped<IGenerateUrl<Account>, AccountUrlGenerator>();
+            services.AddScoped<IGenerateUrl<GetAccountListResponse>, AccountsUrlGenerator>();
+            services.AddScoped<IGenerateUrl<Transaction>, TransactionUrlGenerator>();
+            services.AddScoped<IGenerateUrl<List<Transaction>>, TransactionTargetIdUrlGenerator>();
             services.AddScoped<IGenerateUrl<Asset>, AssetUrlGenerator>();
             services.AddScoped<IGenerateUrl<Person>, PersonUrlGenerator>();
             services.AddScoped<IGenerateUrl<GetContactDetailsResponse>, ContactDetailUrlGenerator>();
+            services.AddScoped<IGenerateUrl<List<Charge>>, ChargesUrlGenerator>();
+
             services.AddAutoMapper(cnf =>
             {
                 cnf.AddProfile<AccountAutoMapperProfile>();
@@ -177,11 +202,21 @@ namespace FinanceServicesApi
             services.AddScoped<IAccountGateway, AccountGateway>();
             services.AddScoped<ITransactionGateway, TransactionGateway>();
             services.AddScoped<IPersonGateway, PersonGateway>();
-            services.AddScoped<IFinancialSummaryByTargetIdGateway, FinancialSummaryByTargetIdGateway>();
             services.AddScoped<IContactDetailsGateway, ContactDetailsGateway>();
             services.AddScoped<ITenureInformationGateway, TenureInformationGateway>();
             services.AddScoped<IChargesGateway, ChargesGateway>();
             services.AddScoped<IAssetGateway, AssetGateway>();
+
+            services.AddTransient<LoggingDelegatingHandler>();
+            var housingSearchApiUrl = Environment.GetEnvironmentVariable("SEARCH_API_URL") ?? String.Empty;
+            var housingSearchApiToken = Environment.GetEnvironmentVariable("HOUSING_SEARCH_API_TOKEN") ?? String.Empty;
+
+            services.AddHttpClient<IHousingSearchGateway, HousingSearchGateway>(c =>
+            {
+                c.BaseAddress = new Uri(housingSearchApiUrl);
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(housingSearchApiToken);
+            })
+           .AddHttpMessageHandler<LoggingDelegatingHandler>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)
@@ -191,11 +226,12 @@ namespace FinanceServicesApi
             services.AddScoped<IGetTransactionByIdUseCase, GetTransactionByIdUseCase>();
             services.AddScoped<IGetLastPaymentTransactionsByTargetIdUseCase, GetLastPaymentTransactionsByTargetIdUseCase>();
             services.AddScoped<IGetPersonByIdUseCase, GetPersonByIdUseCase>();
-            services.AddScoped<IGetFinancialSummaryByTargetIdUseCase, GetFinancialSummaryByTargetIdUseCase>();
             services.AddScoped<IGetContactDetailsByTargetIdUseCase, GetContactDetailsByTargetIdUseCase>();
             services.AddScoped<IGetTenureInformationByIdUseCase, GetTenureInformationByIdUseCase>();
             services.AddScoped<IGetChargeByAssetIdUseCase, GetChargeByAssetIdUseCase>();
             services.AddScoped<IGetAssetByIdUseCase, GetAssetByIdUseCase>();
+            services.AddScoped<IGetLeaseholdAssetsListUseCase, GetLeaseholdAssetsListUseCase>();
+            services.AddScoped<IGetAssetApportionmentUseCase, GetAssetApportionmentUseCase>();
         }
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -220,7 +256,7 @@ namespace FinanceServicesApi
 
             var api = app.ApplicationServices.GetService<IApiVersionDescriptionProvider>();
             _apiVersions = api.ApiVersionDescriptions.ToList();
-
+            app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 foreach (var apiVersionDescription in _apiVersions)

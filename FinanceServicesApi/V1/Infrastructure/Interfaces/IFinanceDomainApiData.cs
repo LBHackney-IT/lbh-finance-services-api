@@ -4,8 +4,8 @@ using FinanceServicesApi.V1.Infrastructure.Enums;
 
 namespace FinanceServicesApi.V1.Infrastructure.Interfaces
 {
-    public interface IHousingData<T> where T : class
+    public interface IFinanceDomainApiData<T> where T : class
     {
-        public abstract Task<T> DownloadAsync(Guid id);
+        public abstract Task<T> DownloadAsync(Guid id, SearchBy searchBy = SearchBy.ById);
     }
 }

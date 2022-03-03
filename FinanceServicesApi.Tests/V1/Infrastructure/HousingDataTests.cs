@@ -26,7 +26,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
         private readonly Mock<IHttpContextAccessor> _context;
 
         private readonly Mock<IGenerateUrl<T>> _generateUrl;
-        private readonly HousingData<T> _sutHousingData;
+        private readonly FinanceDomainApiData<T> _sutHousingData;
 
         protected HousingDataTests()
         {
@@ -40,7 +40,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             _httpContext.Request.Headers["Authorization"] = token.ToString();
             _context.Setup(_ => _.HttpContext).Returns(_httpContext);
 
-            _sutHousingData = new HousingData<T>(_client.Object, _generateUrl.Object, _context.Object);
+            _sutHousingData = new FinanceDomainApiData<T>(_client.Object, _generateUrl.Object, _context.Object);
         }
 
         public virtual void DownloadAsyncWithEmptyIdThrowsArgumentException()
@@ -118,8 +118,9 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             Func<Task<T>> func = async () => await _sutHousingData.DownloadAsync(id).ConfigureAwait(false);
 
             //Assert
-            var exception = func.Should().ThrowAsync<Exception>();
-            exception.WithMessage(HttpStatusCode.BadGateway.ToString());
+            var exception = Assert.ThrowsAsync<Exception>(func);
+            exception.Should().NotBeNull();
+            exception.Result.Message.Should().Contain(HttpStatusCode.BadGateway.ToString());
         }
 
         public virtual async Task DownloadAsyncWithNonExistenceIdReturnsNull()
@@ -136,6 +137,23 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
 
             //Assert
             result.Should().BeNull();
+        }
+
+        public virtual void DownloadAsyncWithApiExceptionReturnsException()
+        {
+            // Arrange
+            Guid id = Guid.NewGuid();
+            HttpResponseMessage responseMessage = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+
+            _client.Setup(p => p.GetAsync(It.IsAny<Uri>()))
+                .ReturnsAsync(responseMessage);
+
+            // Act
+            Func<Task<T>> func = async () => await _sutHousingData.DownloadAsync(id).ConfigureAwait(false);
+
+            // Assert
+            var exception = Assert.ThrowsAsync<Exception>(func);
+            exception.Result.Message.Should().Contain(HttpStatusCode.Unauthorized.ToString());
         }
     }
 }

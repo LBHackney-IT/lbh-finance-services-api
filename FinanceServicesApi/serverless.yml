@@ -3,12 +3,13 @@ provider:
   name: aws
   runtime: dotnetcore3.1
   memorySize: 2048
+  timeout: 30
   tracing:
     lambda: true
     apiGateway: true
   vpc: ${self:custom.vpc.${opt:stage}}
   stage: ${opt:stage}
-  account: ${opt:account}
+  #account: ${opt:account}
   region: eu-west-2
 
 package:
@@ -24,11 +25,12 @@ functions:
       TRANSACTION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/financial-transactions-api-url}
       TENURE_API_URL: ${ssm:/housing-finance/${self:provider.stage}/tenure-api-url}
       FINANCIAL_SUMMARY_API_URL: ${ssm:/housing-finance/${self:provider.stage}/financial-summary-api-url}
-      CHARGE_API_URL: ${ssm:/housing-finance/${self:provider.stage}/charge-api-url}
+      CHARGES_API_URL: ${ssm:/housing-finance/${self:provider.stage}/charge-api-url}
       CONTACT_DETAILS_API_URL: ${ssm:/housing-finance/${self:provider.stage}/contact-details-api-url}
       ASSET_INFORMATION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/asset-information-api-url}
       PERSON_API_URL: ${ssm:/housing-finance/${self:provider.stage}/person-api-url}
       SEARCH_API_URL: ${ssm:/housing-finance/${self:provider.stage}/housing-search-api-url}
+      HOUSING_SEARCH_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/housing-search-api-token}
       REQUIRED_GOOGL_GROUPS: ${ssm:/housing-finance/${self:provider.stage}/authorization/required-google-groups}
     events:
       - http:

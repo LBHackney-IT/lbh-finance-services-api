@@ -44,8 +44,6 @@ commands:
     parameters:
       stage:
         type: string
-      aws-account:
-        type: string
     steps:
       - *attach_workspace
       - checkout
@@ -68,7 +66,7 @@ commands:
           name: Deploy lambda
           command: |
             cd ./FinanceServicesApi/
-            sls deploy --stage <<parameters.stage>> --account <<parameters.aws-account>> --conceal
+            sls deploy --stage <<parameters.stage>> --conceal
       # - run:
       #     name: Getting environment variable
       #     command:
@@ -120,21 +118,21 @@ jobs:
       # - aws-cli/install
       - deploy-lambda:
           stage: "development"
-          aws-account: $AWS_ACCOUNT_DEVELOPMENT
+          #aws-account: $AWS_ACCOUNT_DEVELOPMENT
   deploy-to-staging:
     executor: docker-dotnet
     steps:
       # - aws-cli/install
       - deploy-lambda:
           stage: "staging"
-          aws-account: $AWS_ACCOUNT_STAGING
+          #aws-account: $AWS_ACCOUNT_STAGING
   deploy-to-production:
     executor: docker-dotnet
     steps:
       # - aws-cli/install
       - deploy-lambda:
           stage: "production"
-          aws-account: $AWS_ACCOUNT_PRODUCTION
+          #aws-account: $AWS_ACCOUNT_PRODUCTION
 
 workflows:
   check-and-deploy-development:

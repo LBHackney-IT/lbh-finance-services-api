@@ -82,6 +82,8 @@ namespace FinanceServicesApi.V1.Infrastructure.Enums
         MajorWorksLoan,
         [Description("Major Works Revenue")]
         MajorWorksRevenue,
+        [Description("Housing Revenue")]
+        HousingRevenue,
         [Description("Parking Permits")]
         ParkingPermits,
         [Description("Parking Annual Chg")]

@@ -62,7 +62,7 @@ namespace FinanceServicesApi.V1.Infrastructure
                     TransactionAmount = decimal.Parse(item["transaction_amount"].N),
                     TransactionDate = DateTime.Parse(item["transaction_date"].S),
                     TransactionSource = item["transaction_source"].S,
-                    TransactionType = Enum.Parse<TransactionType>(item["transaction_type"].S),
+                    TransactionType = Enum.Parse<TransactionType>(item["transaction_type"].S.Trim()),
                     LastUpdatedBy = item.ContainsKey("last_updated_by") ? item["last_updated_by"].S : null,
                     LastUpdatedAt = DateTime.Parse(item["last_updated_at"].S),
                     CreatedBy = item.ContainsKey("created_by") ? item["created_by"].S : null,
@@ -112,6 +112,7 @@ namespace FinanceServicesApi.V1.Infrastructure
                 var innerItem = item["detailed_charges"].L;
                 foreach (var detail in innerItem)
                 {
+
                     detailCharges.Add(new DetailedCharges
                     {
                         Amount = Convert.ToDecimal(detail.M["amount"].N),
@@ -124,13 +125,16 @@ namespace FinanceServicesApi.V1.Infrastructure
                         EndDate = DateTime.Parse(detail.M["endDate"].S)
                     });
                 }
-
+                var chargeYear = !string.IsNullOrEmpty(item["charge_year"].N)
+                        ? Convert.ToInt16(item["charge_year"].N) : 0;
                 chargesList.Add(new Charge
                 {
                     Id = Guid.Parse(item["id"].S),
                     TargetId = Guid.Parse(item["target_id"].S),
                     ChargeGroup = Enum.Parse<ChargeGroup>(item["charge_group"].S),
+                    ChargeSubGroup = item.ContainsKey("charge_sub_group") ? Enum.Parse<ChargeSubGroup>(item["charge_sub_group"].S) : (ChargeSubGroup?) null,
                     TargetType = Enum.Parse<TargetType>(item["target_type"].S),
+                    ChargeYear = Convert.ToInt16(chargeYear),
                     DetailedCharges = detailCharges
                 });
             }
@@ -162,32 +166,37 @@ namespace FinanceServicesApi.V1.Infrastructure
                 }
 
                 AccountTenureSubSet tenure = null;
-                if (item.Keys.Any(p => p == "tenure"))
+                if (item.Keys.Any(p => p == "tenure") && !item["tenure"].NULL)
                 {
-                    var _tenure = item["tenure"].M;
+                    var tenureItem = item["tenure"].M;
                     tenure = new AccountTenureSubSet
                     {
-                        FullAddress = _tenure["fullAddress"].S,
-                        TenureId = _tenure["tenureId"].S,
+                        FullAddress = tenureItem.ContainsKey("fullAddress") ? tenureItem["fullAddress"].S : "",
+                        TenureId = tenureItem.ContainsKey("tenureId") ? tenureItem["tenureId"].S : "",
                         TenureType = new TenureType
                         {
-                            Code = _tenure["tenureType"].M["code"].S,
-                            Description = _tenure["tenureType"].M["description"].S
+                            Code = tenureItem.ContainsKey("tenureType") ? tenureItem["tenureType"].M.ContainsKey("code") ? tenureItem["tenureType"].M["code"].S : "" : "",
+                            Description = tenureItem.ContainsKey("tenureType") ?
+                                tenureItem["tenureType"].M.ContainsKey("description") ? tenureItem["tenureType"].M["description"].S : "" : ""
                         }
                     };
-                    if (_tenure.ContainsKey("primaryTenants"))
+                    if (tenureItem.ContainsKey("primaryTenants") && !tenureItem["primaryTenants"].NULL)
                     {
                         tenure.PrimaryTenants = new List<PrimaryTenants>();
-                        foreach (var primaryItems in _tenure["primaryTenants"].L)
+                        if (!tenureItem["primaryTenants"].NULL)
                         {
-                            tenure.PrimaryTenants.Add(new PrimaryTenants
+                            foreach (var primaryItems in tenureItem["primaryTenants"].L)
                             {
-                                FullName = primaryItems.M["fullName"].S,
-                                Id = Guid.Parse(primaryItems.M["id"].S)
-                            });
+                                tenure.PrimaryTenants.Add(new PrimaryTenants
+                                {
+                                    FullName = primaryItems.M.ContainsKey("fullName") ? primaryItems.M["fullName"].S : "",
+                                    Id = primaryItems.M.ContainsKey("id") ? Guid.Parse(primaryItems.M["id"].S) : Guid.Empty
+                                });
+                            }
                         }
                     }
                 }
+
 
                 return new Account
                 {

@@ -29,6 +29,7 @@ namespace FinanceServicesApi.V1.Controllers
         private readonly IGetAccountByTargetIdUseCase _accountByTargetIdUseCase;
         private readonly IGetLastPaymentTransactionsByTargetIdUseCase _transactionUseCase;
         private readonly IGetAssetByIdUseCase _assetUseCase;
+        private readonly IGetAssetApportionmentUseCase _getAssetApportionmentUseCase;
 
         public PropertySummaryController(IGetPersonByIdUseCase personUseCase
             , IGetChargeByAssetIdUseCase chargeUseCase
@@ -36,7 +37,8 @@ namespace FinanceServicesApi.V1.Controllers
             , IGetContactDetailsByTargetIdUseCase contactUseCase
             , IGetAccountByTargetIdUseCase accountByTargetIdUseCase
             , IGetLastPaymentTransactionsByTargetIdUseCase lastPaymentTransactionsByTargetIdUseCase
-            , IGetAssetByIdUseCase assetByIdUseCase)
+            , IGetAssetByIdUseCase assetByIdUseCase
+            , IGetAssetApportionmentUseCase getAssetApportionmentUseCase)
         {
             _personUseCase = personUseCase;
             _chargeUseCase = chargeUseCase;
@@ -45,6 +47,7 @@ namespace FinanceServicesApi.V1.Controllers
             _accountByTargetIdUseCase = accountByTargetIdUseCase;
             _transactionUseCase = lastPaymentTransactionsByTargetIdUseCase;
             _assetUseCase = assetByIdUseCase;
+            _getAssetApportionmentUseCase = getAssetApportionmentUseCase;
         }
 
         /// <summary>
@@ -81,12 +84,10 @@ namespace FinanceServicesApi.V1.Controllers
             var transactionResponse = transactionResponseTask.Result;
             var tenureInformationResponse = tenureInformationResponseTask.Result;
 
-            var personId = tenureInformationResponse?.HouseholdMembers
-                .FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Leaseholder ||
-                                     p.PersonTenureType == PersonTenureType.Tenant)?.Id ?? Guid.Empty;
+            var personId = tenureInformationResponse?.HouseholdMembers.FirstOrDefault(p => p.IsResponsible)?.Id ?? Guid.Empty;
 
             if (personId == Guid.Empty)
-                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no responsible household member for provided tenure."));
 
             Asset assetResponse = null;
             List<Charge> chargeResponse = null;
@@ -140,9 +141,7 @@ namespace FinanceServicesApi.V1.Controllers
 
             var tenureInformation = await _tenureUseCase.ExecuteAsync(id).ConfigureAwait(false);
 
-            var personId = tenureInformation?.HouseholdMembers?
-                .FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Leaseholder ||
-                                     p.PersonTenureType == PersonTenureType.Tenant)?.Id ?? Guid.Empty;
+            var personId = tenureInformation?.HouseholdMembers?.FirstOrDefault(p => p.IsResponsible)?.Id ?? Guid.Empty;
 
             if (personId == Guid.Empty)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided person"));
@@ -207,6 +206,35 @@ namespace FinanceServicesApi.V1.Controllers
             var chargeData = await _chargeUseCase.ExecuteAsync(assetData.Id).ConfigureAwait(false);
 
             return Ok(ResponseFactory.ToResponse(assetData, chargeData));
+        }
+
+        /// <summary>
+        /// Returns Totals, Estate costs, Block costs, Property costs
+        /// </summary>
+        /// <param name="assetId"></param>
+        /// <param name="fromYear">Start year for totals sequense. Will be returned result for period from provided year until currect one. Should be more that 1970 ans less than currect year</param>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(AssetApportionmentResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
+        [HttpGet("{assetId}/apportionments")]
+        public async Task<IActionResult> GetAssetApportionments([FromRoute] Guid assetId, [FromQuery] short fromYear)
+        {
+            if (assetId == Guid.Empty)
+            {
+                return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
+                    $"{nameof(assetId)} cannot be empty."));
+            }
+            if (fromYear < 1970 || fromYear > DateTime.UtcNow.Year)
+            {
+                return BadRequest(new BaseErrorResponse((int) HttpStatusCode.BadRequest,
+                    $"{nameof(fromYear)} should be more that 1970 ans less than currect year"));
+            }
+
+            var result = await _getAssetApportionmentUseCase.ExecuteAsync(assetId, fromYear).ConfigureAwait(false);
+
+            return Ok(result);
         }
     }
 }

@@ -9,9 +9,9 @@ namespace FinanceServicesApi.V1.Gateways
     public class ContactDetailsGateway : IContactDetailsGateway
 
     {
-        private readonly IHousingData<GetContactDetailsResponse> _housingData;
+        private readonly IFinanceDomainApiData<GetContactDetailsResponse> _housingData;
 
-        public ContactDetailsGateway(IHousingData<GetContactDetailsResponse> housingData)
+        public ContactDetailsGateway(IFinanceDomainApiData<GetContactDetailsResponse> housingData)
         {
             _housingData = housingData;
         }
