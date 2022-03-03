@@ -110,7 +110,7 @@ namespace FinanceServicesApi.V1.Factories
             var wtc = charges?.Sum(p =>
                 p.DetailedCharges.Where(c =>
                     c.StartDate >= firstDayOfFinancialYear &&
-                    c.EndDate <=lastDayOfFinancialYear &&
+                    c.EndDate <= lastDayOfFinancialYear &&
                     c.Type.ToLower() == "service" &&
                     c.Frequency.ToLower() == "weekly").Sum(c => c.Amount));
             var yrd = charges?.Sum(p =>
