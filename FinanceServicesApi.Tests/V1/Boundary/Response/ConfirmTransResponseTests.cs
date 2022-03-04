@@ -22,7 +22,8 @@ namespace FinanceServicesApi.Tests.V1.Boundary.Response
             Assert.IsType<string>(entity.Payee);
             Assert.IsType<string>(entity.RentAccountNumber);
             Assert.IsType<string>(entity.Resident);
-            Assert.IsType<string>(entity.TotalAmount);
+            Assert.IsType<decimal>(entity.TotalAmount);
+            Assert.IsType<string>(entity.Account);
         }
 
         [Fact]
