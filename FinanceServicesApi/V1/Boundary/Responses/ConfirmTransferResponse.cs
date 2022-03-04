@@ -16,5 +16,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses
         public string Resident { get; set; }
         [Required]
         public string RentAccountNumber { get; set; }
+        [Required]
+        public decimal TotalAmount { get; set; }
     }
 }

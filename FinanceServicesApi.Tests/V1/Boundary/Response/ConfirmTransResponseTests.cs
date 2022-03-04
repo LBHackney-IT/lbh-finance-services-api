@@ -13,7 +13,7 @@ namespace FinanceServicesApi.Tests.V1.Boundary.Response
         public void ConfirmTransferEntityHasPropertiesSet()
         {
             var confirmTransferEntity = typeof(ConfirmTransferResponse);
-            confirmTransferEntity.GetProperties().Length.Should().Be(7);
+            confirmTransferEntity.GetProperties().Length.Should().Be(8);
 
             var entity = _fixture.Create<ConfirmTransferResponse>();
             Assert.IsType<string>(entity.Address);
@@ -22,6 +22,8 @@ namespace FinanceServicesApi.Tests.V1.Boundary.Response
             Assert.IsType<string>(entity.Payee);
             Assert.IsType<string>(entity.RentAccountNumber);
             Assert.IsType<string>(entity.Resident);
+            Assert.IsType<decimal>(entity.TotalAmount);
+            Assert.IsType<string>(entity.Account);
         }
 
         [Fact]
