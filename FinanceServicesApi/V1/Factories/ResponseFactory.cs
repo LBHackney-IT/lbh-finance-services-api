@@ -31,7 +31,8 @@ namespace FinanceServicesApi.V1.Factories
                 CurrentArrears = account.AccountBalance,
                 Payee = transaction.Person?.FullName,
                 RentAccountNumber = account.PaymentReference,
-                Resident = account.Tenure?.PrimaryTenants?.FirstOrDefault()?.FullName
+                Resident = account.Tenure?.PrimaryTenants?.FirstOrDefault()?.FullName,
+                TotalAmount = transaction.TransactionAmount
             };
         }
 
