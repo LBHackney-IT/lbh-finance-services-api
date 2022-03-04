@@ -29,32 +29,32 @@ namespace FinanceServicesApi.V1.Controllers
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet]
-        public async Task<IActionResult> GetById([FromQuery] Guid transactionId, [FromQuery] Guid tenueId)
+        public async Task<IActionResult> GetById([FromQuery] Guid transactionId, [FromQuery] Guid tenureId)
         {
-            if (transactionId == Guid.Empty || tenueId == Guid.Empty)
-                throw new ArgumentException($"The {nameof(tenueId)} or {nameof(transactionId)} shouldn't be empty!");
+            if (transactionId == Guid.Empty || tenureId == Guid.Empty)
+                throw new ArgumentException($"The {nameof(tenureId)} or {nameof(transactionId)} shouldn't be empty!");
 
-            var accountResponse = await _getAccountByTargetIdUseCase.ExecuteAsync(tenueId).ConfigureAwait(false);
+            var accountResponse = await _getAccountByTargetIdUseCase.ExecuteAsync(tenureId).ConfigureAwait(false);
             if (accountResponse == null)
             {
-                return NotFound(new BaseErrorResponse((int) StatusCodes.Status404NotFound,
+                return NotFound(new BaseErrorResponse(StatusCodes.Status404NotFound,
                     "No information by provided account id or account id founded!"));
             }
             else if (!ModelValidatorHelper.IsModelValid(accountResponse))
             {
-                return BadRequest(new BaseErrorResponse((int) StatusCodes.Status400BadRequest,
+                return BadRequest(new BaseErrorResponse(StatusCodes.Status400BadRequest,
                     ModelValidatorHelper.ErrorMessages));
             }
 
             var transactionResponse = await _getTransactionByIdUseCase.ExecuteAsync(transactionId).ConfigureAwait(false);
             if (transactionResponse == null)
             {
-                return NotFound(new BaseErrorResponse((int) StatusCodes.Status404NotFound,
+                return NotFound(new BaseErrorResponse(StatusCodes.Status404NotFound,
                     "No information by provided transaction id or account id founded!"));
             }
             else if (!ModelValidatorHelper.IsModelValid(transactionResponse))
             {
-                return BadRequest(new BaseErrorResponse((int) StatusCodes.Status400BadRequest,
+                return BadRequest(new BaseErrorResponse(StatusCodes.Status400BadRequest,
                     ModelValidatorHelper.ErrorMessages));
             }
 
