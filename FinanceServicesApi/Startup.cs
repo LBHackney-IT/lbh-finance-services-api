@@ -20,6 +20,7 @@ using FinanceServicesApi.V1.Infrastructure.UrlGenerators;
 using FinanceServicesApi.V1.UseCase;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FinanceServicesApi.Versioning;
+using FluentValidation.AspNetCore;
 using Hackney.Core.Authorization;
 using Hackney.Core.DynamoDb;
 using Hackney.Core.JWT;
@@ -59,6 +60,11 @@ namespace FinanceServicesApi
         {
             services
                 .AddMvc()
+                .AddFluentValidation(fv =>
+                {
+                    fv.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                    fv.LocalizationEnabled = false;
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddApiVersioning(o =>
             {
@@ -232,6 +238,7 @@ namespace FinanceServicesApi
             services.AddScoped<IGetAssetByIdUseCase, GetAssetByIdUseCase>();
             services.AddScoped<IGetLeaseholdAssetsListUseCase, GetLeaseholdAssetsListUseCase>();
             services.AddScoped<IGetAssetApportionmentUseCase, GetAssetApportionmentUseCase>();
+            services.AddScoped<IGetPersonListUseCase, GetPersonListUseCase>();
         }
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
