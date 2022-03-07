@@ -59,6 +59,7 @@ namespace FinanceServicesApi.V1.UseCase
             var assetTotals = new ConcurrentBag<PropertySearchResponse>();
 
             var degree = Convert.ToInt32(Math.Ceiling(Environment.ProcessorCount * 0.75 * 2.0));
+            _logger.LogError("Degree Count : " + degree);
             var block = new ActionBlock<Asset>(
                     async x =>
                     {

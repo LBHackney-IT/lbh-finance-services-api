@@ -29,7 +29,7 @@ functions:
       CONTACT_DETAILS_API_URL: ${ssm:/housing-finance/${self:provider.stage}/contact-details-api-url}
       ASSET_INFORMATION_API_URL: ${ssm:/housing-finance/${self:provider.stage}/asset-information-api-url}
       PERSON_API_URL: ${ssm:/housing-finance/${self:provider.stage}/person-api-url}
-      SEARCH_API_URL: ${ssm:/housing-finance/${self:provider.stage}/housing-search-api-url}
+      SEARCH_API_URL: ${ssm:/housing-finance/${self:provider.stage}/housing-search-api-short-url}
       HOUSING_SEARCH_API_TOKEN: ${ssm:/housing-finance/${self:provider.stage}/housing-search-api-token}
       REQUIRED_GOOGL_GROUPS: ${ssm:/housing-finance/${self:provider.stage}/authorization/required-google-groups}
     events:
