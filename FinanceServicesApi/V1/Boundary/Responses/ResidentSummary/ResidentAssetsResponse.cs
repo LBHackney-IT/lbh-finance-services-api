@@ -36,7 +36,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.ResidentSummary
         /// <example>
         ///     1234.56
         /// </example>
-        public float? CurrentBalance { get; set; }
+        public decimal? CurrentBalance { get; set; }
 
         /// <summary>
         /// 
@@ -44,7 +44,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.ResidentSummary
         /// <example>
         ///     123.45
         /// </example>
-        public float? ServiceCharge { get; set; }
+        public decimal? ServiceCharge { get; set; }
 
         /// <summary>
         /// 
@@ -52,7 +52,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.ResidentSummary
         /// <example>
         ///     1234.5
         /// </example>
-        public float? RentCharge { get; set; }
+        public decimal? RentCharge { get; set; }
 
         /// <summary>
         /// 

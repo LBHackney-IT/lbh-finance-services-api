@@ -39,7 +39,7 @@ namespace FinanceServicesApi.V1.Factories
         public static ResidentSummaryResponse ToResponse(Person person,
             TenureInformation tenure,
             Account account,
-            List<Domain.Charges.Charge> charges,
+            Domain.Charges.Charge charge,
             List<ContactDetail> contacts,
             List<Transaction> transactions)
         {
@@ -52,13 +52,10 @@ namespace FinanceServicesApi.V1.Factories
                 LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.LastOrDefault(p => p.PaidAmount != 0)?.PaidAmount ?? 0,
                 LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.LastOrDefault(p => p.PaidAmount != 0)?.TransactionDate,
 
-                ServiceCharge = charges?.Count == 0 ? 0m : charges?.Sum(p =>
-                    p.DetailedCharges?.Where(c =>
-                        c.Type.ToLower() == "service").Sum(c => c.Amount)),
-                WeeklyTotalCharges = charges?.Count == 0 ? 0m : charges?.Sum(p =>
-                    p.DetailedCharges?.Where(c =>
+                ServiceCharge = charge?.DetailedCharges?.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount) / 12,
+                WeeklyTotalCharges = charge?.DetailedCharges?.Where(c =>
                         c.Frequency.ToLower() == "weekly" &&
-                        c.Type.ToLower() == "service").Sum(c => c.Amount)),
+                        c.Type.ToLower() == "service").Sum(c => c.Amount),
 
                 DateOfBirth = person?.DateOfBirth,
                 PrimaryTenantName = (person?.FirstName == null && person?.Surname == null) ? null :
@@ -84,43 +81,40 @@ namespace FinanceServicesApi.V1.Factories
         public static PropertySummaryResponse ToResponse(TenureInformation tenure,
             Person person,
             Account account,
-            List<Charge> charges,
+            Charge charges,
             List<ContactDetail> contacts,
             List<Transaction> transactions,
             Asset asset)
         {
             var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
             var firstDayOfFinancialYear = new DateTime(financialYear, 4, 1);
-            /*
-            Year    Month   fy      fdy     ldy
-            2022    March   2021    21-4-1  22-3-28
-            2022    Jun     2022    22-4-1  23-3-28
-            2021    Sep     2021    21-4-1  22-3-28
-             */
             while (firstDayOfFinancialYear.DayOfWeek != DayOfWeek.Monday)
             {
                 firstDayOfFinancialYear = firstDayOfFinancialYear.AddDays(1);
             }
             var lastDayOfFinancialYear = firstDayOfFinancialYear.AddYears(1).AddDays(-1);
 
-            var ytd = transactions?
+            var yearToDate = transactions?
                 .Where(p =>
                     p.TransactionDate >= firstDayOfFinancialYear)
                 .Sum(p =>
                     p.ChargedAmount - p.PaidAmount - p.HousingBenefitAmount) ?? 0;
-            var wtc = charges?.Sum(p =>
-                p.DetailedCharges.Where(c =>
-                    c.StartDate >= firstDayOfFinancialYear &&
-                    c.EndDate <= lastDayOfFinancialYear &&
+            var weeklyTotalCharges = charges?.DetailedCharges.Where(c =>
                     c.Type.ToLower() == "service" &&
-                    c.Frequency.ToLower() == "weekly").Sum(c => c.Amount));
-            var yrd = charges?.Sum(p =>
-                p.DetailedCharges.Where(c =>
-                    c.StartDate >= firstDayOfFinancialYear &&
-                    c.EndDate <= lastDayOfFinancialYear &&
+                    c.Frequency.ToLower() == "weekly").Sum(c => c.Amount);
+
+            var yearlyRentDebit = charges?.DetailedCharges.Where(c =>
                     c.Type.ToLower() == "rent" &&
-                    c.Frequency.ToLower() == "weekly").Sum(c => c.Amount)) * 52;
-            var pty = transactions?.Where(p =>
+                    c.Frequency.ToLower() == "weekly").Sum(c => c.Amount) * 52;
+
+            var rent = charges?.DetailedCharges
+                    .LastOrDefault(c => c.Type.ToLower() == "rent")?.Amount ?? 0;
+
+            var serviceCharge = charges?.DetailedCharges
+                .Where(c => c.Type.ToLower() == "service")?
+                .Sum(s => s.Amount) / 12 ?? 0;
+
+            var paidThisYear = transactions?.Where(p =>
                 p.TransactionDate >= firstDayOfFinancialYear &&
                 p.TransactionDate <= lastDayOfFinancialYear).Sum(p => p.PaidAmount);
 
@@ -128,11 +122,7 @@ namespace FinanceServicesApi.V1.Factories
             {
                 CurrentBalance = account?.ConsolidatedBalance,
                 HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount) ?? 0,
-                ServiceCharge = charges?.Count == 0 ? 0 :
-                    charges?.Sum(p =>
-                        p.DetailedCharges.Where(c =>
-                            c.Type.ToLower() == "service").
-                            Sum(c => c.Amount)),
+                ServiceCharge = serviceCharge,
                 TenancyType = tenure?.TenureType.Code,
                 PersonTenureType = person == null ? null : tenure?.HouseholdMembers.FirstOrDefault(p => p.Id == person.Id)?.PersonTenureType,
                 PrimaryTenantEmail = contacts?.Where(c =>
@@ -147,31 +137,43 @@ namespace FinanceServicesApi.V1.Factories
                         c.ContactInformation.ContactType == ContactType.Phone)
                     .Select(s =>
                         s.ContactInformation.Value).FirstOrDefault() ?? "",
-                Rent = tenure?.Charges?.Rent,
+                Rent = rent, //tenure?.Charges?.Rent,
                 Address = asset?.AssetAddress,
                 Prn = tenure?.PaymentReference,
                 PropertyReference = tenure?.TenuredAsset?.PropertyReference,
                 PropertySize = asset?.AssetCharacteristics?.NumberOfBedrooms ?? 0,
                 TenancyStartDate = tenure?.StartOfTenureDate,
-                YearToDate = ytd,
-                WeeklyTotalCharges = wtc,
-                YearlyRentDebits = yrd,
-                PaidThisYear = pty,
+                YearToDate = yearToDate,
+                WeeklyTotalCharges = weeklyTotalCharges,
+                YearlyRentDebits = yearlyRentDebit,
+                PaidThisYear = paidThisYear,
                 ArrearsBalance = (account?.AccountBalance ?? 0) > 0 ? account?.AccountBalance : 0,
                 AccountStartDate = account?.StartDate
             };
         }
 
-        public static ResidentAssetsResponse ToResponse(Asset asset, TenureInformation tenure)
+        public static ResidentAssetsResponse ToResponse(Asset asset, TenureInformation tenure, List<Charge> charges, Account account)
         {
+            var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
+
+            var rent = charges?.Count == 0
+                ? 0
+                : charges?.LastOrDefault(p => p.ChargeYear == financialYear)?.DetailedCharges
+                .LastOrDefault(c => c.Type.ToLower() == "rent")?.Amount ?? 0;
+
+            var serviceCharge = charges?.Count == 0
+                ? 0
+                : charges?.LastOrDefault(p => p.ChargeYear == financialYear)?.DetailedCharges
+                    .LastOrDefault(c => c.Type.ToLower() == "service")?.Amount ?? 0;
+
             return new ResidentAssetsResponse()
             {
                 AssetAddress = asset?.AssetAddress,
                 AssetType = asset?.AssetType,
                 RentAccountNumber = tenure?.PaymentReference,
-                CurrentBalance = tenure?.Charges?.CurrentBalance,
-                RentCharge = tenure?.Charges?.Rent,
-                ServiceCharge = tenure?.Charges?.ServiceCharge,
+                CurrentBalance = account?.ConsolidatedBalance,
+                RentCharge = rent,
+                ServiceCharge = serviceCharge,
                 Staircasting = -1,
                 TenancyType = tenure?.TenureType,
                 Tenure = new TenurePartialModel
@@ -209,31 +211,31 @@ namespace FinanceServicesApi.V1.Factories
             };
         }
 
-        public static PropertyDetailsResponse ToResponse(Asset asset, List<Charge> charges)
+        public static PropertyDetailsResponse ToResponse(Asset asset, Charge charge)
         {
-            List<DetailedCharges> chargesList = new List<DetailedCharges>();
-            charges.ForEach(p =>
+            var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
+            var firstDayOfFinancialYear = new DateTime(financialYear, 4, 1);
+            while (firstDayOfFinancialYear.DayOfWeek != DayOfWeek.Monday)
             {
-                chargesList.AddRange(p.DetailedCharges);
-            });
+                firstDayOfFinancialYear = firstDayOfFinancialYear.AddDays(1);
+            }
+            var lastDayOfFinancialYear = firstDayOfFinancialYear.AddYears(1).AddDays(-1);
 
-            var weeklyCharges = chargesList.Where(c =>
-                c.EndDate >= DateTime.UtcNow &&
+
+            var weeklyCharges = charge?.DetailedCharges.Where(c =>
                 c.Type.ToLower() == "service" &&
-                c.Frequency.ToLower() == "weekly").Sum(s => s.Amount);
+                c.Frequency.ToLower() == "weekly").Sum(s => s.Amount) ?? 0;
 
-            var lastYear = chargesList.Max(r => r.EndDate).Year;
 
             return new PropertyDetailsResponse()
             {
                 Bedrooms = asset.AssetCharacteristics.NumberOfBedrooms,
                 FullAddress = $"{asset.AssetAddress.AddressLine1} {asset.AssetAddress.AddressLine2} {asset.AssetAddress.AddressLine3} asset.AssetAddress.AddressLine4",
-                PropertyValue = chargesList?.FirstOrDefault(c => c.Type.ToLower() == "valuation")?.Amount,
+                PropertyValue = charge?.DetailedCharges?.FirstOrDefault(c => c.Type.ToLower() == "valuation")?.Amount,
                 RentModel = null,
-                The1999Value = chargesList?.FirstOrDefault(c => c.Type.ToLower().Contains("1999"))?.Amount,
-                ExtraCharges = chargesList.ToList().Where(w => w.Type.ToLower() != "valuation"
+                The1999Value = charge?.DetailedCharges?.FirstOrDefault(c => c.Type.ToLower().Contains("1999"))?.Amount,
+                ExtraCharges = charge?.DetailedCharges?.Where(w => w.Type.ToLower() != "valuation"
                                                                && w.Type.ToLower() != "rent"
-                                                               && w.EndDate.Year == lastYear
                                                                && !w.Type.ToLower().Contains("1999")).Select(p => new ExtraCharge
                                                                {
                                                                    Name = p.SubType,

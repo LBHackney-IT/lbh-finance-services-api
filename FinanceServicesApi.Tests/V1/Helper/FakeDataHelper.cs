@@ -798,19 +798,24 @@ namespace FinanceServicesApi.Tests.V1.Helper
             };
             yield return new object[]
             {
-                new List<Charge>()
-                {
-                    {
-                        _fixture.Build<Charge>()
-                            .Without(p=>p.DetailedCharges)
-                            .Create()
-                    }
-                }
+                _fixture.Build<Charge>().Without(p=>p.DetailedCharges).Create()
                 , 0m,0m
             };
             yield return new object[]
             {
-                new List<Charge>()
+                _fixture.Build<Charge>()
+                    .With(p=>p.DetailedCharges,new List<DetailedCharges>(4)
+                    {
+                        {
+                            _fixture.Build<DetailedCharges>()
+                                .With(p=>p.Type,"service")
+                                .With(p=>p.Amount,11.35m)
+                                .With(p=>p.Frequency,"Weekly")
+                                .Create()
+                        }
+                    })
+                    .Create()
+                /*new List<Charge>()
                 {
                     {
                         _fixture.Build<Charge>()
@@ -854,7 +859,7 @@ namespace FinanceServicesApi.Tests.V1.Helper
                             })
                             .Create()
                     }
-                }
+                }*/
                 , 32.95m,11.35m
             };
         }
