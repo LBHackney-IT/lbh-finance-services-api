@@ -147,12 +147,27 @@ namespace FinanceServicesApi.V1.Controllers
             if (personData == null)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
 
+            List<Task> tasks = new List<Task>();
+
             List<ResidentAssetsResponse> responses = new List<ResidentAssetsResponse>();
             foreach (var t in personData.Tenures)
             {
-                var assetData = await _assetUseCase.ExecuteAsync(Guid.Parse(t.AssetId)).ConfigureAwait(false);
-                var tenureData = await _tenureUseCase.ExecuteAsync(t.Id).ConfigureAwait(false);
-                responses.Add(ResponseFactory.ToResponse(assetData, tenureData));
+                tasks.Clear();
+                var assetTask = _assetUseCase.ExecuteAsync(Guid.Parse(t.AssetId));
+                var tenureTask = _tenureUseCase.ExecuteAsync(t.Id);
+                var chargeTask = _chargeUseCase.ExecuteAsync(Guid.Parse(t.AssetId));
+                var accountTask = _accountUseCase.ExecuteAsync(t.Id);
+
+                tasks.AddRange(new List<Task> { assetTask, tenureTask, chargeTask });
+
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+
+                var assetData = assetTask?.Result;
+                var tenureData = tenureTask?.Result;
+                var chargeData = chargeTask?.Result;
+                var accountData = accountTask?.Result;
+
+                responses.Add(ResponseFactory.ToResponse(assetData, tenureData, chargeData, accountData));
             }
             return Ok(responses);
         }
