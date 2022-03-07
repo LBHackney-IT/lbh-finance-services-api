@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Boundary.Responses.ResidentSummary;
 using FinanceServicesApi.V1.Domain.AccountModels;
+using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Domain.TransactionModels;
 using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
@@ -113,14 +115,42 @@ namespace FinanceServicesApi.V1.Controllers
             var transactionResponse = transactionResponseTask?.Result;
             var tenureInformationResponse = tenureInformationResponseTask?.Result;
 
+            if (tenureInformationResponse == null)
+                return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
+
             var chargeResponse = (tenureInformationResponse?.TenuredAsset?.Id == null ||
                                   tenureInformationResponse?.TenuredAsset?.Id == Guid.Empty) ? null :
                 await _chargeUseCase.ExecuteAsync(tenureInformationResponse.TenuredAsset.Id).ConfigureAwait(false);
 
+            Charge chargeData = null;
+
+            var isLeaseHolder =
+                   tenureInformationResponse.TenureType?.Description == TenureTypes.LeaseholdRTB.Description
+                || tenureInformationResponse.TenureType?.Description == TenureTypes.PrivateSaleLH.Description
+                || tenureInformationResponse.TenureType?.Description == TenureTypes.SharedOwners.Description
+                || tenureInformationResponse.TenureType?.Description == TenureTypes.SharedEquity.Description
+                || tenureInformationResponse.TenureType?.Description == TenureTypes.ShortLifeLse.Description
+                || tenureInformationResponse.TenureType?.Description == TenureTypes.LeaseholdStair.Description
+                || tenureInformationResponse.TenureType?.Description == TenureTypes.FreeholdServ.Description;
+
+            if (isLeaseHolder) // leaseholder
+            {
+                var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
+
+                chargeData = chargeResponse?.Where(p => p.ChargeGroup == ChargeGroup.Leaseholders
+                                                        && p.ChargeSubGroup == ChargeSubGroup.Estimate
+                                                        && p.ChargeYear == financialYear).FirstOrDefault();
+            }
+            else
+            {
+                chargeData = chargeResponse?.Where(p => p.ChargeGroup == ChargeGroup.Tenants)
+                    .OrderByDescending(c => c.ChargeYear).FirstOrDefault();
+            }
+
             var result = ResponseFactory.ToResponse(personResponse,
                 tenureInformationResponse,
                 account,
-                chargeResponse,
+                chargeData,
                 contactDetailsResponse?.Results,
                 transactionResponse);
             return Ok(result);
