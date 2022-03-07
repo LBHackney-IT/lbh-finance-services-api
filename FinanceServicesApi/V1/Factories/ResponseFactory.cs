@@ -198,7 +198,7 @@ namespace FinanceServicesApi.V1.Factories
                 serviceCharge = charges?.Count == 0
                     ? 0
                     : charges?.Where(p => p.ChargeGroup == ChargeGroup.Tenants).OrderByDescending(x => x.ChargeYear).First()
-                        ?.DetailedCharges.Where(x => x.Type.ToLower() == "service")?.Sum(x =>x.Amount) ?? 0;
+                        ?.DetailedCharges.Where(x => x.Type.ToLower() == "service")?.Sum(x => x.Amount) ?? 0;
             }
 
             return new ResidentAssetsResponse()
@@ -270,7 +270,7 @@ namespace FinanceServicesApi.V1.Factories
                                                                    Value = p.Amount
                                                                }).ToList(),
                 WeeklyCharge = weeklyCharges,
-                YearlyCharge = monthlyCharge * 12 
+                YearlyCharge = monthlyCharge * 12
             };
         }
     }
