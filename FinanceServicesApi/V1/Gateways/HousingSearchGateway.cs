@@ -36,7 +36,7 @@ namespace FinanceServicesApi.V1.Gateways
             var uri = new Uri(GeneratePersonSearchUrl(request), UriKind.Relative);
             var apiResponse = await _client.GetAsync(uri).ConfigureAwait(true);
 
-            if(!apiResponse.IsSuccessStatusCode)
+            if (!apiResponse.IsSuccessStatusCode)
             {
                 var errorResponseMessage = await apiResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 _logger.LogError("Failed to get persons from HousingSearchAPI");

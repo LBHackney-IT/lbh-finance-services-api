@@ -39,7 +39,7 @@ namespace FinanceServicesApi.V1.UseCase
                     .Join(accounts,
                           tenure => Guid.Parse(tenure.Id),
                           account => account.TargetId,
-                          (tenure, account) => new { Tenure = tenure, Account = account})
+                          (tenure, account) => new { Tenure = tenure, Account = account })
                     .ToList()
                     .ForEach(pair =>
                     {
