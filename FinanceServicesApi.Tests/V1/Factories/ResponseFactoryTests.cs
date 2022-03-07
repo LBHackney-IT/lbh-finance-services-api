@@ -126,7 +126,7 @@ namespace FinanceServicesApi.Tests.V1.Factories
         #endregion
 
 
-        [Theory]
+        /*[Theory]
         [MemberData(nameof(MockToResidentSummaryResponseInput.GetTestData), MemberType = typeof(MockToResidentSummaryResponseInput))]
         public void ToResidentSummaryResponseNeverReturnsNullOutput(
             Person person,
@@ -140,7 +140,7 @@ namespace FinanceServicesApi.Tests.V1.Factories
                 ResponseFactory.ToResponse(person, tenure, account, charge, contactDetails, transactions);
 
             response.Should().NotBeNull();
-        }
+        }*/
 
         [Fact]
         public void ToResidentSummaryResponseWithValidInputsReturnsValidOutPut()
