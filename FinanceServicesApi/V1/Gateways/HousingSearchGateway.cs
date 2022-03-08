@@ -46,6 +46,8 @@ namespace FinanceServicesApi.V1.Gateways
             }
 
             var personsList = await apiResponse.ReadContentAs<APIResponse<GetPersonListResponse>>().ConfigureAwait(true);
+            var response = personsList.Results;
+            response.SetTotal(personsList.Total);
             return personsList.Results;
         }
 
