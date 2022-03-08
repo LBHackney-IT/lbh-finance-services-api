@@ -41,7 +41,8 @@ namespace FinanceServicesApi.V1.Factories
             Account account,
             Domain.Charges.Charge charge,
             List<ContactDetail> contacts,
-            List<Transaction> transactions)
+            List<Transaction> transactions,
+            bool isLeaseHolder)
         {
             return new ResidentSummaryResponse
             {
@@ -52,10 +53,11 @@ namespace FinanceServicesApi.V1.Factories
                 LastPaymentAmount = transactions?.Count == 0 ? 0 : transactions?.LastOrDefault(p => p.PaidAmount != 0)?.PaidAmount ?? 0,
                 LastPaymentDate = transactions?.Count == 0 ? (DateTime?) null : transactions?.LastOrDefault(p => p.PaidAmount != 0)?.TransactionDate,
 
-                ServiceCharge = charge?.DetailedCharges?.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount) / 12,
+                ServiceCharge = isLeaseHolder
+                    ? charge?.DetailedCharges?.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount) / 12
+                    : charge?.DetailedCharges?.Where(c => c.Type.ToLower() == "service").Sum(c => c.Amount),
                 WeeklyTotalCharges = charge?.DetailedCharges?.Where(c =>
-                        c.Frequency.ToLower() == "weekly" &&
-                        c.Type.ToLower() == "service").Sum(c => c.Amount),
+                        c.Frequency.ToLower() == "weekly").Sum(c => c.Amount),
 
                 DateOfBirth = person?.DateOfBirth,
                 PrimaryTenantName = (person?.FirstName == null && person?.Surname == null) ? null :
@@ -63,7 +65,7 @@ namespace FinanceServicesApi.V1.Factories
                 PersonId = "-",
 
                 PrimaryTenantAddress = tenure?.TenuredAsset?.FullAddress,
-                TenureType = tenure?.TenureType?.Code,
+                TenureType = tenure?.TenureType?.Description,
                 TenureStartDate = tenure?.StartOfTenureDate,
                 Tenure = new TenurePartialModel { Id = tenure?.Id ?? Guid.Empty },
 
@@ -84,7 +86,8 @@ namespace FinanceServicesApi.V1.Factories
             Charge charges,
             List<ContactDetail> contacts,
             List<Transaction> transactions,
-            Asset asset)
+            Asset asset,
+            bool isLeaseholder)
         {
             var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
             var firstDayOfFinancialYear = new DateTime(financialYear, 4, 1);
@@ -99,9 +102,9 @@ namespace FinanceServicesApi.V1.Factories
                     p.TransactionDate >= firstDayOfFinancialYear)
                 .Sum(p =>
                     p.ChargedAmount - p.PaidAmount - p.HousingBenefitAmount) ?? 0;
+            // Sum of all the charges - Tenants
             var weeklyTotalCharges = charges?.DetailedCharges.Where(c =>
-                    c.Type.ToLower() == "service" &&
-                    c.Frequency.ToLower() == "weekly").Sum(c => c.Amount);
+                c.Frequency.ToLower() == "weekly").Sum(c => c.Amount);
 
             var yearlyRentDebit = charges?.DetailedCharges.Where(c =>
                     c.Type.ToLower() == "rent" &&
@@ -110,9 +113,20 @@ namespace FinanceServicesApi.V1.Factories
             var rent = charges?.DetailedCharges
                     .LastOrDefault(c => c.Type.ToLower() == "rent")?.Amount ?? 0;
 
-            var serviceCharge = charges?.DetailedCharges
-                .Where(c => c.Type.ToLower() == "service")?
-                .Sum(s => s.Amount) / 12 ?? 0;
+            // Check for Tenants and Leaseholders
+            decimal serviceCharge;
+            if (isLeaseholder)
+            {
+                serviceCharge = charges?.DetailedCharges
+                    .Where(c => c.Type.ToLower() == "service")?
+                    .Sum(s => s.Amount) / 12 ?? 0;
+            }
+            else
+            {
+                serviceCharge = charges?.DetailedCharges
+                    .Where(c => c.Type.ToLower() == "service")?
+                    .Sum(s => s.Amount) ?? 0;
+            }
 
             var paidThisYear = transactions?.Where(p =>
                 p.TransactionDate >= firstDayOfFinancialYear &&
@@ -123,7 +137,7 @@ namespace FinanceServicesApi.V1.Factories
                 CurrentBalance = account?.ConsolidatedBalance,
                 HousingBenefit = transactions?.Sum(s => s.HousingBenefitAmount) ?? 0,
                 ServiceCharge = serviceCharge,
-                TenancyType = tenure?.TenureType.Code,
+                TenancyType = tenure?.TenureType.Description,
                 PersonTenureType = person == null ? null : tenure?.HouseholdMembers.FirstOrDefault(p => p.Id == person.Id)?.PersonTenureType,
                 PrimaryTenantEmail = contacts?.Where(c =>
                         c.TargetType == TargetType.Person &&
@@ -155,16 +169,37 @@ namespace FinanceServicesApi.V1.Factories
         public static ResidentAssetsResponse ToResponse(Asset asset, TenureInformation tenure, List<Charge> charges, Account account)
         {
             var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
+            var isLeaseHolder =
+                tenure.TenureType?.Description == TenureTypes.LeaseholdRTB.Description
+                || tenure.TenureType?.Description == TenureTypes.PrivateSaleLH.Description
+                || tenure.TenureType?.Description == TenureTypes.SharedOwners.Description
+                || tenure.TenureType?.Description == TenureTypes.SharedEquity.Description
+                || tenure.TenureType?.Description == TenureTypes.ShortLifeLse.Description
+                || tenure.TenureType?.Description == TenureTypes.LeaseholdStair.Description
+                || tenure.TenureType?.Description == TenureTypes.FreeholdServ.Description;
+            decimal rent;
+            decimal serviceCharge;
+            if (isLeaseHolder)
+            {
+                rent = 0;
+                serviceCharge = charges?.Count == 0
+                    ? 0
+                    : charges?.FirstOrDefault(p => p.ChargeGroup == ChargeGroup.Leaseholders
+                                                   && p.ChargeSubGroup == ChargeSubGroup.Estimate && p.ChargeYear == financialYear)
+                        ?.DetailedCharges.Sum(x => x.Amount) ?? 0;
 
-            var rent = charges?.Count == 0
-                ? 0
-                : charges?.LastOrDefault(p => p.ChargeYear == financialYear)?.DetailedCharges
-                .LastOrDefault(c => c.Type.ToLower() == "rent")?.Amount ?? 0;
-
-            var serviceCharge = charges?.Count == 0
-                ? 0
-                : charges?.LastOrDefault(p => p.ChargeYear == financialYear)?.DetailedCharges
-                    .LastOrDefault(c => c.Type.ToLower() == "service")?.Amount ?? 0;
+            }
+            else
+            {
+                rent = charges?.Count == 0
+                    ? 0
+                    : charges?.Where(p => p.ChargeGroup == ChargeGroup.Tenants).OrderByDescending(x => x.ChargeYear).First()
+                        ?.DetailedCharges.FirstOrDefault(x => x.Type.ToLower() == "rent")?.Amount ?? 0;
+                serviceCharge = charges?.Count == 0
+                    ? 0
+                    : charges?.Where(p => p.ChargeGroup == ChargeGroup.Tenants).OrderByDescending(x => x.ChargeYear).First()
+                        ?.DetailedCharges.Where(x => x.Type.ToLower() == "service")?.Sum(x => x.Amount) ?? 0;
+            }
 
             return new ResidentAssetsResponse()
             {
@@ -211,21 +246,14 @@ namespace FinanceServicesApi.V1.Factories
             };
         }
 
-        public static PropertyDetailsResponse ToResponse(Asset asset, Charge charge)
+        public static PropertyDetailsResponse ToResponse(Asset asset, Charge charge, bool isLeaseholder)
         {
-            var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
-            var firstDayOfFinancialYear = new DateTime(financialYear, 4, 1);
-            while (firstDayOfFinancialYear.DayOfWeek != DayOfWeek.Monday)
-            {
-                firstDayOfFinancialYear = firstDayOfFinancialYear.AddDays(1);
-            }
-            var lastDayOfFinancialYear = firstDayOfFinancialYear.AddYears(1).AddDays(-1);
-
-
-            var weeklyCharges = charge?.DetailedCharges.Where(c =>
-                c.Type.ToLower() == "service" &&
-                c.Frequency.ToLower() == "weekly").Sum(s => s.Amount) ?? 0;
-
+            var weeklyCharges = isLeaseholder ? 0
+                : charge?.DetailedCharges.Where(c =>
+                    c.Frequency.ToLower() == "weekly").Sum(s => s.Amount) ?? 0;
+            var monthlyCharge = isLeaseholder ? charge?.DetailedCharges.Where(c =>
+                    c.Frequency.ToLower() == "monthly").Sum(s => s.Amount) / 12
+                : weeklyCharges * 4;
 
             return new PropertyDetailsResponse()
             {
@@ -242,7 +270,7 @@ namespace FinanceServicesApi.V1.Factories
                                                                    Value = p.Amount
                                                                }).ToList(),
                 WeeklyCharge = weeklyCharges,
-                YearlyCharge = weeklyCharges * 52
+                YearlyCharge = monthlyCharge * 12
             };
         }
     }

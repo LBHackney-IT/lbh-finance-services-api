@@ -149,7 +149,8 @@ namespace FinanceServicesApi.V1.Controllers
                 chargeResponse,
                 contactDetailsResponse?.Results,
                 transactionResponse,
-                assetResponse);
+                assetResponse,
+                isLeaseHolder);
             return Ok(result);
         }
 
@@ -260,7 +261,7 @@ namespace FinanceServicesApi.V1.Controllers
                     .OrderByDescending(c => c.ChargeYear).FirstOrDefault();
             }
 
-            return Ok(ResponseFactory.ToResponse(assetData, chargeData));
+            return Ok(ResponseFactory.ToResponse(assetData, chargeData, isLeaseHolder));
         }
 
         /// <summary>

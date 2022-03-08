@@ -151,9 +151,10 @@ namespace FinanceServicesApi.Tests.V1.Factories
             Charge charge = _fixture.Create<Charge>();
             List<ContactDetail> contacts = _fixture.Create<List<ContactDetail>>();
             List<Transaction> transactions = _fixture.Create<List<Transaction>>();
+            var isLeaseholder = _fixture.Create<bool>();
 
             ResidentSummaryResponse response =
-                ResponseFactory.ToResponse(person, tenureInformation, account, charge, contacts, transactions);
+                ResponseFactory.ToResponse(person, tenureInformation, account, charge, contacts, transactions, isLeaseholder);
 
             response.Should().NotBeNull();
         }
@@ -170,9 +171,9 @@ namespace FinanceServicesApi.Tests.V1.Factories
             Charge charge = _fixture.Create<Charge>();
             List<ContactDetail> contacts = _fixture.Create<List<ContactDetail>>();
             List<Transaction> transactions = _fixture.Create<List<Transaction>>();
-
+            var isLeaseholder = _fixture.Create<bool>();
             ResidentSummaryResponse response =
-                ResponseFactory.ToResponse(person, tenureInformation, account, charge, contacts, transactions);
+                ResponseFactory.ToResponse(person, tenureInformation, account, charge, contacts, transactions, isLeaseholder);
 
             response.Should().NotBeNull();
             response.CurrentBalance.Should().Be(balanceExpected);
@@ -191,9 +192,10 @@ namespace FinanceServicesApi.Tests.V1.Factories
             Charge charge = _fixture.Create<Charge>();
             List<ContactDetail> contacts = _fixture.Create<List<ContactDetail>>();
             Account account = _fixture.Create<Account>();
+            var isLeaseholder = _fixture.Create<bool>();
 
             ResidentSummaryResponse response =
-                ResponseFactory.ToResponse(person, tenureInformation, account, charge, contacts, transactions);
+                ResponseFactory.ToResponse(person, tenureInformation, account, charge, contacts, transactions, isLeaseholder);
 
             response.Should().NotBeNull();
             response.HousingBenefit.Should().Be(housingBenefitExpected);
@@ -213,9 +215,10 @@ namespace FinanceServicesApi.Tests.V1.Factories
             Charge charge = _fixture.Create<Charge>();
             List<ContactDetail> contacts = _fixture.Create<List<ContactDetail>>();
             List<Transaction> transactions = _fixture.CreateMany<Transaction>(5).ToList();
+            var isLeaseholder = _fixture.Create<bool>();
 
             ResidentSummaryResponse response =
-                ResponseFactory.ToResponse(person, tenureInformation, account, charge, contacts, transactions);
+                ResponseFactory.ToResponse(person, tenureInformation, account, charge, contacts, transactions, isLeaseholder);
 
             response.Should().NotBeNull();
             response.DateOfBirth.Should().Be(dateOfBirthExpected);
@@ -236,9 +239,10 @@ namespace FinanceServicesApi.Tests.V1.Factories
             Charge charge = _fixture.Create<Charge>();
             List<ContactDetail> contacts = _fixture.Create<List<ContactDetail>>();
             List<Transaction> transactions = _fixture.CreateMany<Transaction>(5).ToList();
+            var isLeaseholder = _fixture.Create<bool>();
 
             ResidentSummaryResponse response =
-                ResponseFactory.ToResponse(person, tenure, account, charge, contacts, transactions);
+                ResponseFactory.ToResponse(person, tenure, account, charge, contacts, transactions, false);
 
             response.Should().NotBeNull();
             response.PrimaryTenantAddress.Should().Be(primaryTenantAddressExpected);
@@ -259,9 +263,10 @@ namespace FinanceServicesApi.Tests.V1.Factories
             Charge charge = _fixture.Create<Charge>();
             TenureInformation tenure = _fixture.Create<TenureInformation>();
             List<Transaction> transactions = _fixture.CreateMany<Transaction>(5).ToList();
+            var isLeaseholder = _fixture.Create<bool>();
 
             ResidentSummaryResponse response =
-                ResponseFactory.ToResponse(person, tenure, account, charge, contacts, transactions);
+                ResponseFactory.ToResponse(person, tenure, account, charge, contacts, transactions, isLeaseholder);
 
             response.Should().NotBeNull();
             response.PrimaryTenantEmail.Should().Be(primaryTenantEmailExpected);
