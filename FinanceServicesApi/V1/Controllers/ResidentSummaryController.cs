@@ -152,7 +152,8 @@ namespace FinanceServicesApi.V1.Controllers
                 account,
                 chargeData,
                 contactDetailsResponse?.Results,
-                transactionResponse);
+                transactionResponse,
+                isLeaseHolder);
             return Ok(result);
         }
 
