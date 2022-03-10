@@ -18,8 +18,9 @@ namespace FinanceServicesApi.V1.Domain.TransactionModels
 
         public string TransactionSource { get; set; }
 
-        [AllowedValues(typeof(TransactionType))]
-        public TransactionType TransactionType { get; set; }
+        //[AllowedValues(typeof(TransactionType))]
+        //public TransactionType TransactionType { get; set; }
+        public string TransactionType { get; set; }
 
         [RequiredDateTime]
         public DateTime TransactionDate { get; set; }
@@ -73,4 +74,5 @@ namespace FinanceServicesApi.V1.Domain.TransactionModels
 
         public string CreatedBy { get; set; }
     }
+
 }
