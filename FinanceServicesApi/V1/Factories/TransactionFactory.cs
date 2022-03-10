@@ -2,6 +2,7 @@ using FinanceServicesApi.V1.Infrastructure.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using FinanceServicesApi.V1.Domain.TransactionModels;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 
 namespace FinanceServicesApi.V1.Factories
 {
@@ -26,7 +27,7 @@ namespace FinanceServicesApi.V1.Factories
                 PeriodNo = transaction.PeriodNo,
                 TransactionAmount = transaction.TransactionAmount,
                 TransactionDate = transaction.TransactionDate,
-                TransactionType = transaction.TransactionType,
+                TransactionType = EnumHelper.GetValueFromDescription<TransactionType>(transaction.TransactionType),
                 TransactionSource = transaction.TransactionSource,
                 Address = transaction.Address,
                 Person = transaction.Person,
@@ -58,7 +59,7 @@ namespace FinanceServicesApi.V1.Factories
                 PeriodNo = transactionDbEntity.PeriodNo,
                 TransactionAmount = transactionDbEntity.TransactionAmount,
                 TransactionDate = transactionDbEntity.TransactionDate,
-                TransactionType = transactionDbEntity.TransactionType,
+                TransactionType = transactionDbEntity.TransactionType.GetDescription(),
                 TransactionSource = transactionDbEntity.TransactionSource,
                 Address = transactionDbEntity.Address,
                 Person = transactionDbEntity.Person,

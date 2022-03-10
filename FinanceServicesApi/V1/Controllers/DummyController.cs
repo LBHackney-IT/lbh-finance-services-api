@@ -105,7 +105,7 @@ namespace FinanceServicesApi.V1.Controllers
                         TargetType = TargetType.Tenure,
                         TransactionDate = RandomDay(),
                         TransactionSource = Faker.Lorem.Words(5).First(),
-                        TransactionType = (TransactionType) ((short) _generator.Next(1, (int) Enum.GetValues(typeof(TransactionType)).Cast<TransactionType>().Max()))
+                        TransactionType = ((short) _generator.Next(1, (int) Enum.GetValues(typeof(TransactionType)).Cast<TransactionType>().Max())).GetDescription()
                     };
                     response.Add(transaction);
                 }
