@@ -23,7 +23,7 @@ namespace FinanceServicesApi.V1.Factories
             if (account == null) throw new ArgumentNullException(nameof(account));
             if (transaction == null) throw new ArgumentNullException(nameof(transaction));
 
-            var arrearsAfterPayment = account.AccountBalance - transaction.TransactionAmount;
+            var arrearsAfterPayment = account.AccountBalance + transaction.TransactionAmount;
             return new ConfirmTransferResponse
             {
                 Address = transaction.Address,
