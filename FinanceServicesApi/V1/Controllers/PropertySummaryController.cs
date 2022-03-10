@@ -9,6 +9,7 @@ using FinanceServicesApi.V1.Domain.ContactDetails;
 using FinanceServicesApi.V1.Factories;
 using Microsoft.AspNetCore.Mvc;
 using FinanceServicesApi.V1.Infrastructure;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Tenure.Domain;
@@ -82,7 +83,10 @@ namespace FinanceServicesApi.V1.Controllers
 
             var accountResponse = accountResponseTask.Result;
             var transactionResponse = transactionResponseTask.Result;
-            var tenureInformationResponse = tenureInformationResponseTask.Result;
+            TenureInformation tenureInformationResponse = tenureInformationResponseTask.Result;
+
+            if (tenureInformationResponse == null)
+                return NotFound($"The tenure id not found!");
 
             var personId = tenureInformationResponse?.HouseholdMembers.FirstOrDefault(p => p.IsResponsible)?.Id ?? Guid.Empty;
 
@@ -90,7 +94,7 @@ namespace FinanceServicesApi.V1.Controllers
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no responsible household member for provided tenure."));
 
             Asset assetResponse = null;
-            List<Charge> chargeResponse = null;
+            Charge chargeResponse = null;
             Task<Asset> assetResponseTask = null;
             Task<List<Charge>> chargeResponseTask = null;
 
@@ -108,9 +112,35 @@ namespace FinanceServicesApi.V1.Controllers
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
             assetResponse = assetResponseTask?.Result;
-            chargeResponse = chargeResponseTask?.Result;
+            var rawChargeResponse = chargeResponseTask?.Result;
+
+
+            // leaseholder, if the value is true
+            var isLeaseHolder =
+                        tenureInformationResponse.TenureType?.Description == TenureTypes.LeaseholdRTB.Description
+                     || tenureInformationResponse.TenureType?.Description == TenureTypes.PrivateSaleLH.Description
+                     || tenureInformationResponse.TenureType?.Description == TenureTypes.SharedOwners.Description
+                     || tenureInformationResponse.TenureType?.Description == TenureTypes.SharedEquity.Description
+                     || tenureInformationResponse.TenureType?.Description == TenureTypes.ShortLifeLse.Description
+                     || tenureInformationResponse.TenureType?.Description == TenureTypes.LeaseholdStair.Description
+                     || tenureInformationResponse.TenureType?.Description == TenureTypes.FreeholdServ.Description;
+
+            if (isLeaseHolder) // leaseholder
+            {
+                var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
+
+                chargeResponse = rawChargeResponse?.Where(p => p.ChargeGroup == ChargeGroup.Leaseholders
+                                                               && p.ChargeSubGroup == ChargeSubGroup.Estimate
+                                                               && p.ChargeYear == financialYear).FirstOrDefault();
+            }
+            else
+            {
+                chargeResponse = rawChargeResponse?.Where(p => p.ChargeGroup == ChargeGroup.Tenants)
+                    .OrderByDescending(c => c.ChargeYear).FirstOrDefault();
+            }
 
             var personResponse = personResponseTask.Result;
+
             var contactDetailsResponse = contactDetailsResponseTask.Result;
 
             var result = ResponseFactory.ToResponse(tenureInformationResponse,
@@ -119,7 +149,8 @@ namespace FinanceServicesApi.V1.Controllers
                 chargeResponse,
                 contactDetailsResponse?.Results,
                 transactionResponse,
-                assetResponse);
+                assetResponse,
+                isLeaseHolder);
             return Ok(result);
         }
 
@@ -203,9 +234,34 @@ namespace FinanceServicesApi.V1.Controllers
             if (assetData == null)
                 return NotFound(new BaseErrorResponse((int) HttpStatusCode.NotFound, $"There is no data for provided tenure"));
 
-            var chargeData = await _chargeUseCase.ExecuteAsync(assetData.Id).ConfigureAwait(false);
+            var rawChargeData = await _chargeUseCase.ExecuteAsync(assetData.Id).ConfigureAwait(false);
+            Charge chargeData = null;
 
-            return Ok(ResponseFactory.ToResponse(assetData, chargeData));
+            // leaseholder, if the value is true
+            var isLeaseHolder =
+                   tenureInformation.TenureType?.Description == TenureTypes.LeaseholdRTB.Description
+                || tenureInformation.TenureType?.Description == TenureTypes.PrivateSaleLH.Description
+                || tenureInformation.TenureType?.Description == TenureTypes.SharedOwners.Description
+                || tenureInformation.TenureType?.Description == TenureTypes.SharedEquity.Description
+                || tenureInformation.TenureType?.Description == TenureTypes.ShortLifeLse.Description
+                || tenureInformation.TenureType?.Description == TenureTypes.LeaseholdStair.Description
+                || tenureInformation.TenureType?.Description == TenureTypes.FreeholdServ.Description;
+
+            if (isLeaseHolder) // leaseholder
+            {
+                var financialYear = DateTime.UtcNow.Year + ((DateTime.UtcNow.Month > 0 && DateTime.UtcNow.Month < 4) ? -1 : 0);
+
+                chargeData = rawChargeData?.Where(p => p.ChargeGroup == ChargeGroup.Leaseholders
+                                                       && p.ChargeSubGroup == ChargeSubGroup.Estimate
+                                                       && p.ChargeYear == financialYear).FirstOrDefault();
+            }
+            else
+            {
+                chargeData = rawChargeData?.Where(p => p.ChargeGroup == ChargeGroup.Tenants)
+                    .OrderByDescending(c => c.ChargeYear).FirstOrDefault();
+            }
+
+            return Ok(ResponseFactory.ToResponse(assetData, chargeData, isLeaseHolder));
         }
 
         /// <summary>

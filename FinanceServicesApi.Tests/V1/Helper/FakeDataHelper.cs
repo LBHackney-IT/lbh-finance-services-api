@@ -392,7 +392,7 @@ namespace FinanceServicesApi.Tests.V1.Helper
                     .With(p=>p.StartOfTenureDate,new DateTime(2020,01,01))
                     .With(p=>p.Id,_tenureId)
                     .Create(),
-                null,"Code1",new DateTime(2020,01,01),_tenureId
+                null,"Desc1",new DateTime(2020,01,01),_tenureId
             };
             yield return new object[]
             {
@@ -409,7 +409,7 @@ namespace FinanceServicesApi.Tests.V1.Helper
                     .With(p=>p.StartOfTenureDate,new DateTime(2020,01,01))
                     .With(p=>p.Id,_tenureId)
                     .Create(),
-                null,"Code1",new DateTime(2020,01,01),_tenureId
+                null,"Desc1",new DateTime(2020,01,01),_tenureId
             };
             yield return new object[]
             {
@@ -426,7 +426,7 @@ namespace FinanceServicesApi.Tests.V1.Helper
                     .With(p=>p.StartOfTenureDate,new DateTime(2020,01,01))
                     .With(p=>p.Id,_tenureId)
                     .Create(),
-                "ABCDEF","Code1",new DateTime(2020,01,01),_tenureId
+                "ABCDEF","Desc1",new DateTime(2020,01,01),_tenureId
             };
             yield return new object[]
             {
@@ -457,7 +457,7 @@ namespace FinanceServicesApi.Tests.V1.Helper
                     .Without(p=>p.StartOfTenureDate)
                     .With(p=>p.Id,_tenureId)
                     .Create(),
-                "ABCDEF","Code1",null,_tenureId
+                "ABCDEF","Desc1",null,_tenureId
             };
             yield return new object[]
             {
@@ -474,7 +474,7 @@ namespace FinanceServicesApi.Tests.V1.Helper
                     .With(p=>p.StartOfTenureDate,new DateTime(2020,01,01))
                     .With(p=>p.Id,Guid.Empty)
                     .Create(),
-                "ABCDEF","Code1",new DateTime(2020,01,01),Guid.Empty
+                "ABCDEF","Desc1",new DateTime(2020,01,01),Guid.Empty
             };
             yield return new object[]
             {
@@ -491,7 +491,7 @@ namespace FinanceServicesApi.Tests.V1.Helper
                     .With(p=>p.StartOfTenureDate,new DateTime(2020,01,01))
                     .Without(p=>p.Id)
                     .Create(),
-                "ABCDEF","Code1",new DateTime(2020,01,01),Guid.Empty
+                "ABCDEF","Desc1",new DateTime(2020,01,01),Guid.Empty
             };
         }
 
@@ -798,19 +798,24 @@ namespace FinanceServicesApi.Tests.V1.Helper
             };
             yield return new object[]
             {
-                new List<Charge>()
-                {
-                    {
-                        _fixture.Build<Charge>()
-                            .Without(p=>p.DetailedCharges)
-                            .Create()
-                    }
-                }
+                _fixture.Build<Charge>().Without(p=>p.DetailedCharges).Create()
                 , 0m,0m
             };
             yield return new object[]
             {
-                new List<Charge>()
+                _fixture.Build<Charge>()
+                    .With(p=>p.DetailedCharges,new List<DetailedCharges>(4)
+                    {
+                        {
+                            _fixture.Build<DetailedCharges>()
+                                .With(p=>p.Type,"service")
+                                .With(p=>p.Amount,11.35m)
+                                .With(p=>p.Frequency,"Weekly")
+                                .Create()
+                        }
+                    })
+                    .Create()
+                /*new List<Charge>()
                 {
                     {
                         _fixture.Build<Charge>()
@@ -854,7 +859,7 @@ namespace FinanceServicesApi.Tests.V1.Helper
                             })
                             .Create()
                     }
-                }
+                }*/
                 , 32.95m,11.35m
             };
         }

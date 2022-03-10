@@ -26,7 +26,7 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
         /// <example>
         ///     125.54
         /// </example>
-        public float? Rent { get; set; }
+        public decimal? Rent { get; set; }
         /// <summary>
         /// 
         /// </summary>
