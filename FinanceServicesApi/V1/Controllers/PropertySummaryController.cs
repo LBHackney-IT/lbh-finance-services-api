@@ -14,6 +14,7 @@ using FinanceServicesApi.V1.UseCase.Interfaces;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Tenure.Domain;
 using Microsoft.AspNetCore.Http;
+using FinanceServicesApi.V1.Boundary.Request.Enums;
 
 namespace FinanceServicesApi.V1.Controllers
 {
@@ -52,7 +53,7 @@ namespace FinanceServicesApi.V1.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Return summary info about some property, including HousingBenefit, ServiceCharge, CurrentBalance, Rent, etc.
         /// </summary>
         /// <param name="id">Tenure id</param>
         /// <returns>Property Summary</returns>
@@ -269,13 +270,16 @@ namespace FinanceServicesApi.V1.Controllers
         /// </summary>
         /// <param name="assetId"></param>
         /// <param name="fromYear">Start year for totals sequense. Will be returned result for period from provided year until currect one. Should be more that 1970 ans less than currect year</param>
+        /// <param name="chargeGroupFilter">Defines for what charge group we need to return response. Allowed values: 0 [Tenants], 1 [Leaseholders], 2 [Both]</param>
         /// <returns></returns>
         [ProducesResponseType(typeof(AssetApportionmentResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
         [HttpGet("{assetId}/apportionments")]
-        public async Task<IActionResult> GetAssetApportionments([FromRoute] Guid assetId, [FromQuery] short fromYear)
+        public async Task<IActionResult> GetAssetApportionments([FromRoute] Guid assetId,
+            [FromQuery] short fromYear,
+            [FromQuery] ChargeGroupFilter chargeGroupFilter = ChargeGroupFilter.Both)
         {
             if (assetId == Guid.Empty)
             {
@@ -288,7 +292,7 @@ namespace FinanceServicesApi.V1.Controllers
                     $"{nameof(fromYear)} should be more that 1970 ans less than currect year"));
             }
 
-            var result = await _getAssetApportionmentUseCase.ExecuteAsync(assetId, fromYear).ConfigureAwait(false);
+            var result = await _getAssetApportionmentUseCase.ExecuteAsync(assetId, fromYear, chargeGroupFilter).ConfigureAwait(false);
 
             return Ok(result);
         }

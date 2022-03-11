@@ -1,4 +1,6 @@
+using FinanceServicesApi.V1.Boundary.Request.Enums;
 using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
+using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Gateways.Interfaces;
 using FinanceServicesApi.V1.Infrastructure;
 using FinanceServicesApi.V1.Infrastructure.Enums;
@@ -23,7 +25,7 @@ namespace FinanceServicesApi.V1.UseCase
             _assetGateway = assetGateway;
         }
 
-        public async Task<AssetApportionmentResponse> ExecuteAsync(Guid assetId, short startPeriodYear)
+        public async Task<AssetApportionmentResponse> ExecuteAsync(Guid assetId, short startPeriodYear, ChargeGroupFilter chargeGroupFilter)
         {
             var asset = await _assetGateway.GetById(assetId).ConfigureAwait(false);
 
@@ -43,30 +45,48 @@ namespace FinanceServicesApi.V1.UseCase
                 throw new ArgumentException($"No charges was loaded from Charges API for asset id: [{assetId}]");
             }
 
-            var charges = allAssetCharges
-                .Where(_ => _.ChargeYear >= startPeriodYear)
-                .SelectMany(c => c.DetailedCharges.Select(dc => new DetailedChargeForYear(dc, c.ChargeYear, c.ChargeSubGroup)))
-                .ToList();
-
             var assetApportionment = new AssetApportionmentResponse();
-
             assetApportionment.AssetId = assetId;
             assetApportionment.AssetAddress = asset.AssetAddress;
 
-            assetApportionment.PropertyCosts = GetCostsGroupTotals(charges, ChargeType.Property);
-            assetApportionment.Totals.PropertyCostTotal = GetCostsTotals(assetApportionment.PropertyCosts);
+            if (chargeGroupFilter == ChargeGroupFilter.Both || chargeGroupFilter == ChargeGroupFilter.Tenants)
+            {
+                assetApportionment.TenantApportionment = GenerateApportionmentForChargeGroup(allAssetCharges, startPeriodYear, ChargeGroup.Tenants);
+                assetApportionment.TenantTotals = GetAppointmentTotal(assetApportionment.TenantApportionment);
+            }
 
-            assetApportionment.BlockCosts = GetCostsGroupTotals(charges, ChargeType.Block);
-            assetApportionment.Totals.BlockCostTotal = GetCostsTotals(assetApportionment.BlockCosts);
-
-            assetApportionment.EstateCosts = GetCostsGroupTotals(charges, ChargeType.Estate);
-            assetApportionment.Totals.EstateCostTotal = GetCostsTotals(assetApportionment.EstateCosts);
+            if (chargeGroupFilter == ChargeGroupFilter.Both || chargeGroupFilter == ChargeGroupFilter.Leaseholders)
+            {
+                assetApportionment.LeaseholdApportionment = GenerateApportionmentForChargeGroup(allAssetCharges, startPeriodYear, ChargeGroup.Leaseholders);
+                assetApportionment.LeaseholdTotals = GetAppointmentTotal(assetApportionment.LeaseholdApportionment);
+            }
 
             return assetApportionment;
         }
 
+        private ChargeGroupTotals GenerateApportionmentForChargeGroup(IEnumerable<Charge> allCharges,
+            short startPeriodYear,
+            ChargeGroup chargeGroup)
+        {
+            var appointment = new ChargeGroupTotals();
+
+            var detailedCharges = allCharges
+              .Where(_ => _.ChargeYear >= startPeriodYear
+                          && _.ChargeGroup == chargeGroup)
+              .SelectMany(c => c.DetailedCharges.Select(dc => new DetailedChargeForYear(dc, c.ChargeYear, c.ChargeSubGroup)))
+              .ToList();
+
+            appointment.PropertyCosts = GetCostsGroupTotals(detailedCharges, ChargeType.Property);
+
+            appointment.BlockCosts = GetCostsGroupTotals(detailedCharges, ChargeType.Block);
+
+            appointment.EstateCosts = GetCostsGroupTotals(detailedCharges, ChargeType.Estate);
+
+            return appointment;
+        }
+
         private List<PropertyCostTotals> GetCostsGroupTotals(
-            List<DetailedChargeForYear> detailedCharges,
+            IEnumerable<DetailedChargeForYear> detailedCharges,
             ChargeType costsGroupType)
         {
             return detailedCharges
@@ -82,6 +102,16 @@ namespace FinanceServicesApi.V1.UseCase
                         Amount = _.Where(charge => charge.Year == year && charge.ChargeSubGroup == GetTargetSubGroup(year)).Sum(c => c.Amount)
                     }).ToList()
                 }).ToList();
+        }
+
+        private AssetApportionmentTotalsResponse GetAppointmentTotal(ChargeGroupTotals chargeGroupTotals)
+        {
+            return new AssetApportionmentTotalsResponse
+            {
+                PropertyCostTotal = GetCostsTotals(chargeGroupTotals.PropertyCosts),
+                BlockCostTotal = GetCostsTotals(chargeGroupTotals.BlockCosts),
+                EstateCostTotal = GetCostsTotals(chargeGroupTotals.EstateCosts),
+            };
         }
 
         private List<ChargesTotalResponse> GetCostsTotals(List<PropertyCostTotals> propertyCostTotals)
