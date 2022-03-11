@@ -52,13 +52,13 @@ namespace FinanceServicesApi.V1.UseCase
             if (chargeGroupFilter == ChargeGroupFilter.Both || chargeGroupFilter == ChargeGroupFilter.Tenants)
             {
                 assetApportionment.TenantApportionment = GenerateApportionmentForChargeGroup(allAssetCharges, startPeriodYear, ChargeGroup.Tenants);
-                assetApportionment.TenantTotals = GetAppointmentTotal(assetApportionment.TenantApportionment);
+                assetApportionment.TenantTotals = GetApportionmentTotal(assetApportionment.TenantApportionment);
             }
 
             if (chargeGroupFilter == ChargeGroupFilter.Both || chargeGroupFilter == ChargeGroupFilter.Leaseholders)
             {
                 assetApportionment.LeaseholdApportionment = GenerateApportionmentForChargeGroup(allAssetCharges, startPeriodYear, ChargeGroup.Leaseholders);
-                assetApportionment.LeaseholdTotals = GetAppointmentTotal(assetApportionment.LeaseholdApportionment);
+                assetApportionment.LeaseholdTotals = GetApportionmentTotal(assetApportionment.LeaseholdApportionment);
             }
 
             return assetApportionment;
@@ -68,7 +68,7 @@ namespace FinanceServicesApi.V1.UseCase
             short startPeriodYear,
             ChargeGroup chargeGroup)
         {
-            var appointment = new ChargeGroupTotals();
+            var apportionment = new ChargeGroupTotals();
 
             var detailedCharges = allCharges
               .Where(_ => _.ChargeYear >= startPeriodYear
@@ -76,13 +76,13 @@ namespace FinanceServicesApi.V1.UseCase
               .SelectMany(c => c.DetailedCharges.Select(dc => new DetailedChargeForYear(dc, c.ChargeYear, c.ChargeSubGroup)))
               .ToList();
 
-            appointment.PropertyCosts = GetCostsGroupTotals(detailedCharges, ChargeType.Property);
+            apportionment.PropertyCosts = GetCostsGroupTotals(detailedCharges, ChargeType.Property);
 
-            appointment.BlockCosts = GetCostsGroupTotals(detailedCharges, ChargeType.Block);
+            apportionment.BlockCosts = GetCostsGroupTotals(detailedCharges, ChargeType.Block);
 
-            appointment.EstateCosts = GetCostsGroupTotals(detailedCharges, ChargeType.Estate);
+            apportionment.EstateCosts = GetCostsGroupTotals(detailedCharges, ChargeType.Estate);
 
-            return appointment;
+            return apportionment;
         }
 
         private List<PropertyCostTotals> GetCostsGroupTotals(
@@ -104,7 +104,7 @@ namespace FinanceServicesApi.V1.UseCase
                 }).ToList();
         }
 
-        private AssetApportionmentTotalsResponse GetAppointmentTotal(ChargeGroupTotals chargeGroupTotals)
+        private AssetApportionmentTotalsResponse GetApportionmentTotal(ChargeGroupTotals chargeGroupTotals)
         {
             return new AssetApportionmentTotalsResponse
             {
