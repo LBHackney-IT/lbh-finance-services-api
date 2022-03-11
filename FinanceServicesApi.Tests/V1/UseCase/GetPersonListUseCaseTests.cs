@@ -17,7 +17,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
     {
         private readonly Mock<IHousingSearchGateway> _housingSearchGateway;
         private readonly Mock<IGetAccountByTargetIdUseCase> _getAccountByTargetIdUseCase;
-        private readonly Fixture _fixture; 
+        private readonly Fixture _fixture;
 
         private readonly GetPersonListUseCase _sut;
 

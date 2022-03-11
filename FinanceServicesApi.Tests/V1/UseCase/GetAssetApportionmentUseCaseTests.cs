@@ -4,7 +4,6 @@ using FinanceServicesApi.V1.Boundary.Request.Enums;
 using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
 using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Gateways.Interfaces;
-using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.UseCase;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FluentAssertions;
