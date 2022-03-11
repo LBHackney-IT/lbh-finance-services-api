@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AutoFixture;
+using FinanceServicesApi.V1.Boundary.Request.Enums;
 using FinanceServicesApi.V1.Boundary.Responses;
 using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
 using FinanceServicesApi.V1.Controllers;
@@ -146,10 +147,10 @@ namespace FinanceServicesApi.Tests.V1.Controllers
         public async Task GetAssetApportionmentCallsUseCaseReturnsResponse()
         {
             var expectedResponse = _fixture.Create<AssetApportionmentResponse>();
-            _mockGetAssetApportionmentUseCase.Setup(_ => _.ExecuteAsync(It.IsAny<Guid>(), It.IsAny<short>()))
+            _mockGetAssetApportionmentUseCase.Setup(_ => _.ExecuteAsync(It.IsAny<Guid>(), It.IsAny<short>(), ChargeGroupFilter.Both))
                 .ReturnsAsync(expectedResponse);
 
-            var actualResult = await _sutController.GetAssetApportionments(Guid.NewGuid(), 2022).ConfigureAwait(false);
+            var actualResult = await _sutController.GetAssetApportionments(Guid.NewGuid(), 2022, ChargeGroupFilter.Both).ConfigureAwait(false);
 
             actualResult.Should().NotBeNull();
             actualResult.Should().BeOfType<OkObjectResult>();

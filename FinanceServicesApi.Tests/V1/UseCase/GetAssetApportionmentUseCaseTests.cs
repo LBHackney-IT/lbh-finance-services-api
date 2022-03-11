@@ -1,8 +1,9 @@
 using AutoFixture;
+using FinanceServicesApi.Tests.V1.Helper;
+using FinanceServicesApi.V1.Boundary.Request.Enums;
 using FinanceServicesApi.V1.Boundary.Responses.PropertySummary;
 using FinanceServicesApi.V1.Domain.Charges;
 using FinanceServicesApi.V1.Gateways.Interfaces;
-using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.UseCase;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FluentAssertions;
@@ -41,7 +42,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             _assetGateway.Setup(_ => _.GetById(It.IsAny<Guid>()))
                     .ReturnsAsync(_fixture.Create<Asset>());
 
-            Func<Task> action = () => _sut.ExecuteAsync(Guid.NewGuid(), 2022);
+            Func<Task> action = () => _sut.ExecuteAsync(Guid.NewGuid(), 2022, ChargeGroupFilter.Both);
 
             var actualException = await Assert.ThrowsAsync<Exception>(action).ConfigureAwait(false);
             actualException.Should().BeEquivalentTo(expectedException);
@@ -57,7 +58,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             _assetGateway.Setup(_ => _.GetById(It.IsAny<Guid>()))
                     .ReturnsAsync(_fixture.Create<Asset>());
 
-            Func<Task> action = () => _sut.ExecuteAsync(assetId, 2022);
+            Func<Task> action = () => _sut.ExecuteAsync(assetId, 2022, ChargeGroupFilter.Both);
 
             var actualException = await Assert.ThrowsAsync<ArgumentException>(action).ConfigureAwait(false);
             actualException.Message.Should().Be(expectedException.Message);
@@ -73,10 +74,64 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             _assetGateway.Setup(_ => _.GetById(It.IsAny<Guid>()))
                     .ReturnsAsync(_fixture.Create<Asset>());
 
-            Func<Task> action = () => _sut.ExecuteAsync(assetId, 2022);
+            Func<Task> action = () => _sut.ExecuteAsync(assetId, 2022, ChargeGroupFilter.Both);
 
             var actualException = await Assert.ThrowsAsync<ArgumentException>(action).ConfigureAwait(false);
             actualException.Message.Should().Be(expectedException.Message);
+        }
+
+        [Fact]
+        public async Task GatewatReturnsLeaseholdChargesCalculateApportionmentFrom2019()
+        {
+            Guid assetId = Guid.NewGuid();
+            Asset asset = _fixture.Create<Asset>();
+            var charges = ApportionmentGeneratorHelper.CreateTestChargesData(ChargeGroupFilter.Leaseholders);
+
+            AssetApportionmentResponse expectedResponse = new AssetApportionmentResponse()
+            {
+                AssetId = assetId,
+                AssetAddress = asset.AssetAddress,
+                LeaseholdTotals = ApportionmentGeneratorHelper.CalculateDefaultApportionmentTotals(),
+                LeaseholdApportionment = ApportionmentGeneratorHelper.CalculateDefaultApportionment(),
+                TenantTotals = null,
+                TenantApportionment = null
+            };
+            _chargeUseCase.Setup(_ => _.ExecuteAsync(assetId))
+                .ReturnsAsync(charges);
+            _assetGateway.Setup(_ => _.GetById(It.IsAny<Guid>()))
+                    .ReturnsAsync(asset);
+
+            var actualResponse = await _sut.ExecuteAsync(assetId, (short) (DateTime.Now.Year - 3), ChargeGroupFilter.Leaseholders).ConfigureAwait(false);
+
+            actualResponse.Should().NotBeNull();
+            actualResponse.Should().BeEquivalentTo(expectedResponse);
+        }
+
+        [Fact]
+        public async Task GatewatReturnsTenantsChargesCalculateApportionmentFrom2019()
+        {
+            Guid assetId = Guid.NewGuid();
+            Asset asset = _fixture.Create<Asset>();
+            var charges = ApportionmentGeneratorHelper.CreateTestChargesData(ChargeGroupFilter.Tenants);
+
+            AssetApportionmentResponse expectedResponse = new AssetApportionmentResponse()
+            {
+                AssetId = assetId,
+                AssetAddress = asset.AssetAddress,
+                LeaseholdTotals = null,
+                LeaseholdApportionment = null,
+                TenantTotals = ApportionmentGeneratorHelper.CalculateDefaultApportionmentTotals(),
+                TenantApportionment = ApportionmentGeneratorHelper.CalculateDefaultApportionment()
+            };
+            _chargeUseCase.Setup(_ => _.ExecuteAsync(assetId))
+                .ReturnsAsync(charges);
+            _assetGateway.Setup(_ => _.GetById(It.IsAny<Guid>()))
+                    .ReturnsAsync(asset);
+
+            var actualResponse = await _sut.ExecuteAsync(assetId, (short) (DateTime.Now.Year - 3), ChargeGroupFilter.Tenants).ConfigureAwait(false);
+
+            actualResponse.Should().NotBeNull();
+            actualResponse.Should().BeEquivalentTo(expectedResponse);
         }
 
         [Fact]
@@ -84,224 +139,26 @@ namespace FinanceServicesApi.Tests.V1.UseCase
         {
             Guid assetId = Guid.NewGuid();
             Asset asset = _fixture.Create<Asset>();
-            List<Charge> charges = new List<Charge>()
-            {
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Estimate, ChargeType.Estate, "Estate Cleaning", 100),
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Actual, ChargeType.Estate, "Estate Cleaning", 100),
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Actual, ChargeType.Estate, "Estate Cleaning", 200),
-                CreateCharge(DateTime.Now.Year - 1, ChargeSubGroup.Estimate, ChargeType.Estate, "Estate Cleaning", 300),
-                CreateCharge(DateTime.Now.Year - 1, ChargeSubGroup.Estimate, ChargeType.Estate, "Estate Cleaning", 50),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Estimate, ChargeType.Estate, "Estate Cleaning", 800),
-                CreateCharge(DateTime.Now.Year - 2, ChargeSubGroup.Actual, ChargeType.Estate, "Grounds Maintenance", 50),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Actual, ChargeType.Estate, "Grounds Maintenance", 50),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Estimate, ChargeType.Estate, "Grounds Maintenance", 300),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Estimate, ChargeType.Estate, "Grounds Maintenance", 150),
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Estimate, ChargeType.Estate, "Ground rent", 300),
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Actual, ChargeType.Estate, "Ground rent", 300),
-
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Estimate, ChargeType.Block, "Block Cleaning", 100),
-                CreateCharge(DateTime.Now.Year - 4, ChargeSubGroup.Actual, ChargeType.Block, "Block Cleaning", 200),
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Actual, ChargeType.Block, "Block Cleaning", 100),
-                CreateCharge(DateTime.Now.Year - 1, ChargeSubGroup.Estimate, ChargeType.Block, "Grounds Maintenance", 50),
-                CreateCharge(DateTime.Now.Year - 1, ChargeSubGroup.Estimate, ChargeType.Block, "Grounds Maintenance", 50),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Estimate, ChargeType.Block, "Heating Fuel", 500),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Estimate, ChargeType.Block, "Heating Fuel", 100),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Estimate, ChargeType.Block, "Heating Fuel", 50),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Actual, ChargeType.Block, "Heating Fuel", 50),
-
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Estimate, ChargeType.Property, "Building insurance", 100),
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Actual, ChargeType.Property, "Building insurance", 100),
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Actual, ChargeType.Property, "Building insurance", 50),
-                CreateCharge(DateTime.Now.Year - 1, ChargeSubGroup.Estimate, ChargeType.Property, "Building insurance", 200),
-                CreateCharge(DateTime.Now.Year - 1, ChargeSubGroup.Estimate, ChargeType.Property, "Building insurance", 100),
-                CreateCharge(DateTime.Now.Year - 1, ChargeSubGroup.Actual, ChargeType.Property, "Building insurance", 100),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Estimate, ChargeType.Property, "Building insurance", 100),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Estimate, ChargeType.Property, "Building insurance", 50),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Actual, ChargeType.Property, "Building insurance", 50),
-                CreateCharge(DateTime.Now.Year - 3, ChargeSubGroup.Actual, ChargeType.Property, "Management Fee", 200),
-                CreateCharge(DateTime.Now.Year - 4, ChargeSubGroup.Actual, ChargeType.Property, "Management Fee", 200),
-                CreateCharge(DateTime.Now.Year - 2, ChargeSubGroup.Actual, ChargeType.Property, "Management Fee", 200),
-                CreateCharge(DateTime.Now.Year - 2, ChargeSubGroup.Actual, ChargeType.Property, "Management Fee", 800),
-                CreateCharge(DateTime.Now.Year - 2, ChargeSubGroup.Estimate, ChargeType.Property, "Management Fee", 200),
-                CreateCharge(DateTime.Now.Year - 1, ChargeSubGroup.Actual, ChargeType.Property, "Management Fee", 200),
-                CreateCharge(DateTime.Now.Year - 1, ChargeSubGroup.Estimate, ChargeType.Property, "Management Fee", 150),
-                CreateCharge(DateTime.Now.Year - 1, ChargeSubGroup.Estimate, ChargeType.Property, "Management Fee", 300),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Estimate, ChargeType.Property, "Management Fee", 300),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Estimate, ChargeType.Property, "Management Fee", 50),
-                CreateCharge(DateTime.Now.Year, ChargeSubGroup.Actual, ChargeType.Property, "Management Fee", 50),
-            };
+            var charges = ApportionmentGeneratorHelper.CreateTestChargesData(ChargeGroupFilter.Both);
 
             AssetApportionmentResponse expectedResponse = new AssetApportionmentResponse()
             {
                 AssetId = assetId,
                 AssetAddress = asset.AssetAddress,
-                EstateCosts = new List<PropertyCostTotals>
-                {
-                    new PropertyCostTotals()
-                    {
-                        ChargeName = "Estate Cleaning",
-                        Totals = new List<ChargesTotalResponse>
-                        {
-                            CreateTotal(800, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                            CreateTotal(350, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                            CreateTotal(0, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                            CreateTotal(300, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                        }
-                    },
-                    new PropertyCostTotals()
-                    {
-                        ChargeName = "Grounds Maintenance",
-                        Totals = new List<ChargesTotalResponse>
-                        {
-                            CreateTotal(450, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                            CreateTotal(0, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                            CreateTotal(50, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                            CreateTotal(0, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                        }
-                    },
-                    new PropertyCostTotals()
-                    {
-                        ChargeName = "Ground rent",
-                        Totals = new List<ChargesTotalResponse>
-                        {
-                            CreateTotal(0, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                            CreateTotal(0, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                            CreateTotal(0, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                            CreateTotal(300, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                        }
-                    }
-                },
-                Totals = new AssetApportionmentTotalsResponse
-                {
-                    EstateCostTotal = new List<ChargesTotalResponse>
-                    {
-                        CreateTotal(1250, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                        CreateTotal(350, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                        CreateTotal(50, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                        CreateTotal(600, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                    },
-                    BlockCostTotal = new List<ChargesTotalResponse>
-                    {
-                        CreateTotal(650, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                        CreateTotal(100, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                        CreateTotal(0, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                        CreateTotal(100, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                    },
-                    PropertyCostTotal = new List<ChargesTotalResponse>
-                    {
-                        CreateTotal(500, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                        CreateTotal(750, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                        CreateTotal(1000, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                        CreateTotal(350, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                    }
-                },
-                BlockCosts = new List<PropertyCostTotals>
-                {
-                    new PropertyCostTotals()
-                    {
-                        ChargeName = "Block Cleaning",
-                        Totals = new List<ChargesTotalResponse>()
-                        {
-                            CreateTotal(0, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                            CreateTotal(0, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                            CreateTotal(0, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                            CreateTotal(100, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                        },
-
-                    },
-                    new PropertyCostTotals()
-                    {
-                        ChargeName = "Grounds Maintenance",
-                        Totals = new List<ChargesTotalResponse>()
-                        {
-                            CreateTotal(0, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                            CreateTotal(100, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                            CreateTotal(0, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                            CreateTotal(0, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                        }
-                    },
-                    new PropertyCostTotals()
-                    {
-                        ChargeName = "Heating Fuel",
-                        Totals = new List<ChargesTotalResponse>()
-                        {
-                            CreateTotal(650, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                            CreateTotal(0, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                            CreateTotal(0, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                            CreateTotal(0, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                        }
-                    }
-                    //new PropertyCostTotals()
-                    //{
-                    //    ChargeGroup = "",
-                    //    Totals = new List<ChargesTotalResponse>()
-                    //    {
-                    //        CreateTotal(0, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                    //        CreateTotal(0, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                    //        CreateTotal(0, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                    //        CreateTotal(0, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                    //    }
-                    //}
-                },
-                PropertyCosts = new List<PropertyCostTotals>
-                {
-                    new PropertyCostTotals
-                    {
-                        ChargeName = "Building insurance",
-                        Totals = new List<ChargesTotalResponse>()
-                        {
-                            CreateTotal(150, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                            CreateTotal(300, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                            CreateTotal(0, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                            CreateTotal(150, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                        }
-                    },
-                    new PropertyCostTotals
-                    {
-                        ChargeName = "Management Fee",
-                        Totals = new List<ChargesTotalResponse>()
-                        {
-                            CreateTotal(350, DateTime.Now.Year, ChargeSubGroup.Estimate),
-                            CreateTotal(450, DateTime.Now.Year - 1, ChargeSubGroup.Estimate),
-                            CreateTotal(1000, DateTime.Now.Year - 2, ChargeSubGroup.Actual),
-                            CreateTotal(200, DateTime.Now.Year - 3, ChargeSubGroup.Actual)
-                        }
-                    }
-                }
+                LeaseholdTotals = ApportionmentGeneratorHelper.CalculateDefaultApportionmentTotals(),
+                LeaseholdApportionment = ApportionmentGeneratorHelper.CalculateDefaultApportionment(),
+                TenantTotals = ApportionmentGeneratorHelper.CalculateDefaultApportionmentTotals(),
+                TenantApportionment = ApportionmentGeneratorHelper.CalculateDefaultApportionment()
             };
             _chargeUseCase.Setup(_ => _.ExecuteAsync(assetId))
                 .ReturnsAsync(charges);
             _assetGateway.Setup(_ => _.GetById(It.IsAny<Guid>()))
                     .ReturnsAsync(asset);
 
-            var actualResponse = await _sut.ExecuteAsync(assetId, (short) (DateTime.Now.Year - 3)).ConfigureAwait(false);
+            var actualResponse = await _sut.ExecuteAsync(assetId, (short) (DateTime.Now.Year - 3), ChargeGroupFilter.Both).ConfigureAwait(false);
 
             actualResponse.Should().NotBeNull();
             actualResponse.Should().BeEquivalentTo(expectedResponse);
-        }
-
-        private Charge CreateCharge(int year, ChargeSubGroup chargeSubGroup, ChargeType chargeType, string subType, decimal amount)
-        {
-            var detailerCharge = _fixture.Build<DetailedCharges>()
-                .With(_ => _.SubType, subType)
-                .With(_ => _.ChargeType, chargeType)
-                .With(_ => _.Amount, amount)
-                .CreateMany(1);
-
-            return _fixture.Build<Charge>()
-                .With(_ => _.ChargeYear, year)
-                .With(_ => _.ChargeSubGroup, chargeSubGroup)
-                .With(_ => _.DetailedCharges, detailerCharge)
-                .Create();
-        }
-
-        private ChargesTotalResponse CreateTotal(decimal amount, int year, ChargeSubGroup chargeSubGroup)
-        {
-            return _fixture.Build<ChargesTotalResponse>()
-                 .With(_ => _.Amount, amount)
-                 .With(_ => _.Type, chargeSubGroup)
-                 .With(_ => _.Year, year)
-                 .Create();
         }
     }
 }

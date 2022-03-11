@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using FinanceServicesApi.V1.Infrastructure;
+using FinanceServicesApi.V1.Infrastructure.Exceptions;
 
 namespace FinanceServicesApi.V1
 {
@@ -42,6 +43,10 @@ namespace FinanceServicesApi.V1
             catch (KeyNotFoundException ex)
             {
                 await HandleExceptionAsync(context, ex, HttpStatusCode.BadRequest).ConfigureAwait(false);
+            }
+            catch (AssetNotFoundException ex)
+            {
+                await HandleExceptionAsync(context, ex, HttpStatusCode.NotFound).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

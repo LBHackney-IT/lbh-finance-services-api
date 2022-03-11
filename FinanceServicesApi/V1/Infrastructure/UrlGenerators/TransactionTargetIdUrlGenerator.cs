@@ -28,7 +28,7 @@ namespace FinanceServicesApi.V1.Infrastructure.UrlGenerators
                 case SearchBy.ById:
                     {
                         var url = _getEnvironmentVariables.GetUrl();
-                        return new Uri($"{url}/transactions/{Guid.Empty}?targetId={id}");
+                        return new Uri($"{url}/transactions/{id}");
                     }
                 case SearchBy.ByTargetId:
                     {

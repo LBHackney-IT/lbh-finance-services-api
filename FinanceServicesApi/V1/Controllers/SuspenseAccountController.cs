@@ -38,7 +38,7 @@ namespace FinanceServicesApi.V1.Controllers
             if (accountResponse == null)
             {
                 return NotFound(new BaseErrorResponse(StatusCodes.Status404NotFound,
-                    "No information by provided account id or account id founded!"));
+                    "No information by provided tenure id founded!"));
             }
             else if (!ModelValidatorHelper.IsModelValid(accountResponse))
             {
@@ -50,7 +50,7 @@ namespace FinanceServicesApi.V1.Controllers
             if (transactionResponse == null)
             {
                 return NotFound(new BaseErrorResponse(StatusCodes.Status404NotFound,
-                    "No information by provided transaction id or account id founded!"));
+                    "No information by provided transaction id founded!"));
             }
             else if (!ModelValidatorHelper.IsModelValid(transactionResponse))
             {
