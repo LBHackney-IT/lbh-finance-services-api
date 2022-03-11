@@ -24,9 +24,9 @@ namespace FinanceServicesApi.Tests.V1.Factories
 
         #region ConfirmTransferResponse
         [Theory]
-        [InlineData(100, 150, 0)]
-        [InlineData(150, 100, 50)]
-        [InlineData(150, 150, 0)]
+        [InlineData(100, 150, 250)]
+        [InlineData(150, 100, 250)]
+        [InlineData(150, 150, 300)]
         [InlineData(0, 0, 0)]
         public void ToConfirmTransferResponseReturnsValidArrears(decimal accountBalance, decimal transactionAmount, decimal arrearsAmount)
         {
