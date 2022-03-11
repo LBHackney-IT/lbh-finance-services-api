@@ -1,6 +1,5 @@
 using Hackney.Shared.Asset.Domain;
 using System;
-using System.Collections.Generic;
 
 namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 {
@@ -11,12 +10,12 @@ namespace FinanceServicesApi.V1.Boundary.Responses.PropertySummary
 
         public AssetAddress AssetAddress { get; set; }
 
-        public AssetApportionmentTotalsResponse Totals { get; set; } = new AssetApportionmentTotalsResponse();
+        public AssetApportionmentTotalsResponse TenantTotals { get; set; }
 
-        public List<PropertyCostTotals> EstateCosts { get; set; } = new List<PropertyCostTotals>();
+        public AssetApportionmentTotalsResponse LeaseholdTotals { get; set; }
 
-        public List<PropertyCostTotals> BlockCosts { get; set; } = new List<PropertyCostTotals>();
+        public ChargeGroupTotals TenantApportionment { get; set; }
 
-        public List<PropertyCostTotals> PropertyCosts { get; set; } = new List<PropertyCostTotals>();
+        public ChargeGroupTotals LeaseholdApportionment { get; set; }
     }
 }
