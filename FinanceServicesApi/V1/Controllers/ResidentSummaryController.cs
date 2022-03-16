@@ -86,7 +86,7 @@ namespace FinanceServicesApi.V1.Controllers
 
             Guid tenureId = Guid.Empty;
             Account account = new Account();
-            foreach (var tenure in personResponse.Tenures)
+            foreach (var tenure in personResponse.Tenures.Where(p=>p.IsActive))
             {
                 account = null;
                 var innerAccount =
