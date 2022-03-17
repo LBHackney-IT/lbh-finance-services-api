@@ -252,7 +252,7 @@ namespace FinanceServicesApi.V1.Factories
                 : charge?.DetailedCharges.Where(c =>
                     c.Frequency.ToLower() == "weekly").Sum(s => s.Amount) ?? 0;
             var monthlyCharge = isLeaseholder ? charge?.DetailedCharges.Where(c =>
-                    c.Frequency.ToLower() == "monthly").Sum(s => s.Amount) / 12
+                    c.Frequency.ToLower() == "yearly").Sum(s => s.Amount) / 12
                 : weeklyCharges * 4;
 
             return new PropertyDetailsResponse()
