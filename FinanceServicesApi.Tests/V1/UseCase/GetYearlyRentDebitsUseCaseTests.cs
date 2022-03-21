@@ -79,7 +79,8 @@ namespace FinanceServicesApi.Tests.V1.UseCase
                 })
                 .Create();
             var years = Enumerable.Range(2011, 12).Select(Convert.ToInt16).ToList();
-            var charges = CreateCharges(assetId, years);
+            var charges = CreateCharges(assetId, years).ToList();
+            charges.AddRange(CreateCharges(assetId, Enumerable.Range(2000, 11).Select(Convert.ToInt16).ToList(), ChargeGroup.Leaseholders));
             var tenureInfo = CreateTenureInfo();
 
             _assetGateway.Setup(g => g.GetById(It.IsAny<Guid>())).ReturnsAsync(asset);
@@ -90,36 +91,32 @@ namespace FinanceServicesApi.Tests.V1.UseCase
             _assetGateway.VerifyGetAssetById(Times.Once());
             _chargesGateway.VerifyGetChargesByAssetId(Times.Once());
             _tenureInformationGateway.VerifyGetTenureById(Times.Once());
-            response.Count.Should().Be(12);
+            response.Count.Should().Be(12); // Because leaseholder charge group is ignored
             Assert.All(response,
-                item => Assert.Equal(100m, item.RentCharge)
+                item => Assert.Equal(160m, item.RentCharge)
             );
             Assert.All(response,
-                item => Assert.Equal(100m, item.ServiceCharge)
+                item => Assert.Equal(160m, item.ServiceCharge)
             );
         }
 
-        private IList<Charge> CreateCharges(Guid assetId, List<short> years)
+        private IList<Charge> CreateCharges(Guid assetId, List<short> years, ChargeGroup chargeGroup = ChargeGroup.Tenants)
         {
             var charges = new List<Charge>();
             var chargeFaker = new Faker<Charge>()
                 .RuleFor(p => p.Id, f => f.Random.Uuid())
                 .RuleFor(p => p.TargetId, f => assetId)
                 .RuleFor(p => p.TargetType, f => TargetType.Asset)
-                .RuleFor(p => p.ChargeGroup, f => ChargeGroup.Leaseholders)
+                .RuleFor(p => p.ChargeGroup, f => chargeGroup)
                 .RuleFor(p => p.ChargeYear, f => 2020);
             foreach (var year in years)
             {
                 chargeFaker.RuleFor(p => p.ChargeYear, year);
                 var weeklyRentCharges = CreateDetailedCharges(Convert.ToInt16(year), "rent", "weekly");
-                var monthlyRentCharges = CreateDetailedCharges(Convert.ToInt16(year), "rent", "monthly");
                 var weeklyServiceCharges = CreateDetailedCharges(Convert.ToInt16(year), "service", "weekly");
-                var monthlyServiceCharges = CreateDetailedCharges(Convert.ToInt16(year), "service", "monthly");
                 var detailedCharges = new List<DetailedCharges>();
                 detailedCharges.AddRange(weeklyRentCharges);
-                detailedCharges.AddRange(monthlyRentCharges);
                 detailedCharges.AddRange(weeklyServiceCharges);
-                detailedCharges.AddRange(monthlyServiceCharges);
                 chargeFaker.RuleFor(p => p.DetailedCharges, detailedCharges);
                 charges.Add(chargeFaker.Generate());
             }
@@ -137,7 +134,7 @@ namespace FinanceServicesApi.Tests.V1.UseCase
                 .With(p => p.Frequency, frequency)
                 .With(p => p.StartDate, startDate)
                 .With(p => p.EndDate, startDate.AddDays(28))
-                .CreateMany(2);
+                .CreateMany(4);
 
             return detailedCharges.ToList();
         }
