@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Reflection;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using FinanceServicesApi.V1;
 using FinanceServicesApi.V1.Boundary.Responses;
@@ -39,6 +33,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Reflection;
 
 namespace FinanceServicesApi
 {
@@ -52,6 +52,7 @@ namespace FinanceServicesApi
 
         public IConfiguration Configuration { get; }
         private static List<ApiVersionDescription> _apiVersions { get; set; }
+
         //TODO update the below to the name of your API
         private const string ApiName = "FinanceServicesApi";
 
@@ -239,6 +240,7 @@ namespace FinanceServicesApi
             services.AddScoped<IGetLeaseholdAssetsListUseCase, GetLeaseholdAssetsListUseCase>();
             services.AddScoped<IGetAssetApportionmentUseCase, GetAssetApportionmentUseCase>();
             services.AddScoped<IGetPersonListUseCase, GetPersonListUseCase>();
+            services.AddScoped<IGetYearlyRentDebitsUseCase, GetYearlyRentDebitsUseCase>();
         }
 
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
