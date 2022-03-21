@@ -42,19 +42,6 @@ namespace FinanceServicesApi.V1.UseCase
             var tenureInformationResponse = await _tenureInformationGateway.GetById(new Guid(currentTenure.Id)).ConfigureAwait(false);
             var leaseHolder = tenureInformationResponse?.HouseholdMembers.FirstOrDefault(p => p.IsResponsible);
 
-            var isLeaseHolder = false;
-            if (tenureInformationResponse != null)
-            {
-                isLeaseHolder =
-                    tenureInformationResponse.TenureType?.Description == TenureTypes.LeaseholdRTB.Description
-                    || tenureInformationResponse.TenureType?.Description == TenureTypes.PrivateSaleLH.Description
-                    || tenureInformationResponse.TenureType?.Description == TenureTypes.SharedOwners.Description
-                    || tenureInformationResponse.TenureType?.Description == TenureTypes.SharedEquity.Description
-                    || tenureInformationResponse.TenureType?.Description == TenureTypes.ShortLifeLse.Description
-                    || tenureInformationResponse.TenureType?.Description == TenureTypes.LeaseholdStair.Description
-                    || tenureInformationResponse.TenureType?.Description == TenureTypes.FreeholdServ.Description;
-            }
-
             var yearlyRentDebitsResponse = new List<YearlyRentDebitResponse>();
             foreach (var charge in chargesResponse)
             {
@@ -71,15 +58,15 @@ namespace FinanceServicesApi.V1.UseCase
                     ChargeYear = charge?.ChargeYear ?? 0,
                     LeaseHolderName = leaseHolder?.FullName,
                     PaymentReferenceNumber = tenureInformationResponse?.PaymentReference,
-                    RentCharge = rentCharges.Any() ? CalculateRentTotal(rentCharges) : 0,
-                    ServiceCharge = serviceCharges.Any() ? CalculateServiceChargeTotal(serviceCharges, isLeaseHolder) : 0
+                    RentCharge = rentCharges.Any() ? CalculateChargeTotal(rentCharges) : 0,
+                    ServiceCharge = serviceCharges.Any() ? CalculateChargeTotal(serviceCharges) : 0
                 });
             }
 
             return yearlyRentDebitsResponse;
         }
 
-        private static decimal CalculateRentTotal(IList<DetailedCharges> charges)
+        private static decimal CalculateChargeTotal(IList<DetailedCharges> charges)
         {
             var totalAmount = 0m;
             foreach (var charge in charges)
@@ -100,21 +87,6 @@ namespace FinanceServicesApi.V1.UseCase
             }
 
             return decimal.Round(totalAmount, 2, MidpointRounding.AwayFromZero);
-        }
-
-        private static decimal CalculateServiceChargeTotal(IList<DetailedCharges> charges, bool isLeaseHolder)
-        {
-            decimal serviceCharge;
-            if (isLeaseHolder)
-            {
-                serviceCharge = charges.Sum(s => s.Amount) / 12;
-            }
-            else
-            {
-                serviceCharge = charges.Sum(s => s.Amount);
-            }
-
-            return decimal.Round(serviceCharge, 2, MidpointRounding.AwayFromZero);
         }
     }
 }
