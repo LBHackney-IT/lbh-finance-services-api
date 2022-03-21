@@ -3,7 +3,9 @@ using FinanceServicesApi.V1.UseCase;
 using Moq;
 using System;
 using FinanceServicesApi.Tests.Extensions;
+using FinanceServicesApi.V1.Infrastructure.Exceptions;
 using FluentAssertions;
+using Hackney.Shared.Asset.Domain;
 using Microsoft.AspNetCore.Http;
 using Xunit;
 
@@ -28,13 +30,26 @@ namespace FinanceServicesApi.Tests.V1.UseCase
         }
 
         [Fact]
-        public void ShouldRaiseExceptionsIfAssetIdIsEmpty()
+        public void ShouldRaiseExceptionIfAssetIdIsEmpty()
         {
-            var assetid = Guid.Empty;
+            var assetId = Guid.Empty;
             _useCase
-                .Invoking(useCase => useCase.ExecuteAsync(assetid))
+                .Invoking(useCase => useCase.ExecuteAsync(assetId))
                 .Should().Throw<ArgumentException>();
             _assetGateway.VerifyGetAssetById(Times.Never());
+            _chargesGateway.VerifyGetChargesByAssetId(Times.Never());
+            _tenureInformationGateway.VerifyGetTenureById(Times.Never());
+        }
+
+        [Fact]
+        public void ShouldRaiseExceptionIfAssetDoesNotExist()
+        {
+            var assetId = Guid.NewGuid();
+            _assetGateway.Setup(g => g.GetById(It.IsAny<Guid>())).ReturnsAsync((Asset)null);
+            _useCase
+                .Invoking(useCase => useCase.ExecuteAsync(assetId))
+                .Should().Throw<AssetNotFoundException>();
+            _assetGateway.VerifyGetAssetById(Times.Once());
             _chargesGateway.VerifyGetChargesByAssetId(Times.Never());
             _tenureInformationGateway.VerifyGetTenureById(Times.Never());
         }

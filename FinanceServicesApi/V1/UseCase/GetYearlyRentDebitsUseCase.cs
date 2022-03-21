@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FinanceServicesApi.V1.Infrastructure.Exceptions;
 
 namespace FinanceServicesApi.V1.UseCase
 {
@@ -32,7 +33,7 @@ namespace FinanceServicesApi.V1.UseCase
             var assetResponse = await _assetGateway.GetById(assetId).ConfigureAwait(false);
             if (assetResponse == null)
             {
-                throw new NotFoundException($"Asset with id {assetId} not found");
+                throw new AssetNotFoundException(assetId, "asset information");
             }
 
             var chargesResponse = await _chargesGateway.GetAllByAssetId(assetId).ConfigureAwait(false);
