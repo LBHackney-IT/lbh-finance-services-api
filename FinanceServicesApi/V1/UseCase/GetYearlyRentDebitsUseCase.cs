@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FinanceServicesApi.V1.Infrastructure.Enums;
 using FinanceServicesApi.V1.Infrastructure.Exceptions;
 
 namespace FinanceServicesApi.V1.UseCase
@@ -40,10 +41,10 @@ namespace FinanceServicesApi.V1.UseCase
             var currentTenure = assetResponse.Tenure;
 
             var tenureInformationResponse = await _tenureInformationGateway.GetById(new Guid(currentTenure.Id)).ConfigureAwait(false);
-            var leaseHolder = tenureInformationResponse?.HouseholdMembers.FirstOrDefault(p => p.IsResponsible);
+            var tenant = tenureInformationResponse?.HouseholdMembers.FirstOrDefault(p => p.PersonTenureType == PersonTenureType.Tenant && p.IsResponsible);
 
             var yearlyRentDebitsResponse = new List<YearlyRentDebitResponse>();
-            foreach (var charge in chargesResponse)
+            foreach (var charge in chargesResponse.Where(cr => cr.ChargeGroup == ChargeGroup.Tenants).ToList())
             {
                 if (charge == null || !charge.DetailedCharges.Any()) continue;
 
@@ -56,7 +57,7 @@ namespace FinanceServicesApi.V1.UseCase
                 yearlyRentDebitsResponse.Add(new YearlyRentDebitResponse
                 {
                     ChargeYear = charge?.ChargeYear ?? 0,
-                    LeaseHolderName = leaseHolder?.FullName,
+                    LeaseHolderName = tenant?.FullName,
                     PaymentReferenceNumber = tenureInformationResponse?.PaymentReference,
                     RentCharge = rentCharges.Any() ? CalculateChargeTotal(rentCharges) : 0,
                     ServiceCharge = serviceCharges.Any() ? CalculateChargeTotal(serviceCharges) : 0

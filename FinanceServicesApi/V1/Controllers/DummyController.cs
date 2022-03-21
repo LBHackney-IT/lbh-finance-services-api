@@ -45,8 +45,8 @@ namespace FinanceServicesApi.V1.Controllers
             {
                 var tenure = await _tenureById.ExecuteAsync(id).ConfigureAwait(false);
                 var houseHold = tenure.HouseholdMembers.FirstOrDefault(m =>
-                    m.PersonTenureType == PersonTenureType.Leaseholder
-                    || m.PersonTenureType == PersonTenureType.Tenant);
+                    (m.PersonTenureType == PersonTenureType.Leaseholder
+                     || m.PersonTenureType == PersonTenureType.Tenant) && m.IsResponsible);
                 if (houseHold == null)
                     continue;
                 var person = await _personByIdUseCase.ExecuteAsync(houseHold.Id).ConfigureAwait(false);
