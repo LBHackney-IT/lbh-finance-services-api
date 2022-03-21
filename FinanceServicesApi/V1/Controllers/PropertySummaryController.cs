@@ -15,6 +15,7 @@ using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Tenure.Domain;
 using Microsoft.AspNetCore.Http;
 using FinanceServicesApi.V1.Boundary.Request.Enums;
+using FinanceServicesApi.V1.Boundary.Responses;
 
 namespace FinanceServicesApi.V1.Controllers
 {
@@ -293,6 +294,24 @@ namespace FinanceServicesApi.V1.Controllers
             }
 
             var result = await _getAssetApportionmentUseCase.ExecuteAsync(assetId, fromYear, chargeGroupFilter).ConfigureAwait(false);
+
+            return Ok(result);
+        }
+
+
+        /// <summary>
+        /// Gets yearly rent debits for an asset.
+        /// </summary>
+        /// <param name="assetId">Asset id.</param>
+        /// <param name="useCase">Get debits use case.</param>
+        /// <returns>List of yearly rent debits</returns>
+        [ProducesResponseType(typeof(IEnumerable<YearlyRentDebitResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(BaseErrorResponse), StatusCodes.Status404NotFound)]
+        [HttpGet("{assetId}/yearly-rent-debits")]
+        public async Task<ActionResult<IEnumerable<YearlyRentDebitResponse>>> GetYearlyRentDebitsAsync([FromRoute] Guid assetId, [FromServices] IGetYearlyRentDebitsUseCase useCase)
+        {
+            var result = await useCase.ExecuteAsync(assetId).ConfigureAwait(false);
 
             return Ok(result);
         }
