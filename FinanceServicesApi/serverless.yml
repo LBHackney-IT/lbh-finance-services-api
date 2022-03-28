@@ -15,6 +15,9 @@ provider:
 package:
   artifact: ./bin/release/netcoreapp3.1/finance-services-api.zip
 
+  plugins:
+  - serverless-associate-waf  
+
 functions:
   FinanceServicesApi:
     name: ${self:service}-${self:provider.stage}
@@ -206,6 +209,9 @@ resources:
                           - Ref: 'AWS::AccountId'
                           - 'table/Charges/index/*'
 custom:
+  associateWaf:
+    name: Platform_APIs_Web_ACL
+    version: V2
   vpc:
     development:
       securityGroupIds:
