@@ -66,6 +66,7 @@ commands:
           name: Deploy lambda
           command: |
             cd ./FinanceServicesApi/
+            npm i serverless-associate-waf
             sls deploy --stage <<parameters.stage>> --conceal
       # - run:
       #     name: Getting environment variable
