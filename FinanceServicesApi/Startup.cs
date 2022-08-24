@@ -15,9 +15,7 @@ using FinanceServicesApi.V1.UseCase;
 using FinanceServicesApi.V1.UseCase.Interfaces;
 using FinanceServicesApi.Versioning;
 using FluentValidation.AspNetCore;
-using Hackney.Core.Authorization;
 using Hackney.Core.DynamoDb;
-using Hackney.Core.JWT;
 using Hackney.Core.Logging;
 using Hackney.Shared.Asset.Domain;
 using Hackney.Shared.Person;
@@ -133,7 +131,6 @@ namespace FinanceServicesApi
                     c.IncludeXmlComments(xmlPath);
             });
 
-            services.AddTokenFactory();
             ConfigureLogging(services, Configuration);
             services.ConfigureDynamoDB();
             RegisterGateways(services);
@@ -276,7 +273,6 @@ namespace FinanceServicesApi
             });
             app.UseSwagger();
             app.UseRouting();
-            app.UseGoogleGroupAuthorization();
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseEndpoints(endpoints =>
             {
