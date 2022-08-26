@@ -65,8 +65,7 @@ namespace FinanceServicesApi
                 {
                     fv.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
                     fv.LocalizationEnabled = false;
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                });
             services.AddApiVersioning(o =>
             {
                 o.DefaultApiVersion = new ApiVersion(1, 0);

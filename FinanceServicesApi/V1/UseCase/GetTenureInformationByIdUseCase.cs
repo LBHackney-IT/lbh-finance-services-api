@@ -19,8 +19,8 @@ namespace FinanceServicesApi.V1.UseCase
         }
         public async Task<TenureInformation> ExecuteAsync(Guid id)
         {
-            if (id == null)
-                throw new Exception("The id shouldn't be empty or null.");
+            if (id == Guid.Empty)
+                throw new Exception("The id shouldn't be empty.");
             return await _gateway.GetById(id).ConfigureAwait(false);
         }
     }
