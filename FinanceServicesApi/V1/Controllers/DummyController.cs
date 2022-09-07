@@ -44,12 +44,12 @@ namespace FinanceServicesApi.V1.Controllers
             foreach (Guid id in ids)
             {
                 var tenure = await _tenureById.ExecuteAsync(id).ConfigureAwait(false);
-                var housHold = tenure.HouseholdMembers.FirstOrDefault(m =>
-                    m.PersonTenureType == PersonTenureType.Leaseholder
-                    || m.PersonTenureType == PersonTenureType.Tenant);
-                if (housHold == null)
+                var houseHold = tenure.HouseholdMembers.FirstOrDefault(m =>
+                    (m.PersonTenureType == PersonTenureType.Leaseholder
+                     || m.PersonTenureType == PersonTenureType.Tenant) && m.IsResponsible);
+                if (houseHold == null)
                     continue;
-                var person = await _personByIdUseCase.ExecuteAsync(housHold.Id).ConfigureAwait(false);
+                var person = await _personByIdUseCase.ExecuteAsync(houseHold.Id).ConfigureAwait(false);
                 if (person == null)
                     continue;
 
