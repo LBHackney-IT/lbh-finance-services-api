@@ -17,9 +17,9 @@ namespace FinanceServicesApi.V1
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (context.Request.Headers[Constants.CorrelationId].Count == 0)
+            if (context.Request.Headers[FinanceServicesApiConstants.CorrelationId].Count == 0)
             {
-                context.Request.Headers[Constants.CorrelationId] = Guid.NewGuid().ToString();
+                context.Request.Headers[FinanceServicesApiConstants.CorrelationId] = Guid.NewGuid().ToString();
             }
 
             if (_next != null)

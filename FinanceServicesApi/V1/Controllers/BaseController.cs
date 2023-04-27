@@ -18,7 +18,7 @@ namespace FinanceServicesApi.V1.Controllers
         public string GetCorrelationId()
         {
             StringValues correlationId;
-            HttpContext.Request.Headers.TryGetValue(Constants.CorrelationId, out correlationId);
+            HttpContext.Request.Headers.TryGetValue(FinanceServicesApiConstants.CorrelationId, out correlationId);
 
             if (!correlationId.Any())
                 throw new KeyNotFoundException("Request is missing a correlationId");

@@ -24,13 +24,13 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             var httpContext = new DefaultHttpContext();
             var headerValue = "123";
 
-            httpContext.HttpContext.Request.Headers.Add(Constants.CorrelationId, headerValue);
+            httpContext.HttpContext.Request.Headers.Add(FinanceServicesApiConstants.CorrelationId, headerValue);
 
             // Act
             await _sut.InvokeAsync(httpContext).ConfigureAwait(false);
 
             // Assert
-            httpContext.HttpContext.Request.Headers[Constants.CorrelationId].Should().BeEquivalentTo(headerValue);
+            httpContext.HttpContext.Request.Headers[FinanceServicesApiConstants.CorrelationId].Should().BeEquivalentTo(headerValue);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace FinanceServicesApi.Tests.V1.Infrastructure
             await _sut.InvokeAsync(httpContext).ConfigureAwait(false);
 
             // Assert
-            httpContext.HttpContext.Request.Headers[Constants.CorrelationId].Should().HaveCountGreaterThan(0);
+            httpContext.HttpContext.Request.Headers[FinanceServicesApiConstants.CorrelationId].Should().HaveCountGreaterThan(0);
         }
     }
 }
