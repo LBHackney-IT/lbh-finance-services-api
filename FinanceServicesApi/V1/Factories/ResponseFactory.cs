@@ -257,8 +257,8 @@ namespace FinanceServicesApi.V1.Factories
 
             return new PropertyDetailsResponse()
             {
-                Bedrooms = asset.AssetCharacteristics.NumberOfBedrooms,
-                FullAddress = $"{asset.AssetAddress.AddressLine1} {asset.AssetAddress.AddressLine2} {asset.AssetAddress.AddressLine3} asset.AssetAddress.AddressLine4",
+                Bedrooms = asset?.AssetCharacteristics?.NumberOfBedrooms ?? 0,
+                FullAddress = $"{asset.AssetAddress.AddressLine1} {asset.AssetAddress.AddressLine2} {asset.AssetAddress.AddressLine3} {asset.AssetAddress.AddressLine4}",
                 PropertyValue = charge?.DetailedCharges?.FirstOrDefault(c => c.Type.ToLower() == "valuation")?.Amount,
                 RentModel = null,
                 The1999Value = charge?.DetailedCharges?.FirstOrDefault(c => c.Type.ToLower().Contains("1999"))?.Amount,
