@@ -14,9 +14,14 @@ serve:
 shell:
 	docker-compose run base-api bash
 
+.PHONY: clean
+clean:
+	docker-compose stop finance-services-api-test && docker-compose rm -f finance-services-api-test && docker rmi $$(docker images --filter "dangling=true" -q)
+
 .PHONY: test
 test:
-	docker-compose up test-database & docker-compose build base-api-test && docker-compose up base-api-test
+	-docker-compose build finance-services-api-test && docker-compose run finance-services-api-test
+	-make clean
 
 .PHONY: lint
 lint:
