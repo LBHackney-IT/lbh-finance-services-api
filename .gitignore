@@ -63,3 +63,6 @@ tmp/
 
 .fake
 .ionide
+
+# Pipeline serverless framework related
+node_modules/
