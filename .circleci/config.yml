@@ -7,7 +7,7 @@ orbs:
 executors:
   docker-python:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.12
   docker-terraform:
     docker:
       - image: "hashicorp/terraform:light"
@@ -105,7 +105,6 @@ jobs:
   deploy-to-staging:
     executor: docker-dotnet
     steps:
-      # - aws-cli/install
       - deploy-lambda:
           stage: "staging"
   deploy-to-production:
