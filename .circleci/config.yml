@@ -50,9 +50,6 @@ commands:
       - node/install-packages:
           app-dir: FinanceServicesApi
       - run:
-          name: Install serverless CLI
-          command: npm i -g serverless
-      - run:
           name: Build lambda
           command: |
             cd ./FinanceServicesApi/
@@ -62,7 +59,7 @@ commands:
           name: Deploy lambda
           command: |
             cd ./FinanceServicesApi/
-            sls deploy --stage <<parameters.stage>> --conceal
+            npx --yes serverless deploy --stage <<parameters.stage>> --conceal
       # - run:
       #     name: Getting environment variable
       #     command:
