@@ -78,10 +78,10 @@ jobs:
       - setup_remote_docker
       - run:
           name: build
-          command: docker-compose build finance-services-api-test
+          command: docker compose build finance-services-api-test
       - run:
           name: Run tests
-          command: docker-compose run finance-services-api-test
+          command: docker compose run finance-services-api-test
   assume-role-development:
     executor: docker-python
     steps:
