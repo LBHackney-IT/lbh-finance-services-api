@@ -135,10 +135,11 @@ workflows:
             branches:
               only: development
       - deploy-to-development:
-          context: api-nuget-token-context
+          context:
+            - api-nuget-token-context
+            - "Serverless Framework"
           requires:
             - assume-role-development
-            - "Serverless Framework"
           filters:
             branches:
               only: development
@@ -157,10 +158,11 @@ workflows:
              branches:
                only: master
       - deploy-to-staging:
-          context: api-nuget-token-context
+          context:
+            - api-nuget-token-context
+            - "Serverless Framework"
           requires:
             - assume-role-staging
-            - "Serverless Framework"
           filters:
             branches:
               only: master
@@ -176,10 +178,11 @@ workflows:
              branches:
                only: master
       - deploy-to-production:
-          context: api-nuget-token-context
+          context:
+            - api-nuget-token-context
+            - "Serverless Framework"
           requires:
             - assume-role-production
-            - "Serverless Framework"
           filters:
             branches:
               only: master
