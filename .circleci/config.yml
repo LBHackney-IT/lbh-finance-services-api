@@ -139,6 +139,7 @@ workflows:
           context: api-nuget-token-context
           requires:
             - assume-role-development
+            - "Serverless Framework"
           filters:
             branches:
               only: development
@@ -160,6 +161,7 @@ workflows:
           context: api-nuget-token-context
           requires:
             - assume-role-staging
+            - "Serverless Framework"
           filters:
             branches:
               only: master
@@ -178,6 +180,7 @@ workflows:
           context: api-nuget-token-context
           requires:
             - assume-role-production
+            - "Serverless Framework"
           filters:
             branches:
               only: master
