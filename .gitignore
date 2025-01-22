@@ -45,6 +45,7 @@ Ankh.NoLoad
 
 #Other
 .svn
+.env
 
 # Include DLLs if they're in the NuGet packages directory
 !/packages/*/lib/*.dll
@@ -63,3 +64,6 @@ tmp/
 
 .fake
 .ionide
+
+# Pipeline serverless framework related
+node_modules/
