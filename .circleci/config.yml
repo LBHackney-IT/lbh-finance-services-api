@@ -59,7 +59,7 @@ commands:
           name: Deploy lambda
           command: |
             cd ./FinanceServicesApi/
-            npx --yes serverless deploy --stage <<parameters.stage>> --conceal
+            npx --yes serverless remove --stage <<parameters.stage>> --verbose
 jobs:
   check-code-formatting:
     executor: docker-dotnet
