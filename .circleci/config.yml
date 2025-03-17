@@ -50,7 +50,7 @@ commands:
       - node/install-packages:
           app-dir: FinanceServicesApi
       - run:
-          name: Build lambda-
+          name: Build lambda
           command: |
             cd ./FinanceServicesApi/
             chmod +x ./build.sh
